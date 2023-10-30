@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./:/app/app"
+    env_file:
+      - ./.env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Africa/Cairo
+      - /etc/localtime:/etc/localtime:ro
+    command: sh -c "cd app && /app/.venv/bin/python3.12 -m feedbackbot"
