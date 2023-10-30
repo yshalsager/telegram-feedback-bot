@@ -106,7 +106,7 @@ def increment_outgoing_stats() -> None:
 
 
 def get_topic(user_id: int) -> int:
-    return session.query(Topic.topic_id).filter(Topic.user_id == user_id).scalar() or -1
+    return session.query(Topic.topic_id).filter(Topic.user_id == user_id).scalar() or 0
 
 
 def get_user_id_of_topic(topic_id: int) -> int:
