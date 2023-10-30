@@ -2,6 +2,8 @@ version: '3.8'
 
 services:
   app:
+    container_name: feedbackbot
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
