@@ -14,7 +14,9 @@ from feedbackbot.db.curd import (
 from feedbackbot.utils.telegram import get_reply_to_message_id
 
 default_message_text = "استلمنا رسالتك. سنرد عليك في أقرب وقت."
-message_text = escape_markdown(getenv("MESSAGE_RECEIVED", default_message_text))
+message_text = escape_markdown(
+    getenv("MESSAGE_RECEIVED", default_message_text).replace("\\n", "\n")
+)
 
 
 async def forward_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:

@@ -4,6 +4,7 @@ from os import getenv
 
 from telegram import Update
 from telegram.ext import ContextTypes
+from telegram.helpers import escape_markdown
 
 from feedbackbot.utils.analytics import add_new_chat_to_db
 from feedbackbot.utils.telegram import get_reply_to_message_id
@@ -14,7 +15,7 @@ from feedbackbot.utils.telegram_handlers import (
 
 logger = logging.getLogger(__name__)
 
-message_text = getenv("MESSAGE_START", "")
+message_text = escape_markdown(getenv("MESSAGE_START", "").replace("\\n", "\n"))
 
 
 def get_default_message_text(chat_title: str) -> str:
