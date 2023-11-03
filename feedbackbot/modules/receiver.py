@@ -25,7 +25,8 @@ async def forward_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     assert update.effective_message is not None
     topic_id = get_topic(update.effective_chat.id)
     if not topic_id:
-        return
+        topic = await create_topic_and_add_to_db(update, context)
+        topic_id = topic.topic_id
     try:
         forwarded: Message = await update.effective_message.forward(
             chat_id=TELEGRAM_CHAT_ID,
@@ -34,6 +35,7 @@ async def forward_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         )
     except BadRequest as err:
         if err.message == "Message thread not found":
+            # Topic was deleted, create a new one
             remove_user_mappings(update.effective_chat.id)
             topic = await create_topic_and_add_to_db(update, context)
             topic_id = topic.topic_id
