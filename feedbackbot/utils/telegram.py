@@ -3,6 +3,11 @@ from typing import cast
 import regex as re
 from telegram import Update
 from telegram.constants import ChatType
+from telegram.ext import ContextTypes
+
+from feedbackbot import TELEGRAM_CHAT_ID
+from feedbackbot.db.curd import add_topic
+from feedbackbot.db.models.topic import Topic
 
 escape_chars = r"\_*[]()~`>#+-={}.!"
 
@@ -33,3 +38,14 @@ def get_reply_to_message_id(update: Update) -> int | None:
         and update.effective_message.reply_to_message.id
         else None
     )
+
+
+async def create_topic_and_add_to_db(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Topic:
+    chat_title = update.effective_chat.full_name or update.effective_chat.title
+    forum_topic = await context.bot.create_forum_topic(TELEGRAM_CHAT_ID, chat_title)
+    await context.bot.send_message(
+        chat_id=TELEGRAM_CHAT_ID,
+        message_thread_id=forum_topic.message_thread_id,
+        text=chat_title,
+    )
+    return add_topic(update.effective_chat.id, forum_topic.message_thread_id)

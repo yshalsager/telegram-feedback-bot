@@ -83,6 +83,11 @@ def get_mapping(user_id: int, source: int) -> Mapping | None:
     return session.query(Mapping).filter(Chat.user_id == user_id, Mapping.source == source).first()
 
 
+def remove_user_mappings(user_id: int) -> None:
+    session.query(Mapping).filter(Mapping.user_id == user_id).delete()
+    session.commit()
+
+
 def get_stats() -> Stat | None:
     return session.query(Stat).first()
 
@@ -114,7 +119,12 @@ def get_user_id_of_topic(topic_id: int) -> int:
 
 
 @db_exceptions_handler
-def add_topic(user_id: int, topic_id: int) -> None:
-    if not get_topic(user_id):
-        session.add(Topic(user_id=user_id, topic_id=topic_id))
-        session.commit()
+def add_topic(user_id: int, topic_id: int) -> Topic:
+    topic: Topic | None = session.query(Topic).filter(Topic.user_id == user_id).first()
+    if not topic:
+        topic = Topic(user_id=user_id, topic_id=topic_id)
+        session.add(topic)
+    else:
+        topic.topic_id = topic_id
+    session.commit()
+    return topic
