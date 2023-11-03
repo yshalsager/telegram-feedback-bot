@@ -27,6 +27,8 @@ Copy example.env to .env `cp example.env .env` and edit the following variables:
   message, if it's more than one line replace the new line with `\n`.
 - `MESSAGE_RECEIVED`: the message that will be sent to users when they send a message to the bot, can be empty to
   use the default message, if it's more than one line replace the new line with `\n`.
+- `MESSAGE_REPLIED`: the feedback message that will be sent when admin reply to a user and message reaches the user, can
+  be empty to use the default message, if it's more than one line replace the new line with `\n`.
 - `DEBUG`: set to `1` to enable debug logging
 
 ## Running
