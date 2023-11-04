@@ -6,6 +6,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 
 from feedbackbot.utils.analytics import add_new_chat_to_db
+from feedbackbot.utils.telegram import get_chat_title
 from feedbackbot.utils.telegram_handlers import tg_exceptions_handler
 
 logger = logging.getLogger(__name__)
@@ -18,11 +19,11 @@ def get_default_message_text(chat_title: str) -> str:
 
 
 @Client.on_message(filters.command("start"))
+@Client.on_message(filters.command("help"))
 @add_new_chat_to_db
 @tg_exceptions_handler
 async def start_handler(_: Client, message: Message) -> None:
-    chat_title = message.chat.title or f"{message.chat.first_name} {message.chat.last_name}".strip()
     await message.reply_text(
-        message_text or get_default_message_text(chat_title),
+        message_text or get_default_message_text(get_chat_title(message)),
         reply_to_message_id=message.reply_to_message_id,
     )

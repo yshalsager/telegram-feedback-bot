@@ -1,7 +1,7 @@
 from os import getenv
 
 from pyrogram import Client, filters
-from pyrogram.errors import BadRequest
+from pyrogram.errors import TopicDeleted
 from pyrogram.types import Message
 
 from feedbackbot import TELEGRAM_CHAT_ID
@@ -30,19 +30,15 @@ async def forward_handler(client: Client, message: Message) -> None:
             message_thread_id=topic_id,
             disable_notification=True,
         )
-    except BadRequest as err:
-        if err.value == "Message thread not found":
-            # Topic was deleted, create a new one
-            remove_user_mappings(message.chat.id)
-            topic = await create_topic_and_add_to_db(client, message)
-            topic_id = topic.topic_id
-            forwarded = await message.forward(
-                chat_id=TELEGRAM_CHAT_ID,
-                message_thread_id=topic_id,
-                disable_notification=True,
-            )
-        else:
-            raise err
+    except TopicDeleted:
+        remove_user_mappings(message.chat.id)
+        topic = await create_topic_and_add_to_db(client, message)
+        topic_id = topic.topic_id
+        forwarded = await message.forward(
+            chat_id=TELEGRAM_CHAT_ID,
+            message_thread_id=topic_id,
+            disable_notification=True,
+        )
     add_mapping(
         message.chat.id,
         message.id,

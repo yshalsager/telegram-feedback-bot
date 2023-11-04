@@ -50,6 +50,6 @@ if BOT_TOKEN:
         api_id=API_ID,
         api_hash=API_HASH,
         bot_token=BOT_TOKEN,
-        plugins={"root": "modules"},
+        plugins={"root": "feedbackbot.modules"},
     )
     app.set_parse_mode(ParseMode.HTML)

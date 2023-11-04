@@ -11,7 +11,7 @@ default_message_text = "رد على الرسالة بنجاح."
 message_text = getenv("MESSAGE_RECEIVED", default_message_text).replace("\\n", "\n")
 
 
-@Client.on_message(is_topic_reply & filters.chat(TELEGRAM_CHAT_ID) & ~filters.regex(r"^/\w+$"))
+@Client.on_message(is_topic_reply & filters.chat(int(TELEGRAM_CHAT_ID)) & ~filters.regex(r"^/\w+$"))
 async def reply_handler(_: Client, message: Message) -> None:
     user_id = get_user_id_of_topic(message.message_thread_id)
     await message.copy(user_id)

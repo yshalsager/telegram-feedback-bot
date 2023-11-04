@@ -72,6 +72,7 @@ venv.bak/
 tmp_*
 *.db
 restart.json
+*.session
 
 # OS
 .DS_Store
