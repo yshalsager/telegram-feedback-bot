@@ -8,10 +8,11 @@ packages = [{include = "feedbackbot"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
-python-telegram-bot = {extras = ["rate-limiter"], version = "^20.6"}
 sqlalchemy = "^2.0.22"
 alembic = "^1.12.0"
 regex = "^2023.10.3"
+pyrofork = {git = "https://github.com/Mayuri-Chan/pyrofork", rev = "v2.3.11"}
+tgcrypto = "^1.2.5"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.3"

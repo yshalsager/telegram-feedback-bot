@@ -4,21 +4,20 @@ from os import execl
 from pathlib import Path
 from sys import executable
 
-from telegram import Update
-from telegram.ext import ContextTypes
+from pyrogram import Client, filters
+from pyrogram.types import Message
 
-from feedbackbot import PARENT_DIR
-from feedbackbot.utils.filters import FilterBotAdmin
-from feedbackbot.utils.telegram_handlers import command_handler
+from feedbackbot import PARENT_DIR, app
+from feedbackbot.utils.filters import is_admin
 
 
-@command_handler("restart", FilterBotAdmin())
-async def restart(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+@app.on_message(filters.command("restart") & is_admin)
+async def restart(_: Client, message: Message) -> None:
     """restarts the bot."""
-    assert update.effective_message is not None
-    restart_message = await update.effective_message.reply_text(
+    restart_message = await message.reply_text(
         "`Restarting, please wait...`",
+        reply_to_message_id=message.reply_to_message_id,
     )
-    chat_info = {"chat": restart_message.chat_id, "message": restart_message.message_id}
+    chat_info = {"chat": restart_message.chat.id, "message": restart_message.id}
     Path(f"{PARENT_DIR}/restart.json").write_text(json.dumps(chat_info))
     execl(executable, executable, "-m", __package__.split(".")[0])  # noqa: S606

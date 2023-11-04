@@ -1,7 +1,7 @@
 """
 Telegram Bot
 """
-from feedbackbot import application
+from feedbackbot import app
 from feedbackbot.modules import ALL_MODULES
 from feedbackbot.utils.modules_loader import load_modules
 
@@ -11,7 +11,8 @@ def main() -> None:
     # Load all modules in modules list
     load_modules(ALL_MODULES, __package__)
     # Start the Bot
-    application.run_polling()
+    # TODO Handle restart
+    app.run()
 
 
 if __name__ == "__main__":

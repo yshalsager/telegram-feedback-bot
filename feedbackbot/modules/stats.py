@@ -1,25 +1,19 @@
 """ Bot stats module"""
-from telegram import Update
-from telegram.ext import ContextTypes
+from pyrogram import Client, filters
+from pyrogram.types import Message
 
+from feedbackbot import app
 from feedbackbot.db.curd import get_chats_count, get_stats
-from feedbackbot.utils.filters import FilterBotAdmin
-from feedbackbot.utils.telegram_handlers import (
-    command_handler,
-    tg_exceptions_handler,
-)
+from feedbackbot.utils.filters import is_admin
+from feedbackbot.utils.telegram_handlers import tg_exceptions_handler
 
 
-@command_handler("stats", FilterBotAdmin())
+@app.on_message(filters.command("stats") & is_admin)
 @tg_exceptions_handler
-async def stats_for_users_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+async def stats_for_users_handler(_: Client, message: Message) -> None:
     """
     Show Bot stats for admins.
-    :param update: `telegram.Update` of `python-telegram-bot`.
-    :param _: `telegram.ext.CallbackContext` of `python-telegram-bot`.
-    :return: None
     """
-    assert update.effective_message is not None
     total_users_count: int = get_chats_count()
     messages_stats = get_stats()
     if messages_stats:
@@ -36,4 +30,4 @@ async def stats_for_users_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) 
 • {incoming_count} رسالة واردة
   {outgoing_count} رد على الرسائل
 """
-    await update.effective_message.reply_html(text_message)
+    await message.reply_text(text_message, reply_to_message_id=message.reply_to_message_id)

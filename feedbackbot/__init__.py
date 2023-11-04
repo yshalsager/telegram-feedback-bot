@@ -1,21 +1,10 @@
 """ Bot initialization """
 import logging
-from functools import partial
 from os import getenv
 from pathlib import Path
-from warnings import filterwarnings
 
-from telegram.constants import ParseMode
-from telegram.ext import (
-    AIORateLimiter,
-    Application,
-    ApplicationBuilder,
-    Defaults,
-    PicklePersistence,
-)
-from telegram.warnings import PTBUserWarning
-
-from feedbackbot.utils.restart import handle_restart
+from pyrogram import Client
+from pyrogram.enums import ParseMode
 
 # paths
 WORK_DIR = Path(__package__)
@@ -25,6 +14,8 @@ DB_PATH = PARENT_DIR / "feedback_bot.db"
 # bot config
 IS_DEBUG: bool = getenv("DEBUG", "").lower() in ("true", "1")
 BOT_TOKEN = getenv("TELEGRAM_BOT_TOKEN")
+API_ID = getenv("TELEGRAM_API_ID")
+API_HASH = getenv("TELEGRAM_API_HASH")
 TG_BOT_ADMINS = [
     int(admin_str.strip())
     for admin_str in getenv("TELEGRAM_BOT_ADMINS", "").split(",")
@@ -55,25 +46,5 @@ else:
 
 # bot
 if BOT_TOKEN:
-    persistence = PicklePersistence(filepath=f"{PARENT_DIR}/bot.pickle")
-    defaults = Defaults(parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-    application: Application = (
-        ApplicationBuilder()
-        .token(BOT_TOKEN)
-        .defaults(defaults)
-        .persistence(persistence)
-        .post_init(partial(handle_restart, PARENT_DIR))
-        .connect_timeout(30)
-        .read_timeout(30)
-        .write_timeout(30)
-        .pool_timeout(30)
-        .get_updates_read_timeout(30)
-        .connection_pool_size(512)
-        .http_version("1.1")
-        .get_updates_http_version("1.1")
-        .rate_limiter(AIORateLimiter(max_retries=5))
-        .build()
-    )
-
-logging.getLogger("httpx").setLevel(logging.WARNING)
-filterwarnings(action="ignore", message=r".*CallbackQueryHandler", category=PTBUserWarning)
+    app = Client("feedbackbot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+    app.set_parse_mode(ParseMode.HTML)
