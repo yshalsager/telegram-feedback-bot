@@ -23,7 +23,6 @@ TG_BOT_ADMINS = [
 ] or []
 TELEGRAM_CHAT_ID = getenv("TELEGRAM_CHAT_ID", "")
 TELEGRAM_LOG_TOPIC_ID = getenv("TELEGRAM_LOG_TOPIC_ID", "")
-SLEEP_AFTER_SEND = 0.035  # Limit is ~30 messages/second; core.telegram.org/bots/faq
 
 # Logging
 LOG_DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -46,5 +45,11 @@ else:
 
 # bot
 if BOT_TOKEN:
-    app = Client("feedbackbot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+    app = Client(
+        "feedbackbot",
+        api_id=API_ID,
+        api_hash=API_HASH,
+        bot_token=BOT_TOKEN,
+        plugins={"root": "modules"},
+    )
     app.set_parse_mode(ParseMode.HTML)

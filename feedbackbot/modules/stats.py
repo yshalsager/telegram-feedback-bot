@@ -2,13 +2,12 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
-from feedbackbot import app
 from feedbackbot.db.curd import get_chats_count, get_stats
 from feedbackbot.utils.filters import is_admin
 from feedbackbot.utils.telegram_handlers import tg_exceptions_handler
 
 
-@app.on_message(filters.command("stats") & is_admin)
+@Client.on_message(filters.command("stats") & is_admin)
 @tg_exceptions_handler
 async def stats_for_users_handler(_: Client, message: Message) -> None:
     """

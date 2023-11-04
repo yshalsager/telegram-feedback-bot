@@ -7,11 +7,11 @@ from sys import executable
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
-from feedbackbot import PARENT_DIR, app
+from feedbackbot import PARENT_DIR
 from feedbackbot.utils.filters import is_admin
 
 
-@app.on_message(filters.command("restart") & is_admin)
+@Client.on_message(filters.command("restart") & is_admin)
 async def restart(_: Client, message: Message) -> None:
     """restarts the bot."""
     restart_message = await message.reply_text(

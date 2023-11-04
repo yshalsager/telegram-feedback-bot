@@ -4,7 +4,7 @@ from pyrogram import Client, filters
 from pyrogram.errors import BadRequest
 from pyrogram.types import Message
 
-from feedbackbot import TELEGRAM_CHAT_ID, app
+from feedbackbot import TELEGRAM_CHAT_ID
 from feedbackbot.db.curd import (
     add_mapping,
     get_topic,
@@ -18,7 +18,7 @@ default_message_text = "استلمنا رسالتك. سنرد عليك في أق
 message_text = getenv("MESSAGE_RECEIVED", default_message_text).replace("\\n", "\n")
 
 
-@app.on_message(filters.private & ~filters.regex(r"^/\w+$"))
+@Client.on_message(filters.private & ~filters.regex(r"^/\w+$"))
 async def forward_handler(client: Client, message: Message) -> None:
     topic_id = get_topic(message.chat.id)
     if not topic_id:

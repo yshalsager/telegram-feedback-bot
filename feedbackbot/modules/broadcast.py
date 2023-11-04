@@ -8,15 +8,16 @@ from pyrogram import Client, filters
 from pyrogram.errors import FloodWait, RPCError
 from pyrogram.types import Message
 
-from feedbackbot import SLEEP_AFTER_SEND, app
 from feedbackbot.db.curd import get_all_chats
 from feedbackbot.utils.filters import is_admin
 from feedbackbot.utils.telegram_handlers import tg_exceptions_handler
 
 logger = logging.getLogger(__name__)
 
+SLEEP_AFTER_SEND = 0.035  # Limit is ~30 messages/second; core.telegram.org/bots/faq
 
-@app.on_message(filters.command("broadcast") & filters.reply & is_admin)
+
+@Client.on_message(filters.command("broadcast") & filters.reply & is_admin)
 @tg_exceptions_handler
 async def broadcast(_: Client, message: Message) -> None:
     """Broadcasts message to bot users."""

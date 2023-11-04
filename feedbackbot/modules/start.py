@@ -5,7 +5,6 @@ from os import getenv
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
-from feedbackbot import app
 from feedbackbot.utils.analytics import add_new_chat_to_db
 from feedbackbot.utils.telegram_handlers import tg_exceptions_handler
 
@@ -18,7 +17,7 @@ def get_default_message_text(chat_title: str) -> str:
     return f"مرحبا بك <b>{escape(chat_title)}</b>\nاترك رسالتك وسنجيبك في أسرع وقت\n"
 
 
-@app.on_message(filters.command("start"))
+@Client.on_message(filters.command("start"))
 @add_new_chat_to_db
 @tg_exceptions_handler
 async def start_handler(_: Client, message: Message) -> None:
