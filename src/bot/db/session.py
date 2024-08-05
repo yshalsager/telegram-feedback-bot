@@ -3,10 +3,14 @@
 import json
 from collections.abc import Generator
 from contextlib import contextmanager
+from pathlib import Path
 
+from alembic import command
+from alembic.config import Config
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
+from src import DATA_DIR
 from src.bot.db.base import Base
 from src.builder.db.crud import get_bots_ids
 
@@ -15,13 +19,19 @@ engines = {}
 
 def create_db(bot_id: int) -> None:
     """Create database."""
-    db_engine = create_engine(
-        f'sqlite:///data/{bot_id}.db',
-        connect_args={'check_same_thread': False},
-        json_serializer=lambda obj: json.dumps(obj, ensure_ascii=False),
+    db_url = f'sqlite:///{DATA_DIR.absolute()}/{bot_id}.db'
+    alembic_cfg = Config(Path(__file__).parent / 'alembic.ini')
+    alembic_cfg.set_main_option('sqlalchemy.url', db_url)
+    command.upgrade(alembic_cfg, 'head')
+    engines.update(
+        {
+            bot_id: create_engine(
+                db_url,
+                connect_args={'check_same_thread': False},
+                json_serializer=lambda obj: json.dumps(obj, ensure_ascii=False),
+            )
+        }
     )
-    Base.metadata.create_all(bind=db_engine)
-    engines.update({bot_id: db_engine})
 
 
 for bot in get_bots_ids():

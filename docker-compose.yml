@@ -16,5 +16,4 @@ services:
       - /etc/localtime:/etc/localtime:ro
     command: >
       sh -c "alembic -c alembic.ini upgrade head &&
-             PYTHONPATH="/code/app" python3 src/bot/db/scripts/migrate.py &&
              python3 -m src"
