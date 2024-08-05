@@ -28,7 +28,7 @@ def get_translator(language_code: str) -> Any:
 def localize(function: F) -> F:
     @wraps(function)
     def wrapper(client: Client, update: Message | CallbackQuery, *args: tuple, **kwargs: dict) -> F:
-        user = update.from_user if update.from_user else None
+        user = update.from_user if hasattr(update, 'from_user') else None
         language_code = user.language_code if user else 'en'
         user_db = get_user(user.id) if user else None
         if user_db and user_db.language:

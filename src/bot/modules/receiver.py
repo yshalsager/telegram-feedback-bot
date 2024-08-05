@@ -30,11 +30,9 @@ async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
         message.continue_propagation()
     with session_scope(client.me.id) as session:
         topic_id = get_topic(session, message.chat.id)
-        if topic_id != 0 and bot.group:
-            topic = await create_topic_and_add_to_db(client, message, session=session)
-            if not topic:
-                return
-            topic_id = topic.topic_id
+        if topic_id == 0 and bot.group:
+            topic = await create_topic_and_add_to_db(client, message, i18n, session, bot.group)
+            topic_id = topic.topic_id if topic else 0
         try:
             forwarded: Message = await message.forward(
                 chat_id=chat_id,
@@ -43,10 +41,8 @@ async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
             )
         except TopicDeleted:
             remove_user_mappings(session, message.chat.id)
-            topic = await create_topic_and_add_to_db(session, client, message)
-            if not topic:
-                return
-            topic_id = topic.topic_id
+            topic = await create_topic_and_add_to_db(client, message, i18n, session, bot.group)
+            topic_id = topic.topic_id if topic else 0
             forwarded = await message.forward(
                 chat_id=chat_id,
                 message_thread_id=topic_id,

@@ -22,7 +22,7 @@ BOT_ADMINS = [
     int(admin_str.strip()) for admin_str in getenv('BOT_ADMINS', '').split(',') if admin_str
 ] or []
 TELEGRAM_CHAT_ID = getenv('CHAT_ID', '')
-LOG_TOPIC_ID = getenv('TELEGRAM_LOG_TOPIC_ID', '')
+LOG_TOPIC_ID = getenv('LOG_TOPIC_ID', '')
 NEW_BOT_ADMIN_APPROVAL = getenv('NEW_BOT_ADMIN_APPROVAL', '').lower() in {'true', '1'}
 
 # Logging
