@@ -16,4 +16,4 @@ services:
       - PGID=1000
       - TZ=Africa/Cairo
       - /etc/localtime:/etc/localtime:ro
-    command: sh -c "cd app && /app/.venv/bin/python3.12 -m feedbackbot"
+    command: sh -c "cd app && /app/.venv/bin/python3 -m src"

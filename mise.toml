@@ -1,0 +1,28 @@
+[tools]
+poetry = 'latest'
+python = '3.12'
+
+[tasks.default]
+run = 'python -m src'
+
+[tasks.migrate]
+run = ['alembic -c alembic.ini upgrade head', 'python src/bot/db/scripts/migrate.py']
+
+[env]
+# the Telegram bot token https://telegram.me/BotFather
+BOT_TOKEN = '0000000000:aaaaaaaaaaaaaaaaaaaa'
+# to connect to MTProto, which we use to upload media files (retrieve from https://my.telegram.org)
+API_ID = '0000000'
+API_HASH = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+# the Telegram account IDs that will have administrator permissions of the bot
+BOT_ADMINS = '000000,000000,000000'
+# Chat that will receive the bot messages
+CHAT_ID = '-10000000000'
+# Group topic that will be used for bot logs
+LOG_TOPIC_ID = 1
+# Require admin approval to add new bot
+NEW_BOT_ADMIN_APPROVAL = "true"
+DEBUG = 1
+
+[env.mise]
+file = '.env'

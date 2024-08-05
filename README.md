@@ -1,35 +1,35 @@
-# Telegram Feedback Bot
+# Telegram Feedback Bots Builder
 
-A livegram Telegram bot clone with topics support.
+A bot that builds feedback Telegram bot like Livegram but with topics support.
 
 ## Features
+
+### Builder
+
+- Create new feedback bots.
+- Manage existing bots.
+    - Delete bot.
+    - Change its token.
+    - Change its group.
+    - Change bot messages (start, receive feedback, sent message feedback).
+- Admin options:
+    - Broadcast messages to all users.
+    - Restart all bots.
+    - Enable or disable bots (via @bot manage).
+- Multi-language support (automatically selected based on Telegram language).
+
+### Bots
 
 - Receive feedback messages from users.
 - Each user has its own topic that messages are sent to, so admins can reply to each user individually and chat history
   is clear.
 - General topic messages aren't sent to users, so admins can discuss without spamming users.
 - Admins can broadcast messages to all users.
-- Admins can restart the bot.
-
-## Setup
-
-- Create a Telegram group and add the bot (create one if no bot yet using BotFather) and the admins to it.
-- Enable topics in the group settings.
+- Bot statistics of users, received and sent messages.
 
 ## Configuration
 
-Copy example.env to .env `cp example.env .env` and edit the following variables:
-
-- `TELEGRAM_BOT_TOKEN`: the Telegram bot token https://telegram.me/BotFather
-- `TELEGRAM_BOT_ADMINS`: the Telegram account IDs that will have administrator permissions of the bot
-- `TELEGRAM_CHAT_ID`: the Telegram chat ID that will be used as forum. The group ID can be found in the URL of the group
-- `MESSAGE_START`: the message that will be sent to users when they start the bot, can be empty to use the default
-  message, if it's more than one line replace the new line with `\n`.
-- `MESSAGE_RECEIVED`: the message that will be sent to users when they send a message to the bot, can be empty to
-  use the default message, if it's more than one line replace the new line with `\n`.
-- `MESSAGE_REPLIED`: the feedback message that will be sent when admin reply to a user and message reaches the user, can
-  be empty to use the default message, if it's more than one line replace the new line with `\n`.
-- `DEBUG`: set to `1` to enable debug logging
+Create a .env file and fill it with requires values from `mise.toml` env section.
 
 ## Running
 
@@ -42,11 +42,19 @@ Copy example.env to .env `cp example.env .env` and edit the following variables:
 - `poetry install`
 - `python3 -m src`
 
-## Bot commands
+## Usage
 
-- `/start`, `/help` - sends the main menu
+### Builder
 
-### Admin commands
+- `/start`: sends the main menu to create and manage bots.
+- `@bot manage`: list bots to enable or disable.
+- `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
+- `/restart`: restarts the bot.
 
-- `/broadcast` - sends a message to all bot users and groups. Send as a reply to a message previously sent to the bot.
-- `/restart` - restarts the bot.
+### Bots
+
+- `/start`: says hello.
+- Send a message, it will be forwarded to the bot owner or group.
+- Owner can reply to the message and it will be forwarded to the user.
+- `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
+- `/stats`: shows bot statistics.
