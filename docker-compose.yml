@@ -1,14 +1,12 @@
-version: '3.8'
-
 services:
   app:
     container_name: feedbackbot
-    restart: always
+    restart: unless-stopped
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile
     volumes:
-      - "./:/app/app"
+      - ./:/code/app
     env_file:
       - ./.env
     environment:
@@ -16,4 +14,3 @@ services:
       - PGID=1000
       - TZ=Africa/Cairo
       - /etc/localtime:/etc/localtime:ro
-    command: sh -c "cd app && /app/.venv/bin/python3 -m src"
