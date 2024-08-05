@@ -5,10 +5,10 @@ from pyrogram.errors import ChatWriteForbidden
 from pyrogram.types import Message
 from sqlalchemy.orm import Session, scoped_session
 
-from common.utils.i18n import localize
 from src import TELEGRAM_CHAT_ID
 from src.bot.db.crud import add_topic
 from src.bot.db.models.topic import Topic
+from src.common.utils.i18n import localize
 
 CHAT_TYPES = {ChatType.PRIVATE: 0, ChatType.GROUP: 1, ChatType.SUPERGROUP: 1, ChatType.CHANNEL: 2}
 
