@@ -26,6 +26,7 @@ async def main() -> None:
         bot_token=BOT_TOKEN,
         plugins={'root': f'{package_name}.builder.modules'},
         parse_mode=ParseMode.HTML,
+        workdir=DATA_DIR,
     )
     await app.start()
     BOTS.update({main_bot_id: app})
