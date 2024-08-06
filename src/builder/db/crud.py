@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TypeAlias
 
 from sqlalchemy import Row, func
@@ -8,7 +9,7 @@ from src.builder.db.models.user import User
 from src.builder.db.session import session
 from src.common.db.utils import db_exceptions_handler
 
-TBot: TypeAlias = Row[tuple[str, str, bool, int, int | None, str, str, str]]  # noqa: UP040
+TBot: TypeAlias = Row[tuple[str, str, bool, int, int | None, str, str, str, datetime]]  # noqa: UP040
 
 
 # users
@@ -74,6 +75,7 @@ def get_bot(user_id: int | str) -> TBot | None:
             Bot.start_message,
             Bot.received_message,
             Bot.sent_message,
+            Bot.created_at,
         )
         .filter(Bot.user_id == user_id)
         .first()

@@ -1,4 +1,5 @@
-from sqlalchemy import BigInteger, Boolean, Column, Integer, String
+from sqlalchemy import BigInteger, Boolean, Column, DateTime, Integer, String
+from sqlalchemy.sql.functions import current_timestamp
 
 from src.builder.db.base import Base
 
@@ -11,6 +12,7 @@ class Bot(Base):
     # first_name (32) + space (1) + last_name (32)
     name: str = Column(String(65), nullable=False, unique=True)
     user_id: int = Column(BigInteger, unique=True, nullable=False)
+    # TODO encrypt token
     token: str = Column(String(45), nullable=False, unique=True)
     owner: int = Column(BigInteger, nullable=False)
     group: int | None = Column(BigInteger, nullable=True)
@@ -18,6 +20,7 @@ class Bot(Base):
     start_message: str = Column(String(4096), nullable=True)
     received_message: str = Column(String(4096), nullable=True)
     sent_message: str = Column(String(4096), nullable=True)
+    created_at = Column(DateTime, nullable=False, default=current_timestamp())
 
     def __repr__(self) -> str:
         return f'Bot(user_name="@{self.username}", owner={self.owner}, group={self.group}, enabled={self.enabled})'
