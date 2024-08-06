@@ -47,7 +47,7 @@ def get_all_chats(
 
 
 def increment_usage_times(session: scoped_session[Session], user_id: int) -> None:
-    chat = session.query(Chat).filter(Chat.user_id == user_id).first()
+    chat = session.query(Chat).filter_by(user_id=user_id).first()
     if chat:
         chat.usage_times += 1
         session.commit()
