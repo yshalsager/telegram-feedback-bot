@@ -73,6 +73,7 @@ tmp_*
 *.db
 restart.json
 *.session
+data/
 
 # OS
 .DS_Store

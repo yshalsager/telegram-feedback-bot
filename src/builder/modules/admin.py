@@ -7,12 +7,24 @@ from pyrogram.types import (
     Message,
 )
 
-from src import BOT_ADMINS
-from src.builder.db.crud import TBot, get_all_bots, get_bot, get_user, update_bot_status
+from src import BOT_ADMINS, DATA_DIR
+from src.builder.db.crud import (
+    TBot,
+    get_all_bots,
+    get_bot,
+    get_user,
+    get_user_bots,
+    remove_bot,
+    update_bot_status,
+)
 from src.builder.db.models.bot import Bot
 from src.common.utils.filters import is_admin
 from src.common.utils.i18n import localize
 from src.common.utils.telegram_handlers import tg_exceptions_handler
+from src.common.utils.whitelist import add_user as whitelist_user
+from src.common.utils.whitelist import get_whitelist
+from src.common.utils.whitelist import remove_user as blacklist_user
+from src.main import BOTS
 
 
 @Client.on_message(filters.private & filters.command('manage') & is_admin(BOT_ADMINS))
@@ -21,12 +33,85 @@ from src.common.utils.telegram_handlers import tg_exceptions_handler
 @localize
 async def manage_command(_: Client, update: Message | CallbackQuery, i18n: Plate) -> None:
     keyboard = InlineKeyboardMarkup(
-        [[InlineKeyboardButton(i18n('manage_bots'), callback_data='manage_bots')]]
+        [
+            [InlineKeyboardButton(i18n('manage_bots'), callback_data='manage_bots')],
+            [InlineKeyboardButton(i18n('manage_users'), callback_data='manage_users')],
+        ]
     )
     if isinstance(update, Message):
         await update.reply_text(i18n('select_manage_option'), reply_markup=keyboard)
     else:
         await update.message.edit_text(i18n('select_manage_option'), reply_markup=keyboard)
+
+
+@Client.on_callback_query(filters.regex('^manage_users$') & is_admin(BOT_ADMINS))
+@tg_exceptions_handler
+@localize
+async def list_users(_: Client, query: CallbackQuery, i18n: Plate) -> None:
+    keyboard = [
+        [InlineKeyboardButton(f'{user}', callback_data=f'manage_user_{user}')]
+        for user in get_whitelist()
+    ]
+    keyboard.append([InlineKeyboardButton(i18n('back'), callback_data='manage')])
+    await query.edit_message_text(i18n('select_user'), reply_markup=InlineKeyboardMarkup(keyboard))
+
+
+@Client.on_callback_query(filters.regex(r'^manage_user_\d+$') & is_admin(BOT_ADMINS))
+@tg_exceptions_handler
+@localize
+async def user_info(_: Client, query: CallbackQuery, i18n: Plate) -> None:
+    user_id = int(query.data.split('_')[-1])
+    user = get_user(user_id)
+    info_text = (
+        f"👤: <a href='tg://user?id={user_id}'>{getattr(user, 'user_name', user_id)}</a>\n"
+        f'🆔: {user_id}\n'
+    )
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    i18n('remove_user_and_bots'), callback_data=f'remove_user_{user_id}'
+                )
+            ],
+            [InlineKeyboardButton(i18n('back'), callback_data='manage_users')],
+        ]
+    )
+    await query.edit_message_text(info_text, reply_markup=keyboard)
+
+
+@Client.on_callback_query(filters.regex(r'^remove_user_\d+$') & is_admin(BOT_ADMINS))
+@tg_exceptions_handler
+@localize
+async def remove_user(_: Client, query: CallbackQuery, i18n: Plate) -> None:
+    user_id = int(query.data.split('_')[-1])
+    blacklist_user(user_id)
+    if get_user(user_id):
+        for bot in get_user_bots(user_id):
+            if bot.user_id in BOTS:
+                await BOTS.pop(bot.user_id).stop()
+            for file in DATA_DIR.glob(f'{bot.user_id}.*'):
+                file.unlink(missing_ok=True)
+            remove_bot(bot.user_id, user_id)
+    await query.edit_message_text(
+        i18n('user_removed'),
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton(i18n('back'), callback_data='manage_users')],
+            ]
+        ),
+    )
+
+
+@Client.on_message(
+    filters.private & filters.command('whitelist')
+    and filters.regex(r'^/whitelist\s+(\d+)$') & is_admin(BOT_ADMINS)
+)
+@tg_exceptions_handler
+@localize
+async def add_user(_: Client, message: Message, i18n: Plate) -> None:
+    user_id = int(message.matches[0].group(1))
+    whitelist_user(user_id)
+    await message.reply_text(i18n('user_whitelisted'))
 
 
 @Client.on_callback_query(filters.regex('^manage_bots$') & is_admin(BOT_ADMINS))

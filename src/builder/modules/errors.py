@@ -21,7 +21,7 @@ def split_string(string: str, n: int) -> list[str]:
 async def error_handler(exception: Exception, client: Client, update: Message | None) -> None:
     """Log the error and send a telegram message to notify the developer."""
     logger.error('Exception while handling an update:', exc_info=exception)
-    if not LOG_TOPIC_ID or IS_DEBUG:
+    if not IS_DEBUG and not LOG_TOPIC_ID:
         return
     # traceback.format_exception returns the usual python message about an exception, but as a
     # list of strings rather than a single string, so we have to join them together.

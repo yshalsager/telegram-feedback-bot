@@ -9,6 +9,7 @@ from src.bot.db.session import create_db
 from src.builder.db.crud import TBot, add_bot, get_bot
 from src.builder.utils.filters import is_token_reply
 from src.builder.utils.keyboards import get_main_menu_keyboard
+from src.common.utils.filters import is_whitelisted_user
 from src.common.utils.i18n import localize
 from src.common.utils.telegram import get_bot_id
 from src.common.utils.telegram_handlers import tg_exceptions_handler
@@ -16,7 +17,7 @@ from src.common.utils.telegram_handlers import tg_exceptions_handler
 package_name = __package__.split('.')[0]
 
 
-@Client.on_callback_query(filters.regex('^add_bot$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex('^add_bot$'))
 @tg_exceptions_handler
 @localize
 async def add(_: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -26,7 +27,9 @@ async def add(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     )
 
 
-@Client.on_message(filters.private & filters.text & filters.reply & is_token_reply)
+@Client.on_message(
+    is_whitelisted_user() & filters.private & filters.text & filters.reply & is_token_reply
+)
 @tg_exceptions_handler
 @localize
 async def handle_token(_: Client, message: Message, i18n: Plate) -> None:

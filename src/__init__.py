@@ -12,6 +12,9 @@ PARENT_DIR = WORK_DIR.parent
 DB_PATH = PARENT_DIR / 'feedback_bot.db'
 DATA_DIR = Path(PARENT_DIR / 'data')
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+WHITELIST = DATA_DIR / 'whitelist.txt'
+if not WHITELIST.exists():
+    WHITELIST.touch()
 
 # bot config
 IS_DEBUG: bool = getenv('DEBUG', '').lower() in {'true', '1'}

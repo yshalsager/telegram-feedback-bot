@@ -7,6 +7,7 @@ from pyrogram.types import (
     Message,
 )
 
+from src import DATA_DIR
 from src.builder.db.crud import (
     TBot,
     delete_bot_group,
@@ -17,11 +18,13 @@ from src.builder.db.crud import (
 )
 from src.builder.utils.filters import is_custom_message_reply
 from src.builder.utils.keyboards import get_main_menu_keyboard, get_update_bot_messages_keyboard
+from src.common.utils.filters import is_whitelisted_user
 from src.common.utils.i18n import localize
 from src.common.utils.telegram_handlers import tg_exceptions_handler
+from src.main import BOTS
 
 
-@Client.on_callback_query(filters.regex(r'^manage_bots$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^manage_bots$'))
 @tg_exceptions_handler
 @localize
 async def manage_bots(_: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -46,7 +49,7 @@ async def manage_bots(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     )
 
 
-@Client.on_callback_query(filters.regex(r'^mb_\d+$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mb_\d+$'))
 @tg_exceptions_handler
 @localize
 async def show_bot_manage_options(_: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -90,7 +93,7 @@ async def show_bot_manage_options(_: Client, update: CallbackQuery, i18n: Plate)
     )
 
 
-@Client.on_callback_query(filters.regex(r'^mbd_\d+$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mbd_\d+$'))
 @tg_exceptions_handler
 @localize
 async def delete_bot(_: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -99,6 +102,10 @@ async def delete_bot(_: Client, update: CallbackQuery, i18n: Plate) -> None:
         await update.answer(i18n('no_bots'))
         return
     await update.answer()
+    if int(bot_id) in BOTS:
+        await BOTS[int(bot_id)].stop()
+    for file in DATA_DIR.glob(f'{bot_id}.*'):
+        file.unlink(missing_ok=True)
     message = (
         i18n('bot_deleted_success')
         if remove_bot(bot_id, update.from_user.id)
@@ -107,7 +114,7 @@ async def delete_bot(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     await update.message.edit_text(message, reply_markup=get_main_menu_keyboard(i18n))
 
 
-@Client.on_callback_query(filters.regex(r'^mbg_\d+$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mbg_\d+$'))
 @tg_exceptions_handler
 @localize
 async def change_group(_: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -132,7 +139,7 @@ async def change_group(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     )
 
 
-@Client.on_callback_query(filters.regex(r'^mbgu_\d+$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mbgu_\d+$'))
 @tg_exceptions_handler
 @localize
 async def unlink_bot_from_group(client: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -155,7 +162,7 @@ async def unlink_bot_from_group(client: Client, update: CallbackQuery, i18n: Pla
     await update.message.edit_text(message, reply_markup=get_main_menu_keyboard(i18n))
 
 
-@Client.on_callback_query(filters.regex(r'^mbt_\d+$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mbt_\d+$'))
 @tg_exceptions_handler
 @localize
 # user should reply to this message with new token
@@ -171,7 +178,7 @@ async def change_token(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     )
 
 
-@Client.on_callback_query(filters.regex(r'^mb[mrcs]+_\d+$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mb[mrcs]+_\d+$'))
 @tg_exceptions_handler
 @localize
 async def reply_with_message(_: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -194,7 +201,9 @@ message_type_to_key: dict[str, str] = {
 }
 
 
-@Client.on_message(filters.private & filters.text & filters.reply & is_custom_message_reply)
+@Client.on_message(
+    is_whitelisted_user() & filters.private & filters.text & filters.reply & is_custom_message_reply
+)
 @tg_exceptions_handler
 @localize
 async def handle_custom_message(_: Client, message: Message, i18n: Plate) -> None:

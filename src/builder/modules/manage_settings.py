@@ -7,11 +7,12 @@ from pyrogram.types import (
 )
 
 from src.builder.db.crud import get_user, update_user_language
+from src.common.utils.filters import is_whitelisted_user
 from src.common.utils.i18n import languages, localize, plate
 from src.common.utils.telegram_handlers import tg_exceptions_handler
 
 
-@Client.on_callback_query(filters.regex(r'^manage_settings$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^manage_settings$'))
 @tg_exceptions_handler
 @localize
 async def manage_settings(_: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -46,7 +47,7 @@ def _create_language_button(locale: str) -> InlineKeyboardButton:
     )
 
 
-@Client.on_callback_query(filters.regex(r'^change_language$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^change_language$'))
 @tg_exceptions_handler
 @localize
 async def change_language(_: Client, update: CallbackQuery, i18n: Plate) -> None:
@@ -58,7 +59,7 @@ async def change_language(_: Client, update: CallbackQuery, i18n: Plate) -> None
     )
 
 
-@Client.on_callback_query(filters.regex(r'^set_lang_\w+$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^set_lang_\w+$'))
 @tg_exceptions_handler
 @localize
 async def set_language(_: Client, update: CallbackQuery, i18n: Plate) -> None:
