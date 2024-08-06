@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "feedback-telegram-bot"
 version = "0.1.0"
-description = "A livegram Telegram bot clone with topics support."
+description = "A bot that builds feedback Telegram bots like Livegram but with topics support."
 authors = ["yshalsager <ysh-alsager@hotmail.com>"]
 license = "MIT"
 package-mode = false
