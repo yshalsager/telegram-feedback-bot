@@ -19,7 +19,7 @@ from src.builder.db.crud import (
 )
 from src.builder.utils.filters import is_custom_message_reply
 from src.builder.utils.keyboards import get_main_menu_keyboard, get_update_bot_messages_keyboard
-from src.common.utils.i18n import localize
+from src.common.utils.i18n import languages, localize, plate
 from src.common.utils.telegram_handlers import tg_exceptions_handler
 
 
@@ -71,20 +71,27 @@ async def manage_settings(_: Client, update: CallbackQuery, i18n: Plate) -> None
     )
 
 
+def _create_language_button(locale: str) -> InlineKeyboardButton:
+    lang_code = locale.split('_')[0]
+    lang = languages[lang_code]
+    name = lang['name']
+    native_name = lang['nativeName']
+    button_text = name if name.lower() == native_name.lower() else f'{name} - {native_name}'
+    return InlineKeyboardButton(
+        button_text,
+        callback_data=f'set_lang_{lang_code}',
+    )
+
+
 @Client.on_callback_query(filters.regex(r'^change_language$'))
 @tg_exceptions_handler
 @localize
 async def change_language(_: Client, update: CallbackQuery, i18n: Plate) -> None:
+    buttons = [[_create_language_button(locale)] for locale in plate.locales]
+    buttons.append([InlineKeyboardButton(i18n('back'), callback_data='manage_settings')])
     await update.message.edit_text(
         i18n('select_language'),
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [InlineKeyboardButton('English', callback_data='set_lang_en')],
-                [InlineKeyboardButton('العربية', callback_data='set_lang_ar')],
-                # Add more languages as needed
-                [InlineKeyboardButton(f"{i18n('back')}", callback_data='manage_settings')],
-            ]
-        ),
+        reply_markup=InlineKeyboardMarkup(buttons),
     )
 
 

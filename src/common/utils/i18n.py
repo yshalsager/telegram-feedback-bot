@@ -1,3 +1,4 @@
+import json
 from collections.abc import Callable
 from functools import wraps
 from pathlib import Path
@@ -11,7 +12,9 @@ from src.builder.db.crud import get_user
 
 F = TypeVar('F', bound=Callable[..., Any])
 
-plate: Plate = Plate(root=str(Path(__file__).parent.parent.parent / 'locales'), fallback='en_US')
+locales_dir = Path(__file__).parent.parent.parent / 'i18n/locales'
+languages = json.loads((locales_dir.parent / 'languages.json').read_text())
+plate: Plate = Plate(root=str(locales_dir), fallback='en_US')
 
 
 def get_full_language_code(language_code: str) -> Any:
