@@ -34,7 +34,7 @@ from src.main import BOTS
 async def manage_command(_: Client, update: Message | CallbackQuery, i18n: Plate) -> None:
     keyboard = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton(i18n('manage_bots'), callback_data='manage_bots')],
+            [InlineKeyboardButton(i18n('manage_bots'), callback_data='_manage_bots')],
             [InlineKeyboardButton(i18n('manage_users'), callback_data='manage_users')],
         ]
     )
@@ -114,7 +114,7 @@ async def add_user(_: Client, message: Message, i18n: Plate) -> None:
     await message.reply_text(i18n('user_whitelisted'))
 
 
-@Client.on_callback_query(filters.regex('^manage_bots$') & is_admin(BOT_ADMINS))
+@Client.on_callback_query(filters.regex('^_manage_bots$') & is_admin(BOT_ADMINS))
 @tg_exceptions_handler
 @localize
 async def list_bots(_: Client, query: CallbackQuery, i18n: Plate) -> None:
@@ -163,7 +163,7 @@ async def bot_info(_: Client, query: CallbackQuery, i18n: Plate) -> None:
                     callback_data=f'toggle_bot_{bot_id}',
                 )
             ],
-            [InlineKeyboardButton(i18n('back'), callback_data='manage_bots')],
+            [InlineKeyboardButton(i18n('back'), callback_data='_manage_bots')],
         ]
     )
 
