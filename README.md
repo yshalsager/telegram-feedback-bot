@@ -2,6 +2,8 @@
 
 A bot that builds feedback Telegram bots like Livegram but with topics support.
 
+**Note**: If you don't need a builder and just want one feedback bot, checkout [standalone](https://github.com/yshalsager/telegram-feedback-bot/tree/standalone) branch.
+
 ## Features
 
 ### Builder
