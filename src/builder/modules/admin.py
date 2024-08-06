@@ -42,7 +42,7 @@ async def list_bots(_: Client, query: CallbackQuery, i18n: Plate) -> None:
         ]
         for bot in bots
     ]
-    keyboard.append([InlineKeyboardButton(i18n('back'), callback_data='manage')])
+    keyboard.append([InlineKeyboardButton(i18n('back'), callback_data='main')])
     await query.edit_message_text(i18n('select_bot'), reply_markup=InlineKeyboardMarkup(keyboard))
 
 

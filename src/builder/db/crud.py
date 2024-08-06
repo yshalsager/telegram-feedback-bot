@@ -8,6 +8,7 @@ from src.builder.db.models.bot import Bot
 from src.builder.db.models.user import User
 from src.builder.db.session import session
 from src.common.db.utils import db_exceptions_handler
+from src.common.utils.cryptography import decrypt_token, encrypt_token
 
 TBot: TypeAlias = Row[tuple[str, str, bool, int, int | None, str, str, str, datetime]]  # noqa: UP040
 
@@ -52,13 +53,13 @@ def add_bot(
             username=username,
             name=name,
             user_id=user_id,
-            token=token,
+            token=encrypt_token(token),
             owner=owner,
             enabled=enabled,
         )
         session.add(bot)
     else:
-        bot.token = token
+        bot.token = encrypt_token(token)
         bot.enabled = enabled
     session.commit()
     return bot
@@ -108,7 +109,7 @@ def get_bots_ids() -> list[int]:
 
 def get_bots_tokens() -> list[tuple[str, int, str]]:
     return [
-        (f'{bot.user_id}:{bot.token}', bot.owner, bot.username)
+        (f'{bot.user_id}:{decrypt_token(bot.token)}', bot.owner, bot.username)
         for bot in session.query(Bot.user_id, Bot.token, Bot.owner, Bot.username)
         .filter(Bot.enabled == True)
         .all()

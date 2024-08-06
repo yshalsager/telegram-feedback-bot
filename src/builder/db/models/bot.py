@@ -12,7 +12,6 @@ class Bot(Base):
     # first_name (32) + space (1) + last_name (32)
     name: str = Column(String(65), nullable=False, unique=True)
     user_id: int = Column(BigInteger, unique=True, nullable=False)
-    # TODO encrypt token
     token: str = Column(String(45), nullable=False, unique=True)
     owner: int = Column(BigInteger, nullable=False)
     group: int | None = Column(BigInteger, nullable=True)

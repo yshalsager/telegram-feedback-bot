@@ -25,6 +25,9 @@ TELEGRAM_CHAT_ID = getenv('CHAT_ID', '')
 LOG_TOPIC_ID = getenv('LOG_TOPIC_ID', '')
 NEW_BOT_ADMIN_APPROVAL = getenv('NEW_BOT_ADMIN_APPROVAL', '').lower() in {'true', '1'}
 
+# encryption key
+ENCRYPTION_KEY = getenv('ENCRYPTION_KEY', '')
+
 # Logging
 LOG_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 LOG_PATH = PARENT_DIR

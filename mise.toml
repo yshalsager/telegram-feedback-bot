@@ -8,6 +8,9 @@ run = 'python -m src'
 [tasks.migrate]
 run = ['alembic -c alembic.ini upgrade head', 'python src/bot/db/scripts/migrate.py']
 
+[tasks.generate-encryption-key]
+run = 'python -c "from secrets import token_bytes; print(token_bytes(32).hex())"'
+
 [env]
 # the Telegram bot token https://telegram.me/BotFather
 BOT_TOKEN = '0000000000:aaaaaaaaaaaaaaaaaaaa'
@@ -23,6 +26,8 @@ LOG_TOPIC_ID = 1
 # Require admin approval to add new bot
 NEW_BOT_ADMIN_APPROVAL = "true"
 DEBUG = 1
+# encryption key
+ENCRYPTION_KEY = '0000000000000000000000000000000000000000000000000000000000000000'
 
 [env.mise]
 file = '.env'

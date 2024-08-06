@@ -51,6 +51,10 @@ NEW_BOT_ADMIN_APPROVAL = "true"
 DEBUG = 1
 ```
 
+Create an encryption key with `mise r generate-encryption-key`
+or `python -c "from secrets import token_bytes; print(token_bytes(32).hex())"`
+and update `ENCRYPTION_KEY` variable.
+
 ## Running
 
 ### Docker
