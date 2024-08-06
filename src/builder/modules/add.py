@@ -7,9 +7,8 @@ from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMa
 from src import API_HASH, API_ID, BOTS, DATA_DIR, NEW_BOT_ADMIN_APPROVAL
 from src.bot.db.session import create_db
 from src.builder.db.crud import TBot, add_bot, get_bot
-from src.builder.utils.filters import is_token_reply
+from src.builder.utils.filters import is_token_reply, is_whitelisted_user
 from src.builder.utils.keyboards import get_main_menu_keyboard
-from src.common.utils.filters import is_whitelisted_user
 from src.common.utils.i18n import localize
 from src.common.utils.telegram import get_bot_id
 from src.common.utils.telegram_handlers import tg_exceptions_handler

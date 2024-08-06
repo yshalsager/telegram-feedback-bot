@@ -10,20 +10,20 @@ from pyrogram.types import (
 from src import BOT_ADMINS, DATA_DIR
 from src.builder.db.crud import (
     TBot,
+    add_to_whitelist,
     get_all_bots,
     get_bot,
     get_user,
     get_user_bots,
+    get_whitelist,
     remove_bot,
+    remove_from_whitelist,
     update_bot_status,
 )
 from src.builder.db.models.bot import Bot
 from src.common.utils.filters import is_admin
 from src.common.utils.i18n import localize
 from src.common.utils.telegram_handlers import tg_exceptions_handler
-from src.common.utils.whitelist import add_user as whitelist_user
-from src.common.utils.whitelist import get_whitelist
-from src.common.utils.whitelist import remove_user as blacklist_user
 from src.main import BOTS
 
 
@@ -84,7 +84,7 @@ async def user_info(_: Client, query: CallbackQuery, i18n: Plate) -> None:
 @localize
 async def remove_user(_: Client, query: CallbackQuery, i18n: Plate) -> None:
     user_id = int(query.data.split('_')[-1])
-    blacklist_user(user_id)
+    remove_from_whitelist(user_id)
     if get_user(user_id):
         for bot in get_user_bots(user_id):
             if bot.user_id in BOTS:
@@ -110,7 +110,7 @@ async def remove_user(_: Client, query: CallbackQuery, i18n: Plate) -> None:
 @localize
 async def add_user(_: Client, message: Message, i18n: Plate) -> None:
     user_id = int(message.matches[0].group(1))
-    whitelist_user(user_id)
+    add_to_whitelist(user_id)
     await message.reply_text(i18n('user_whitelisted'))
 
 

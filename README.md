@@ -15,7 +15,7 @@ A bot that builds feedback Telegram bots like Livegram but with topics support.
     - Change its group.
     - Change bot messages (start, receive feedback, sent message feedback).
 - Admin options:
-    - Whitelist users and remove them.
+    - Whitelist users and remove them, disabled by default.
     - Broadcast messages to all users.
     - Restart all bots.
     - Enable or disable bots (via /manage).

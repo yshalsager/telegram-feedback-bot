@@ -7,7 +7,7 @@ from pyrogram.types import (
 )
 
 from src.builder.db.crud import get_user, update_user_language
-from src.common.utils.filters import is_whitelisted_user
+from src.builder.utils.filters import is_whitelisted_user
 from src.common.utils.i18n import languages, localize, plate
 from src.common.utils.telegram_handlers import tg_exceptions_handler
 

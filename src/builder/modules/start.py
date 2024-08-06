@@ -3,7 +3,7 @@ from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from src.builder.db.crud import add_user
-from src.common.utils.filters import is_whitelisted_user
+from src.builder.utils.filters import is_whitelisted_user
 from src.common.utils.i18n import localize
 from src.common.utils.telegram_handlers import tg_exceptions_handler
 

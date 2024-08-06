@@ -6,11 +6,39 @@ from sqlalchemy.orm import Query
 
 from src.builder.db.models.bot import Bot
 from src.builder.db.models.user import User
+from src.builder.db.models.whitelist import Whitelist
 from src.builder.db.session import session
 from src.common.db.utils import db_exceptions_handler
 from src.common.utils.cryptography import decrypt_token, encrypt_token
 
 TBot: TypeAlias = Row[tuple[str, str, bool, int, int | None, str, str, str, datetime]]  # noqa: UP040
+
+
+# whitelist
+@db_exceptions_handler
+def get_whitelist() -> list[int]:
+    return [user.user_id for user in session.query(Whitelist).all()]
+
+
+@db_exceptions_handler
+def is_whitelisted(user_id: int) -> bool:
+    return session.query(Whitelist).filter(Whitelist.user_id == user_id).first() is not None
+
+
+@db_exceptions_handler
+def add_to_whitelist(user_id: int) -> None:
+    query: Query[Whitelist] = session.query(Whitelist).filter(Whitelist.user_id == user_id)
+    if not query.first():
+        session.add(Whitelist(user_id=user_id))
+        session.commit()
+
+
+@db_exceptions_handler
+def remove_from_whitelist(user_id: int) -> None:
+    whitelist_user = session.query(Whitelist).filter(Whitelist.user_id == user_id).first()
+    if whitelist_user:
+        session.delete(whitelist_user)
+        session.commit()
 
 
 # users

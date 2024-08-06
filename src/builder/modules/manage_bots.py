@@ -16,9 +16,8 @@ from src.builder.db.crud import (
     remove_bot,
     update_bot_messages,
 )
-from src.builder.utils.filters import is_custom_message_reply
+from src.builder.utils.filters import is_custom_message_reply, is_whitelisted_user
 from src.builder.utils.keyboards import get_main_menu_keyboard, get_update_bot_messages_keyboard
-from src.common.utils.filters import is_whitelisted_user
 from src.common.utils.i18n import localize
 from src.common.utils.telegram_handlers import tg_exceptions_handler
 from src.main import BOTS
