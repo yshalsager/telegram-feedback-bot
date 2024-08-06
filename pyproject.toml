@@ -15,6 +15,7 @@ regex = "^2024.7.24"
 pyrofork = {git = "https://github.com/Mayuri-Chan/pyrofork", rev = "v2.3.39"}
 tgcrypto = "^1.2.5"
 plate = "^1.0.1"
+uvloop = "^0.19.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.5.6"
