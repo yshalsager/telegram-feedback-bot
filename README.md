@@ -19,6 +19,7 @@ A bot that builds feedback Telegram bots like Livegram but with topics support.
     - Broadcast messages to all users.
     - Restart all bots.
     - Enable or disable bots (via /manage).
+    - Update bot code (via /update).
 - Multi-language support (automatically selected based on Telegram language).
 
 ### Bots
@@ -76,6 +77,7 @@ and update `ENCRYPTION_KEY` variable.
 - `/manage`: manage users and bots by admin.
 - `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
 - `/restart`: restarts the bot.
+- `/update`: updates the bot code.
 
 ### Bots
 
