@@ -5,6 +5,7 @@ import regex as re
 from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery, Message
 
+from src import BOT_ADMINS
 from src.builder.db.crud import get_whitelist
 
 
@@ -42,6 +43,9 @@ def is_whitelisted_user() -> filters.Filter:
         whitelist = get_whitelist()
         if not whitelist:
             return True  # Allow all if whitelist is empty
-        return bool(update.from_user and update.from_user.id in whitelist)
+        return bool(
+            update.from_user
+            and (update.from_user.id in whitelist or update.from_user.id in BOT_ADMINS)
+        )
 
     return filters.create(check_if_whitelisted)
