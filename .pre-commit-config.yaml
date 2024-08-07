@@ -46,8 +46,8 @@ repos:
     rev: '1.8.3'  # add version here
     hooks:
       - id: poetry-check
-#      - id: poetry-export
-#        args: [ "-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes" ]
+      - id: poetry-export
+        args: [ "-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes" ]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: 'v0.5.6'
