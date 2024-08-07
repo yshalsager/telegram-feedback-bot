@@ -27,6 +27,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PATH="/code/.venv/bin:$PATH"
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # for code update
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /code
 COPY --from=builder /code/.venv ./.venv
 RUN useradd -m appuser
