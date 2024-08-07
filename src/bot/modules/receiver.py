@@ -21,8 +21,7 @@ from src.common.utils.telegram_handlers import tg_exceptions_handler
 @tg_exceptions_handler
 @localize
 async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
-    bot_id: int = client.me.id
-    bot: TBot | None = get_bot(bot_id)
+    bot: TBot | None = get_bot(client.me.id)
     if not bot:
         return
     chat_id: int = bot.group or bot.owner

@@ -206,13 +206,27 @@ message_type_to_key: dict[str, str] = {
 @tg_exceptions_handler
 @localize
 async def handle_custom_message(_: Client, message: Message, i18n: Plate) -> None:
-    callback_data = message.reply_to_message.reply_markup.inline_keyboard[0][0].callback_data
-    message_type = callback_data.split('_')[0][2:]
-    if message_type not in message_type_to_key:
+    callback_data = next(
+        (
+            button.callback_data
+            for row in message.reply_to_message.reply_markup.inline_keyboard
+            for button in row
+            if button.text.startswith('→')
+        ),
+        None,
+    )
+    if not callback_data:
         return
-    bot_id = int(callback_data.split('_')[-1])
-    bot: TBot | None = get_bot(bot_id)
-    if not bot:
+
+    try:
+        message_type, bot_id_str = callback_data.split('_')[0][2:], callback_data.split('_')[-1]
+        if message_type not in message_type_to_key:
+            return
+        bot_id = int(bot_id_str)
+        bot: TBot | None = get_bot(bot_id)
+        if not bot:
+            return
+    except (ValueError, IndexError):
         return
     message_property = message_type_to_key[message_type]
     updated = update_bot_messages(bot_id, **{message_property: message.text})
