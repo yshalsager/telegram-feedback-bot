@@ -690,7 +690,7 @@ files = [
 
 [[package]]
 name = "pyrofork"
-version = "2.3.39"
+version = "2.3.40"
 description = "Fork of pyrogram. Elegant, modern and asynchronous Telegram MTProto API framework in Python for users and bots"
 optional = false
 python-versions = "~=3.8"
@@ -710,8 +710,8 @@ speedup = ["tgcrypto-pyrofork (>=1.2.6)", "uvloop (>=0.19.0)"]
 [package.source]
 type = "git"
 url = "https://github.com/Mayuri-Chan/pyrofork"
-reference = "v2.3.39"
-resolved_reference = "daf6f91600d6dd266816666f82348acfc2b19fb7"
+reference = "22bc0140e98fa658e3317f993a6e27251f229cb4"
+resolved_reference = "22bc0140e98fa658e3317f993a6e27251f229cb4"
 
 [[package]]
 name = "pysocks"
@@ -1263,4 +1263,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "c46b522dbfb47a6b85c9171cd09d0566b02c07a13f12a6e972045ec0a83588f7"
+content-hash = "9266b4cfa8807430ea700a7994ad5cd7994b94d796f52694564632693b3bb2c3"
