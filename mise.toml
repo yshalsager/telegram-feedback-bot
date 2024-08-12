@@ -5,8 +5,11 @@ python = '3.12'
 [tasks.default]
 run = 'python -m src'
 
+[tasks.dev]
+run = 'jurigged -v -m src'
+
 [tasks.migrate]
-run = ['alembic -c alembic.ini upgrade head', 'python src/bot/db/scripts/migrate.py']
+run = ['alembic -c alembic.ini upgrade head', 'alembic -c src/bot/db/alembic.ini upgrade head']
 
 [tasks.generate-encryption-key]
 run = 'python -c "from secrets import token_bytes; print(token_bytes(32).hex())"'
