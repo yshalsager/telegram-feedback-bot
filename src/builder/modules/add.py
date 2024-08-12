@@ -2,7 +2,14 @@ import regex as re
 from plate import Plate
 from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
-from pyrogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message, User
+from pyrogram.types import (
+    CallbackQuery,
+    ForceReply,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+    User,
+)
 
 from src import API_HASH, API_ID, BOTS, DATA_DIR, NEW_BOT_ADMIN_APPROVAL
 from src.bot.db.session import create_db
@@ -20,10 +27,11 @@ package_name = __package__.split('.')[0]
 @tg_exceptions_handler
 @localize
 async def add(_: Client, update: CallbackQuery, i18n: Plate) -> None:
-    await update.message.edit_text(
+    message = await update.message.edit_text(
         i18n('reply_with_token'),
-        reply_markup=get_main_menu_keyboard(i18n),
+        reply_markup=ForceReply(selective=True),
     )
+    await message.reply_text(i18n('back_to_main_menu'), reply_markup=get_main_menu_keyboard(i18n))
 
 
 @Client.on_message(

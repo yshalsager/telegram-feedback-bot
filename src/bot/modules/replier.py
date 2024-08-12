@@ -2,13 +2,13 @@ from plate import Plate
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
-from bot.utils.telegram import get_media
 from src.bot.db.crud import (
     add_mapping,
     get_mapping,
     increment_outgoing_stats,
 )
 from src.bot.db.session import session_scope
+from src.bot.utils.telegram import get_media
 from src.builder.db.crud import TBot, get_bot
 from src.common.utils.i18n import localize
 from src.common.utils.telegram_handlers import tg_exceptions_handler

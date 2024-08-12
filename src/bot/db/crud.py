@@ -109,6 +109,13 @@ def update_mapping(
     session.commit()
 
 
+@db_exceptions_handler
+def delete_mapping(session: scoped_session[Session], mapping_id: int) -> None:
+    session.query(Mapping).filter_by(id=mapping_id).delete()
+    session.commit()
+
+
+@db_exceptions_handler
 def remove_user_mappings(session: scoped_session[Session], user_id: int) -> None:
     session.query(Mapping).filter_by(user_id=user_id).delete()
     session.commit()
