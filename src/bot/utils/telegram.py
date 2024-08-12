@@ -1,8 +1,17 @@
+from datetime import UTC, datetime
+
 from plate import Plate
 from pyrogram import Client
-from pyrogram.enums import ChatType
+from pyrogram.enums import ChatType, MessageMediaType
 from pyrogram.errors import ChatWriteForbidden
-from pyrogram.types import Message
+from pyrogram.types import (
+    InputMedia,
+    InputMediaAudio,
+    InputMediaDocument,
+    InputMediaPhoto,
+    InputMediaVideo,
+    Message,
+)
 from sqlalchemy.orm import Session, scoped_session
 
 from src.bot.db.crud import add_topic
@@ -44,3 +53,22 @@ async def create_topic_and_add_to_db(
             )
             return None
         raise err
+
+
+def get_media(message: Message) -> InputMedia | None:  # noqa: PLR0911
+    caption = message.caption or datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S')
+    match message.media:
+        case MessageMediaType.PHOTO:
+            return InputMediaPhoto(message.photo.file_id, caption)
+        case MessageMediaType.VIDEO:
+            return InputMediaVideo(message.video.file_id, caption)
+        case MessageMediaType.AUDIO:
+            return InputMediaAudio(message.audio.file_id, caption)
+        case MessageMediaType.VOICE:
+            return InputMediaAudio(message.voice.file_id, caption)
+        case MessageMediaType.DOCUMENT:
+            return InputMediaDocument(message.document.file_id, caption)
+        case MessageMediaType.VIDEO_NOTE:
+            return InputMediaVideo(message.video_note.file_id, caption)
+        case _:
+            return None

@@ -45,5 +45,7 @@
   "unlink_bot_from_group_error": "Error unlinking bot from group.",
   "reply_with_new_message": "Please reply to this message with the new message to set.",
   "new_message_success": "New message set successfully.",
-  "new_message_error": "Error setting new message."
+  "new_message_error": "Error setting new message.",
+  "user_edited_message": "<a href=\"{original_link}\">Message</a> has been <a href=\"{edited_link}\">edited</a> by user.",
+  "message_edited": "Message has been edited."
 }

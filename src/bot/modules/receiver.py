@@ -5,10 +5,12 @@ from pyrogram.types import Message
 
 from src.bot.db.crud import (
     add_mapping,
+    get_mapping,
     get_topic,
     increment_incoming_stats,
     increment_usage_times,
     remove_user_mappings,
+    update_mapping,
 )
 from src.bot.db.session import session_scope
 from src.bot.utils.telegram import create_topic_and_add_to_db
@@ -36,7 +38,6 @@ async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
             forwarded: Message = await message.forward(
                 chat_id=chat_id,
                 message_thread_id=topic_id,
-                disable_notification=True,
             )
         except TopicDeleted:
             remove_user_mappings(session, message.chat.id)
@@ -45,7 +46,6 @@ async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
             forwarded = await message.forward(
                 chat_id=chat_id,
                 message_thread_id=topic_id,
-                disable_notification=True,
             )
         add_mapping(
             session,
@@ -60,3 +60,31 @@ async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
         )
         increment_incoming_stats(session)
         increment_usage_times(session, message.chat.id)
+
+
+@Client.on_edited_message(filters.private & ~filters.regex(r'^/\w+$') & ~filters.me)
+@tg_exceptions_handler
+@localize
+async def edit_forwarder(client: Client, message: Message, i18n: Plate) -> None:
+    bot: TBot | None = get_bot(client.me.id)
+    if not bot:
+        return
+    with session_scope(client.me.id) as session:
+        mapping = get_mapping(session, message.from_user.id, message.id)
+        if not mapping:
+            return
+        chat_id = bot.group or bot.owner
+        original_message = await client.get_messages(chat_id, mapping.destination)
+        # await client.delete_messages(chat_id=chat_id, message_ids=mapping.destination)
+        new_message = await message.forward(chat_id=chat_id, message_thread_id=mapping.topic_id)
+        update_mapping(session, message.from_user.id, message.id, new_message.id)
+        await client.send_message(
+            chat_id=chat_id,
+            text=i18n(
+                'user_edited_message',
+                original_link=original_message.link,
+                edited_link=new_message.link,
+            ),
+            message_thread_id=mapping.topic_id,
+            reply_to_message_id=original_message.id,
+        )

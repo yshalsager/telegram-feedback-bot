@@ -55,20 +55,58 @@ def increment_usage_times(session: scoped_session[Session], user_id: int) -> Non
 
 @db_exceptions_handler
 def add_mapping(
-    session: scoped_session[Session], user_id: int, source: int, topic_id: int, destination: int
+    session: scoped_session[Session],
+    user_id: int,
+    source: int,
+    topic_id: int,
+    destination: int,
+    outgoing: bool = False,
 ) -> None:
     query: Query = session.query(Mapping).filter_by(
-        user_id=user_id, source=source, destination=destination
+        user_id=user_id, source=source, destination=destination, outgoing=outgoing
     )
     if not query.first():
         session.add(
-            Mapping(user_id=user_id, source=source, topic_id=topic_id, destination=destination)
+            Mapping(
+                user_id=user_id,
+                source=source,
+                topic_id=topic_id,
+                destination=destination,
+                outgoing=outgoing,
+            )
         )
         session.commit()
 
 
-# def get_mapping(session: scoped_session[Session], user_id: int, source: int) -> Mapping | None:
-#     return session.query(Mapping).filter(Chat.user_id == user_id, Mapping.source == source).first()
+def get_mapping(
+    session: scoped_session[Session],
+    user_id: int | None = None,
+    source: int | None = None,
+    destination: int | None = None,
+    outgoing: bool = False,
+) -> Mapping | None:
+    if not any((user_id, source, destination)):
+        raise ValueError('Must provide at least one filter')
+
+    query = session.query(Mapping).filter_by(outgoing=outgoing)
+    if user_id:
+        query = query.filter_by(user_id=user_id)
+    if source:
+        query = query.filter_by(source=source)
+    if destination:
+        query = query.filter_by(destination=destination)
+    return query.first()
+
+
+@db_exceptions_handler
+def update_mapping(
+    session: scoped_session[Session], user_id: int, source: int, new_destination: int
+) -> None:
+    mapping = session.query(Mapping).filter_by(user_id=user_id, source=source).first()
+    if not mapping:
+        return
+    mapping.destination = new_destination
+    session.commit()
 
 
 def remove_user_mappings(session: scoped_session[Session], user_id: int) -> None:
@@ -100,14 +138,6 @@ def increment_outgoing_stats(session: scoped_session[Session]) -> None:
 
 def get_topic(session: scoped_session[Session], user_id: int) -> int:
     return session.query(Topic.topic_id).filter_by(user_id=user_id).scalar() or 0
-
-
-def get_user_id_of_topic(session: scoped_session[Session], topic_id: int) -> int:
-    return session.query(Topic.user_id).filter_by(topic_id=topic_id).scalar() or -1
-
-
-def get_user_chat_of_message(session: scoped_session[Session], message_id: int) -> int:
-    return session.query(Mapping.user_id).filter_by(destination=message_id).scalar() or -1
 
 
 @db_exceptions_handler
