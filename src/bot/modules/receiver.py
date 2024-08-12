@@ -14,7 +14,8 @@ from src.bot.db.crud import (
 )
 from src.bot.db.session import session_scope
 from src.bot.utils.telegram import create_topic_and_add_to_db
-from src.builder.db.crud import TBot, get_bot
+from src.builder.db.crud import get_bot
+from src.builder.db.models.bot import Bot
 from src.common.utils.i18n import localize
 from src.common.utils.telegram_handlers import tg_exceptions_handler
 
@@ -23,7 +24,7 @@ from src.common.utils.telegram_handlers import tg_exceptions_handler
 @tg_exceptions_handler
 @localize
 async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
-    bot: TBot | None = get_bot(client.me.id)
+    bot: Bot | None = get_bot(client.me.id)
     if not bot:
         return
     chat_id: int = bot.group or bot.owner
@@ -41,8 +42,11 @@ async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
             )
         except TopicDeleted:
             remove_user_mappings(session, message.chat.id)
-            topic = await create_topic_and_add_to_db(client, message, i18n, session, bot.group)
-            topic_id = topic.topic_id if topic else 0
+            if bot.group:
+                topic = await create_topic_and_add_to_db(client, message, i18n, session, bot.group)
+                topic_id = topic.topic_id if topic else 0
+            else:
+                topic_id = 0
             forwarded = await message.forward(
                 chat_id=chat_id,
                 message_thread_id=topic_id,
@@ -54,10 +58,11 @@ async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
             topic_id or 0,
             forwarded.id,
         )
-        await message.reply_text(
-            bot.received_message or i18n('default_received'),
-            reply_to_message_id=message.id,
-        )
+        if bot.bot_settings.confirmations:
+            await message.reply_text(
+                bot.bot_settings.received_message or i18n('default_received'),
+                reply_to_message_id=message.id,
+            )
         increment_incoming_stats(session)
         increment_usage_times(session, message.chat.id)
 
@@ -66,7 +71,7 @@ async def forwarder(client: Client, message: Message, i18n: Plate) -> None:
 @tg_exceptions_handler
 @localize
 async def edit_forwarder(client: Client, message: Message, i18n: Plate) -> None:
-    bot: TBot | None = get_bot(client.me.id)
+    bot: Bot | None = get_bot(client.me.id)
     if not bot:
         return
     with session_scope(client.me.id) as session:
@@ -78,13 +83,14 @@ async def edit_forwarder(client: Client, message: Message, i18n: Plate) -> None:
         # await client.delete_messages(chat_id=chat_id, message_ids=mapping.destination)
         new_message = await message.forward(chat_id=chat_id, message_thread_id=mapping.topic_id)
         update_mapping(session, message.from_user.id, message.id, new_message.id)
-        await client.send_message(
-            chat_id=chat_id,
-            text=i18n(
-                'user_edited_message',
-                original_link=original_message.link,
-                edited_link=new_message.link,
-            ),
-            message_thread_id=mapping.topic_id,
-            reply_to_message_id=original_message.id,
-        )
+        if bot.bot_settings.confirmations:
+            await client.send_message(
+                chat_id=chat_id,
+                text=i18n(
+                    'user_edited_message',
+                    original_link=original_message.link,
+                    edited_link=new_message.link,
+                ),
+                message_thread_id=mapping.topic_id,
+                reply_to_message_id=original_message.id,
+            )

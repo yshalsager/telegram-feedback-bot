@@ -43,6 +43,7 @@
   "bot_has_no_group": "Bot has no group set to use.",
   "unlink_bot_from_group_success": "Bot unlinked from group successfully.",
   "unlink_bot_from_group_error": "Error unlinking bot from group.",
+  "bot_confirmations": "Bot confirmations",
   "reply_with_new_message": "Please reply to this message with the new message to set.",
   "new_message_success": "New message set successfully.",
   "new_message_error": "Error setting new message.",

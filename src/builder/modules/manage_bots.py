@@ -9,13 +9,14 @@ from pyrogram.types import (
 
 from src import DATA_DIR
 from src.builder.db.crud import (
-    TBot,
     delete_bot_group,
     get_bot,
     get_user_bots,
     remove_bot,
+    update_bot_confirmations,
     update_bot_messages,
 )
+from src.builder.db.models.bot import Bot
 from src.builder.utils.filters import is_custom_message_reply, is_whitelisted_user
 from src.builder.utils.keyboards import get_main_menu_keyboard, get_update_bot_messages_keyboard
 from src.common.utils.i18n import localize
@@ -48,12 +49,13 @@ async def manage_bots(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     )
 
 
-@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mb_\d+$'))
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mb_(\d+)$'))
 @tg_exceptions_handler
 @localize
 async def show_bot_manage_options(_: Client, update: CallbackQuery, i18n: Plate) -> None:
-    bot_id = update.data.split('_')[-1]
-    if not get_bot(bot_id):
+    bot_id = update.matches[0].group(1)
+    bot: Bot | None = get_bot(bot_id)
+    if not bot:
         await update.answer(i18n('no_bots'))
         return
     await update.message.edit_text(
@@ -69,6 +71,11 @@ async def show_bot_manage_options(_: Client, update: CallbackQuery, i18n: Plate)
                 [
                     InlineKeyboardButton(
                         f"{i18n('change_bot_group')}", callback_data=f'mbg_{bot_id}'
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        f"{i18n('bot_confirmations')}", callback_data=f'mbc_{bot_id}'
                     )
                 ],
                 [
@@ -118,7 +125,7 @@ async def delete_bot(_: Client, update: CallbackQuery, i18n: Plate) -> None:
 @localize
 async def change_group(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     bot_id = update.data.split('_')[-1]
-    bot: TBot | None = get_bot(bot_id)
+    bot: Bot | None = get_bot(bot_id)
     if not bot:
         await update.answer(i18n('no_bots'))
         return
@@ -143,7 +150,7 @@ async def change_group(_: Client, update: CallbackQuery, i18n: Plate) -> None:
 @localize
 async def unlink_bot_from_group(client: Client, update: CallbackQuery, i18n: Plate) -> None:
     bot_id = update.data.split('_')[-1]
-    bot: TBot | None = get_bot(bot_id)
+    bot: Bot | None = get_bot(bot_id)
     if not bot:
         await update.answer(i18n('no_bots'))
         return
@@ -161,13 +168,29 @@ async def unlink_bot_from_group(client: Client, update: CallbackQuery, i18n: Pla
     await update.message.edit_text(message, reply_markup=get_main_menu_keyboard(i18n))
 
 
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mbc_(\d+)$'))
+@tg_exceptions_handler
+@localize
+async def toggle_bot_confirmations(_: Client, update: CallbackQuery, i18n: Plate) -> None:
+    bot_id = update.data.split('_')[-1]
+    bot: Bot | None = get_bot(bot_id)
+    if not bot:
+        await update.answer(i18n('no_bots'))
+        return
+    update_bot_confirmations(bot.user_id)
+    await update.answer(
+        f'{i18n("bot_confirmations")}: {"✅" if bot.bot_settings.confirmations else "❌"}'
+    )
+    return
+
+
 @Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mbt_\d+$'))
 @tg_exceptions_handler
 @localize
 # user should reply to this message with new token
 async def change_token(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     bot_id = update.data.split('_')[-1]
-    bot: TBot | None = get_bot(bot_id)
+    bot: Bot | None = get_bot(bot_id)
     if not bot:
         await update.answer(i18n('no_bots'))
         return
@@ -177,12 +200,13 @@ async def change_token(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     )
 
 
-@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mb[mrcs]+_\d+$'))
+# TODO refactor to use replymarkup with emoji to allow force reply
+@Client.on_callback_query(is_whitelisted_user() & filters.regex(r'^mb(?:m|rc|sm)_\d+$'))
 @tg_exceptions_handler
 @localize
 async def reply_with_message(_: Client, update: CallbackQuery, i18n: Plate) -> None:
     choose, bot_id = update.data.split('_')
-    bot: TBot | None = get_bot(bot_id)
+    bot: Bot | None = get_bot(bot_id)
     if not bot:
         await update.answer(i18n('no_bots'))
         return
@@ -223,7 +247,7 @@ async def handle_custom_message(_: Client, message: Message, i18n: Plate) -> Non
         if message_type not in message_type_to_key:
             return
         bot_id = int(bot_id_str)
-        bot: TBot | None = get_bot(bot_id)
+        bot: Bot | None = get_bot(bot_id)
         if not bot:
             return
     except (ValueError, IndexError):

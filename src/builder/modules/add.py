@@ -13,7 +13,8 @@ from pyrogram.types import (
 
 from src import API_HASH, API_ID, BOTS, DATA_DIR, NEW_BOT_ADMIN_APPROVAL
 from src.bot.db.session import create_db
-from src.builder.db.crud import TBot, add_bot, get_bot
+from src.builder.db.crud import add_bot, get_bot
+from src.builder.db.models.bot import Bot
 from src.builder.utils.filters import is_token_reply, is_whitelisted_user
 from src.builder.utils.keyboards import get_main_menu_keyboard
 from src.common.utils.i18n import localize
@@ -55,7 +56,7 @@ async def handle_token(_: Client, message: Message, i18n: Plate) -> None:
     )
     bot_token = message.text.strip()
     bot_id = get_bot_id(bot_token)
-    bot_obj: TBot | None = get_bot(bot_id)
+    bot_obj: Bot | None = get_bot(bot_id)
     async with Client(
         str(bot_id),
         api_id=API_ID,

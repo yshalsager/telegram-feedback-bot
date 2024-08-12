@@ -93,22 +93,8 @@ def add_bot(
     return bot
 
 
-def get_bot(user_id: int | str) -> TBot | None:
-    return (
-        session.query(
-            Bot.username,
-            Bot.name,
-            Bot.enabled,
-            Bot.owner,
-            Bot.group,
-            Bot.start_message,
-            Bot.received_message,
-            Bot.sent_message,
-            Bot.created_at,
-        )
-        .filter(Bot.user_id == user_id)
-        .first()
-    )
+def get_bot(user_id: int | str) -> Bot | None:
+    return session.query(Bot).filter(Bot.user_id == user_id).first()
 
 
 @db_exceptions_handler
@@ -163,12 +149,14 @@ def update_bot_messages(
     bot: Bot | None = session.query(Bot).filter(Bot.user_id == user_id).first()
     if not bot:
         return False
+    settings = bot.bot_settings
     if start_message:
-        bot.start_message = start_message[:4096]
+        settings.start_message = start_message[:4096]
     if received_message:
-        bot.received_message = received_message[:4096]
+        settings.received_message = received_message[:4096]
     if sent_message:
-        bot.sent_message = sent_message[:4096]
+        settings.sent_message = sent_message[:4096]
+    bot.bot_settings = settings
     session.commit()
     return True
 
@@ -201,3 +189,15 @@ def delete_bot_group(user_id: int | str) -> bool:
     bot.group = None
     session.commit()
     return True
+
+
+@db_exceptions_handler
+def update_bot_confirmations(user_id: int | str) -> Bot | None:
+    bot: Bot | None = session.query(Bot).filter(Bot.user_id == user_id).first()
+    if not bot:
+        return None
+    settings = bot.bot_settings
+    settings.confirmations = not settings.confirmations
+    bot.bot_settings = settings
+    session.commit()
+    return bot

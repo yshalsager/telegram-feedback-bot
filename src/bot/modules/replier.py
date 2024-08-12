@@ -9,12 +9,13 @@ from src.bot.db.crud import (
 )
 from src.bot.db.session import session_scope
 from src.bot.utils.telegram import get_media
-from src.builder.db.crud import TBot, get_bot
+from src.builder.db.crud import get_bot
+from src.builder.db.models.bot import Bot
 from src.common.utils.i18n import localize
 from src.common.utils.telegram_handlers import tg_exceptions_handler
 
 
-def should_process_reply(bot: TBot, client: Client, message: Message) -> bool:
+def should_process_reply(bot: Bot, client: Client, message: Message) -> bool:
     is_private_chat = message.chat.id == message.from_user.id
     is_not_owner = message.from_user.id != bot.owner
     is_reply_to_bot = (
@@ -30,7 +31,7 @@ def should_process_reply(bot: TBot, client: Client, message: Message) -> bool:
 @tg_exceptions_handler
 @localize
 async def replier(client: Client, message: Message, i18n: Plate) -> None:
-    bot: TBot | None = get_bot(client.me.id)
+    bot: Bot | None = get_bot(client.me.id)
     assert bot is not None
     if not should_process_reply(bot, client, message):
         return
@@ -48,10 +49,11 @@ async def replier(client: Client, message: Message, i18n: Plate) -> None:
             outgoing=True,
         )
         increment_outgoing_stats(session)
-    await message.reply_text(
-        bot.sent_message or i18n('default_sent'),
-        reply_to_message_id=message.reply_to_message_id,
-    )
+    if bot.bot_settings.confirmations:
+        await message.reply_text(
+            bot.bot_settings.sent_message or i18n('default_sent'),
+            reply_to_message_id=message.reply_to_message_id,
+        )
 
 
 @Client.on_edited_message(
@@ -61,7 +63,7 @@ async def replier(client: Client, message: Message, i18n: Plate) -> None:
 @tg_exceptions_handler
 @localize
 async def edit_replier(client: Client, message: Message, i18n: Plate) -> None:
-    bot: TBot | None = get_bot(client.me.id)
+    bot: Bot | None = get_bot(client.me.id)
     assert bot is not None
     if not should_process_reply(bot, client, message):
         return
@@ -82,4 +84,5 @@ async def edit_replier(client: Client, message: Message, i18n: Plate) -> None:
             )
         else:
             return
-        await message.reply_text(i18n('message_edited'), reply_to_message_id=message.id)
+        if bot.bot_settings.confirmations:
+            await message.reply_text(i18n('message_edited'), reply_to_message_id=message.id)
