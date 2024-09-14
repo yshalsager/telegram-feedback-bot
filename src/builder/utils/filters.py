@@ -7,17 +7,13 @@ from pyrogram.types import CallbackQuery, Message
 
 from src import BOT_ADMINS
 from src.builder.db.crud import get_whitelist
+from src.common.utils.i18n import get_user_language
 
 
 def check_if_token_reply(_: Callable[..., Any], __: Client, message: Message) -> bool:
     return bool(
-        re.search(r'^\d{8,20}:[A-Za-z0-9_-]{35}$', message.text)
-        and message.reply_to_message.reply_markup
-        and any(
-            button.callback_data == 'main' or re.search(r'^mbt_\d+$', button.callback_data)
-            for row in message.reply_to_message.reply_markup.inline_keyboard
-            for button in row
-        )
+        message.reply_to_message.text == get_user_language(message)('reply_with_token')
+        and re.search(r'^\d{8,20}:[A-Za-z0-9_-]{35}$', message.text)
     )
 
 
