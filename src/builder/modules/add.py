@@ -1,4 +1,3 @@
-import regex as re
 from plate import Plate
 from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
@@ -41,16 +40,10 @@ async def add(_: Client, update: CallbackQuery, i18n: Plate) -> None:
 @tg_exceptions_handler
 @localize
 async def handle_token(_: Client, message: Message, i18n: Plate) -> None:
-    old_bot: Client | None = None
-    old_bot_id: int = 0
-    if is_old_bot := re.search(
-        r'^mbt_(\d+)$', str(message.reply_to_message.reply_markup.inline_keyboard)
-    ):
-        # stop old bot and remove from BOTS
-        old_bot_id = int(is_old_bot.group(1))
-        old_bot = BOTS.get(old_bot_id)
-        if old_bot:
-            await old_bot.stop()
+    old_bot_id: int = int(message.text.split(':')[0])
+    old_bot: Client | None = BOTS.get(old_bot_id)
+    if old_bot:
+        await old_bot.stop()
     reply_message = await message.reply_to_message.reply_text(
         i18n('checking_token'), reply_to_message_id=message.reply_to_message.id
     )
