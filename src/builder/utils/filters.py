@@ -20,6 +20,7 @@ def check_if_token_reply(_: Callable[..., Any], __: Client, message: Message) ->
 def check_if_custom_message_reply(_: Callable[..., Any], __: Client, message: Message) -> bool:
     return bool(
         message.reply_to_message.reply_markup
+        and message.reply_to_message.reply_markup.inline_keyboard
         and any(
             re.search(r'^mb[mrcs]_\d+$', button.callback_data)
             for row in message.reply_to_message.reply_markup.inline_keyboard
