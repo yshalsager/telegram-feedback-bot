@@ -1,6 +1,6 @@
 [tools]
 poetry = 'latest'
-python = '3.12'
+python = '3.13.0'
 
 [tasks.default]
 run = 'python -m src'
