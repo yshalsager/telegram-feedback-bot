@@ -1,5 +1,5 @@
 # Stage 1: Build dependencies
-FROM python:3.12-slim-bookworm AS builder
+FROM python:3.13-slim-bookworm AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -21,7 +21,7 @@ COPY pyproject.toml poetry.lock* ./
 RUN poetry install --with main --no-root
 
 # Stage 2: Run-time image
-FROM python:3.12-slim-bookworm AS runtime
+FROM python:3.13-slim-bookworm AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
