@@ -11,7 +11,7 @@ pymediainfo-pyrofork==6.0.1 ; python_version >= "3.12" and python_version < "4.0
 pyrofork @ git+https://github.com/Mayuri-Chan/pyrofork@f990b1e7f9ebace757bcf37d8d5e460bc9e3b395 ; python_version >= "3.12" and python_version < "4.0"
 pysocks==1.7.1 ; python_version >= "3.12" and python_version < "4.0"
 regex==2024.7.24 ; python_version >= "3.12" and python_version < "4.0"
-sqlalchemy==2.0.35 ; python_version >= "3.12" and python_version < "4.0"
+sqlalchemy==2.0.36 ; python_version >= "3.12" and python_version < "4.0"
 tgcrypto==1.2.5 ; python_version >= "3.12" and python_version < "4.0"
 typing-extensions==4.12.2 ; python_version >= "3.12" and python_version < "4.0"
 uvloop==0.20.0 ; python_version >= "3.12" and python_version < "4.0"
