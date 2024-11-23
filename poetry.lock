@@ -838,7 +838,7 @@ files = [
 
 [[package]]
 name = "pyrofork"
-version = "2.3.48"
+version = "2.3.50"
 description = "Fork of pyrogram. Elegant, modern and asynchronous Telegram MTProto API framework in Python for users and bots"
 optional = false
 python-versions = "~=3.9"
@@ -852,14 +852,14 @@ pysocks = "1.7.1"
 
 [package.extras]
 dev = ["hatch (>=1.7.0)", "pytest (>=7.4.3)", "pytest-asyncio (>=0.21.1)", "pytest-cov (>=4.1.0)", "twine (>=4.0.2)"]
-docs = ["sphinx", "sphinx-autobuild", "sphinx-copybutton", "sphinx-immaterial (==0.12.3)", "tornado (>=6.3.3)"]
+docs = ["sphinx", "sphinx-autobuild", "sphinx-copybutton", "sphinx-immaterial (==0.12.4)", "tornado (>=6.3.3)"]
 speedup = ["tgcrypto-pyrofork (>=1.2.6)", "uvloop (>=0.19.0)"]
 
 [package.source]
 type = "git"
 url = "https://github.com/Mayuri-Chan/pyrofork"
-reference = "f990b1e7f9ebace757bcf37d8d5e460bc9e3b395"
-resolved_reference = "f990b1e7f9ebace757bcf37d8d5e460bc9e3b395"
+reference = "6f5bd1392bc868d729c3d611efd0c4a4b166d7ca"
+resolved_reference = "6f5bd1392bc868d729c3d611efd0c4a4b166d7ca"
 
 [[package]]
 name = "pysocks"
@@ -1424,4 +1424,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "25847134991b583e6f22ee2dcd19c9bc24ecdc479d2002c4b2542d33d40370d4"
+content-hash = "fd141ffba075fdff0fa97fa18080f424e3cf61e71be5cd2b4b41ba4a193953dc"
