@@ -42,12 +42,6 @@ repos:
         args: [ --pytest-test-first ]
       - id: trailing-whitespace
         types: [ python ]
-  - repo: https://github.com/python-poetry/poetry
-    rev: '1.8.4'  # add version here
-    hooks:
-      - id: poetry-check
-      - id: poetry-export
-        args: [ "-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes" ]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     rev: 'v0.8.1'
