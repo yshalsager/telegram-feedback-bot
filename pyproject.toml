@@ -12,7 +12,7 @@ sqlalchemy = "^2.0.31"
 alembic = "^1.13.2"
 regex = "^2024.7.24"
 # Pyrogram fork because official doesn't support forum topics yet
-pyrofork = {git = "https://github.com/Mayuri-Chan/pyrofork", rev = "6f5bd1392bc868d729c3d611efd0c4a4b166d7ca"}
+pyrofork = {git = "https://github.com/Mayuri-Chan/pyrofork", rev = "f6f003d25aad15d036b4924b9f183cd12a141a05"}
 tgcrypto = "^1.2.5"
 plate = "^1.0.1"
 uvloop = "^0.20.0"
