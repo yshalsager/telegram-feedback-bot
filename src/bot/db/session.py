@@ -39,7 +39,7 @@ for bot in get_bots_ids():
 
 
 @contextmanager
-def session_scope(bot_id: int) -> Generator[scoped_session[Session], None, None]:
+def session_scope(bot_id: int) -> Generator[scoped_session[Session]]:
     """Provides a transactional scope around a series of operations."""
     session = scoped_session(
         sessionmaker(
