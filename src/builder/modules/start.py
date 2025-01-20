@@ -16,9 +16,9 @@ async def start(_: Client, update: Message | CallbackQuery, i18n: Plate) -> None
     message = i18n('welcome')
     keyboard = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton(f"{i18n('add_bot')}", callback_data='add_bot')],
-            [InlineKeyboardButton(f"{i18n('manage_bots')}", callback_data='manage_bots')],
-            [InlineKeyboardButton(f"{i18n('manage_settings')}", callback_data='manage_settings')],
+            [InlineKeyboardButton(f'{i18n("add_bot")}', callback_data='add_bot')],
+            [InlineKeyboardButton(f'{i18n("manage_bots")}', callback_data='manage_bots')],
+            [InlineKeyboardButton(f'{i18n("manage_settings")}', callback_data='manage_settings')],
         ]
     )
     if isinstance(update, CallbackQuery):
