@@ -26,10 +26,10 @@ async def manage_settings(_: Client, update: CallbackQuery, i18n: Plate) -> None
             [
                 [
                     InlineKeyboardButton(
-                        f"{i18n('change_language')}", callback_data='change_language'
+                        f'{i18n("change_language")}', callback_data='change_language'
                     )
                 ],
-                [InlineKeyboardButton(f"{i18n('back_to_main_menu')}", callback_data='main')],
+                [InlineKeyboardButton(f'{i18n("back_to_main_menu")}', callback_data='main')],
             ]
         ),
     )
