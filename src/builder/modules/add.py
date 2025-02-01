@@ -73,14 +73,14 @@ async def handle_token(_: Client, message: Message, i18n: Plate) -> None:
                     [
                         [
                             InlineKeyboardButton(
-                                f"{i18n('add_bot_to_group')}",
+                                f'{i18n("add_bot_to_group")}',
                                 url=f'https://t.me/{bot.username}?startgroup=true',
                             ),
                             InlineKeyboardButton(
-                                f"{i18n('manage_bots')}", callback_data='manage_bots'
+                                f'{i18n("manage_bots")}', callback_data='manage_bots'
                             ),
                             InlineKeyboardButton(
-                                f"{i18n('back_to_main_menu')}", callback_data='main'
+                                f'{i18n("back_to_main_menu")}', callback_data='main'
                             ),
                         ]
                     ]

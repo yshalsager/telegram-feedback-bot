@@ -34,7 +34,7 @@ async def update(_: Client, message: Message) -> None:
             )
             return
         await update_message.edit_text(
-            f'Git update successful. Updating requirements...' f'\n<pre>{git_stdout.decode()}</pre>'
+            f'Git update successful. Updating requirements...\n<pre>{git_stdout.decode()}</pre>'
         )
 
         req_process = await create_subprocess_shell(

@@ -6,7 +6,7 @@ def get_main_menu_keyboard(i18n: Plate) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(f"{i18n('back_to_main_menu')}", callback_data='main'),
+                InlineKeyboardButton(f'{i18n("back_to_main_menu")}', callback_data='main'),
             ]
         ]
     )
@@ -22,13 +22,13 @@ def get_update_bot_messages_keyboard(bot_id: str, choose: str, i18n: Plate) -> I
     keyboard = [
         [
             InlineKeyboardButton(
-                f"{'→ ' if choose == callback_data.split('_')[0] else ''}{i18n(text)}",
+                f'{"→ " if choose == callback_data.split("_")[0] else ""}{i18n(text)}',
                 callback_data=callback_data,
             )
         ]
         for text, callback_data in buttons
     ]
 
-    keyboard.append([InlineKeyboardButton(f"{i18n('back_to_main_menu')}", callback_data='main')])
+    keyboard.append([InlineKeyboardButton(f'{i18n("back_to_main_menu")}', callback_data='main')])
 
     return InlineKeyboardMarkup(keyboard)
