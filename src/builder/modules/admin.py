@@ -145,12 +145,12 @@ async def bot_info(_: Client, query: CallbackQuery, i18n: Plate) -> None:
     bot_owner = get_user(bot.owner)
     assert bot_owner is not None
     info_text = (
-        f"🤖: {bot.name} @{bot.username} {bot_id}\n"
+        f'🤖: {bot.name} @{bot.username} {bot_id}\n'
         f"👤: <a href='tg://user?id={bot.owner}'>{bot_owner.user_name}</a>\n"
-        f"💡: {'✅' if bot.enabled else '❌'}\n"
+        f'💡: {"✅" if bot.enabled else "❌"}\n'
     )
     if bot.created_at:
-        info_text += f"🗓️: {bot.created_at.strftime('%Y-%m-%d')}"
+        info_text += f'🗓️: {bot.created_at.strftime("%Y-%m-%d")}'
     keyboard = InlineKeyboardMarkup(
         [
             [

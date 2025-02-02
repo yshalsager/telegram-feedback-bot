@@ -30,8 +30,7 @@ async def broadcast_messages(chats: list[int], message_to_send: Message) -> str:
     )
     if failed_to_send:
         broadcast_status_message += (
-            f' فشل الإرسال إلى {failed_to_send}'
-            f'مستخدمين/مجموعات، غالبا بسبب أن البوت طرد أو أوقف.'
+            f' فشل الإرسال إلى {failed_to_send}مستخدمين/مجموعات، غالبا بسبب أن البوت طرد أو أوقف.'
         )
     return broadcast_status_message
 
