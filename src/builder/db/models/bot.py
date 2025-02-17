@@ -26,7 +26,7 @@ class Bot(Base):
     user_id: int = Column(BigInteger, unique=True, nullable=False)
     token: str = Column(String(45), nullable=False, unique=True)
     owner: int = Column(BigInteger, nullable=False)
-    group: Mapped[int | None] = Column(BigInteger, nullable=True)
+    group: Mapped[int] = Column(BigInteger, nullable=True)
     enabled: bool = Column(Boolean, nullable=False, default=False)
     settings: dict[str, Any] = Column(
         JSON, nullable=False, default=lambda: BotSettings().model_dump()
