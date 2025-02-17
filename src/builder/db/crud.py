@@ -143,9 +143,7 @@ def get_bot_owner(user_id: int | str) -> int:
 
 
 @db_exceptions_handler
-def update_bot_messages(
-    user_id: int, start_message: str = '', received_message: str = '', sent_message: str = ''
-) -> bool:
+def update_bot_messages(user_id: int, start_message: str = '', received_message: str = '') -> bool:
     bot: Bot | None = session.query(Bot).filter(Bot.user_id == user_id).first()
     if not bot:
         return False
@@ -154,8 +152,6 @@ def update_bot_messages(
         settings.start_message = start_message[:4096]
     if received_message:
         settings.received_message = received_message[:4096]
-    if sent_message:
-        settings.sent_message = sent_message[:4096]
     bot.bot_settings = settings
     session.commit()
     return True

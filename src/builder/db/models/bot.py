@@ -11,7 +11,6 @@ from src.builder.db.base import Base
 class BotSettings(BaseModel):
     start_message: str | None = None
     received_message: str | None = None
-    sent_message: str | None = None
     confirmations: bool = True
 
 

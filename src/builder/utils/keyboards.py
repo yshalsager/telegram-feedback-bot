@@ -16,7 +16,6 @@ def get_update_bot_messages_keyboard(bot_id: str, choose: str, i18n: Plate) -> I
     buttons = [
         ('change_bot_start_message', f'mbm_{bot_id}'),
         ('change_bot_receive_message', f'mbrc_{bot_id}'),
-        ('change_bot_sent_message', f'mbsm_{bot_id}'),
     ]
 
     keyboard = [

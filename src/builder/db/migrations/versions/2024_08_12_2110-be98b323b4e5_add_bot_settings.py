@@ -26,7 +26,6 @@ def upgrade() -> None:
         sa.column('id', sa.Integer),
         sa.column('start_message', sa.String),
         sa.column('received_message', sa.String),
-        sa.column('sent_message', sa.String),
         sa.column('settings', sa.JSON),
     )
 
@@ -36,7 +35,6 @@ def upgrade() -> None:
         settings = {
             'start_message': bot.start_message,
             'received_message': bot.received_message,
-            'sent_message': bot.sent_message,
         }
         connection.execute(bots.update().where(bots.c.id == bot.id).values(settings=settings))
 
@@ -45,7 +43,6 @@ def upgrade() -> None:
         batch_op.alter_column('settings', nullable=False)
 
     # Drop old columns
-    op.drop_column('bots', 'sent_message')
     op.drop_column('bots', 'received_message')
     op.drop_column('bots', 'start_message')
 
@@ -54,7 +51,6 @@ def downgrade() -> None:
     # Add back the old columns
     op.add_column('bots', sa.Column('start_message', sa.VARCHAR(length=4096), nullable=True))
     op.add_column('bots', sa.Column('received_message', sa.VARCHAR(length=4096), nullable=True))
-    op.add_column('bots', sa.Column('sent_message', sa.VARCHAR(length=4096), nullable=True))
 
     # Create a temp table reference
     bots = sa.table(
@@ -62,7 +58,6 @@ def downgrade() -> None:
         sa.column('id', sa.Integer),
         sa.column('start_message', sa.String),
         sa.column('received_message', sa.String),
-        sa.column('sent_message', sa.String),
         sa.column('settings', sa.JSON),
     )
 
@@ -77,7 +72,6 @@ def downgrade() -> None:
                 .values(
                     start_message=settings.get('start_message'),
                     received_message=settings.get('received_message'),
-                    sent_message=settings.get('sent_message'),
                 )
             )
 

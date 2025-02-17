@@ -50,10 +50,7 @@ async def replier(client: Client, message: Message, i18n: Plate) -> None:
         )
         increment_outgoing_stats(session)
     if bot.bot_settings.confirmations:
-        await message.reply_text(
-            bot.bot_settings.sent_message or i18n('default_sent'),
-            reply_to_message_id=message.reply_to_message_id,
-        )
+        await message.react('👍')
 
 
 @Client.on_edited_message(

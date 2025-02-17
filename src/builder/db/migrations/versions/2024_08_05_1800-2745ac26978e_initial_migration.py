@@ -30,7 +30,6 @@ def upgrade() -> None:
         sa.Column('enabled', sa.Boolean(), nullable=False),
         sa.Column('start_message', sa.String(length=4096), nullable=True),
         sa.Column('received_message', sa.String(length=4096), nullable=True),
-        sa.Column('sent_message', sa.String(length=4096), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.UniqueConstraint('name'),
         sa.UniqueConstraint('token'),
