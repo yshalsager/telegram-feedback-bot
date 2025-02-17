@@ -2,6 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel
 from sqlalchemy import JSON, BigInteger, Boolean, Column, DateTime, Integer, String
+from sqlalchemy.orm import Mapped
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.sql.functions import current_timestamp
 
@@ -25,7 +26,7 @@ class Bot(Base):
     user_id: int = Column(BigInteger, unique=True, nullable=False)
     token: str = Column(String(45), nullable=False, unique=True)
     owner: int = Column(BigInteger, nullable=False)
-    group: int | None = Column(BigInteger, nullable=True)
+    group: Mapped[int | None] = Column(BigInteger, nullable=True)
     enabled: bool = Column(Boolean, nullable=False, default=False)
     settings: dict[str, Any] = Column(
         JSON, nullable=False, default=lambda: BotSettings().model_dump()
