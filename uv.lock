@@ -140,7 +140,7 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.13.2" },
     { name = "plate", specifier = ">=1.0.1" },
     { name = "pydantic", specifier = ">=2.8.2" },
-    { name = "pyrofork", git = "https://github.com/Mayuri-Chan/pyrofork.git?rev=2992b6cc2fde465132433d461b30d0f252d219c8" },
+    { name = "pyrofork", git = "https://github.com/Mayuri-Chan/pyrofork.git?rev=2a84c336076babff129866734be07a77c02436bd" },
     { name = "regex", specifier = ">=2024.7.24" },
     { name = "sqlalchemy", specifier = ">=2.0.31" },
     { name = "tgcrypto", specifier = ">=1.2.5" },
@@ -545,8 +545,8 @@ wheels = [
 
 [[package]]
 name = "pyrofork"
-version = "2.3.62"
-source = { git = "https://github.com/Mayuri-Chan/pyrofork.git?rev=2992b6cc2fde465132433d461b30d0f252d219c8#2992b6cc2fde465132433d461b30d0f252d219c8" }
+version = "2.3.63"
+source = { git = "https://github.com/Mayuri-Chan/pyrofork.git?rev=2a84c336076babff129866734be07a77c02436bd#2a84c336076babff129866734be07a77c02436bd" }
 dependencies = [
     { name = "pyaes" },
     { name = "pymediainfo-pyrofork" },

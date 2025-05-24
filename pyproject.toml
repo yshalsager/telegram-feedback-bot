@@ -29,7 +29,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-pyrofork = { git = "https://github.com/Mayuri-Chan/pyrofork.git", rev = "2992b6cc2fde465132433d461b30d0f252d219c8" }
+pyrofork = { git = "https://github.com/Mayuri-Chan/pyrofork.git", rev = "2a84c336076babff129866734be07a77c02436bd" }
 
 [tool.mypy]
 files = ["src"]
