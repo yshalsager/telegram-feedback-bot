@@ -8,24 +8,24 @@ authors = [
 license = { text = "MIT" }
 requires-python = ">=3.13"
 dependencies = [
-    "sqlalchemy>=2.0.31",
-    "alembic>=1.13.2",
-    "regex>=2024.7.24",
+    "sqlalchemy>=2.0.41",
+    "alembic>=1.16.1",
+    "regex>=2024.11.6",
     "tgcrypto>=1.2.5",
     "plate>=1.0.1",
-    "uvloop>=0.20.0",
-    "pydantic>=2.8.2",
+    "uvloop>=0.21.0",
+    "pydantic>=2.11.5",
     "pyrofork",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.6.0",
-    "pre-commit>=3.8.0",
-    "mypy>=1.11.0",
-    "ipython>=8.26.0",
-    "rich>=13.7.1",
-    "jurigged>=0.5.8"
+    "ruff>=0.11.11",
+    "pre-commit>=4.2.0",
+    "mypy>=1.15.0",
+    "ipython>=9.2.0",
+    "rich>=14.0.0",
+    "jurigged>=0.6.0"
 ]
 
 [tool.uv.sources]
