@@ -37,7 +37,7 @@ def get_user_language(update: Message) -> Any:
     return get_translator(language_code)
 
 
-def localize(function: F) -> F:
+def localize[F: Callable[..., Any]](function: F) -> F:
     @wraps(function)
     def wrapper(client: Client, update: Message | CallbackQuery, *args: tuple, **kwargs: dict) -> F:
         i18n = get_user_language(update)

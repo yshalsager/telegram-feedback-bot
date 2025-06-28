@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 F = TypeVar('F', bound=Callable[..., Any])
 
 
-def db_exceptions_handler(function: F) -> F:
+def db_exceptions_handler[F: Callable[..., Any]](function: F) -> F:
     @wraps(function)
     def wrapper(*args: Any, **kwargs: Any) -> F:
         try:
@@ -16,7 +16,7 @@ def db_exceptions_handler(function: F) -> F:
             if isinstance(args[0], Session):
                 args[0].rollback()
             else:
-                from src.builder.db.session import session
+                from src.builder.db.session import session  # noqa: PLC0415
 
                 session.rollback()
             raise err

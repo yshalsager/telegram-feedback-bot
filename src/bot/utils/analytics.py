@@ -12,7 +12,7 @@ from src.bot.utils.telegram import get_chat_title, get_chat_type
 F = TypeVar('F', bound=Callable[..., Any])
 
 
-def add_new_chat_to_db(func: F) -> F:
+def add_new_chat_to_db[F: Callable[..., Any]](func: F) -> F:
     @wraps(func)
     async def wrapper(client: Client, message: Message, *args: list, **kwargs: dict) -> F:
         chat_title = get_chat_title(message)
