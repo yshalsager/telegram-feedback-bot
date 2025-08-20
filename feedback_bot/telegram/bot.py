@@ -50,10 +50,10 @@ class CustomContext(CallbackContext[ExtBot, dict, dict, dict]):
 async def start(update: Update, context: CustomContext) -> None:
     """Display a message with instructions on how to use this bot."""
     # payload_url = html.escape(
-    #     f'{settings.TELEGRAM_WEBHOOK_URL}/submitpayload?user_id=<your user id>&payload=<payload>'
+    #     f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/submitpayload?user_id=<your user id>&payload=<payload>'
     # )
     # text = (
-    #     f'To check if the bot is still running, call <code>{settings.TELEGRAM_WEBHOOK_URL}/healthcheck</code>.\n\n'
+    #     f'To check if the bot is still running, call <code>{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/healthcheck</code>.\n\n'
     #     f'To post a custom update, call <code>{payload_url}</code>.'
     # )
     # logger.info(f'Language: {get_language_info(update.message.from_user.language_code)}')
@@ -91,7 +91,7 @@ context_types = ContextTypes(context=CustomContext)
 # and hence we don't need an Updater instance
 ptb_application = (
     Application.builder()
-    .token(settings.TELEGRAM_BOT_TOKEN)
+    .token(settings.TELEGRAM_BUILDER_BOT_TOKEN)
     .updater(None)
     .context_types(context_types)
     .build()
@@ -110,9 +110,12 @@ async def ptb_lifespan_manager() -> LifespanManager:
         async with ptb_application:
             await ptb_application.start()
             await ptb_application.bot.set_webhook(
-                url=f'{settings.TELEGRAM_WEBHOOK_URL}/telegram', allowed_updates=Update.ALL_TYPES
+                url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}',
+                allowed_updates=Update.ALL_TYPES,
             )
-            logger.info(f'Webhook for main bot set to {settings.TELEGRAM_WEBHOOK_URL}/telegram')
+            # logger.info(
+            #     f'Webhook for main bot set to {settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}'
+            # )
             logger.info('ASGI Lifespan: PTB application started and webhook is set.')
 
             yield state

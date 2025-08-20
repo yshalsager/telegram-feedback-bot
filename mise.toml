@@ -1,5 +1,5 @@
 [tools]
-uv = 'latest'
+"ubi:astral-sh/uv" = '0.8.12'
 python = '3.13'
 
 [tasks.default]
@@ -45,18 +45,22 @@ DJANGO_DEBUG = false
 DJANGO_USE_SQLITE = false
 
 # Telegram
-TELEGRAM_WEBHOOK_URL = ''
-TELEGRAM_ENCRYPTION_KEY = 'changeme'
+TELEGRAM_BUILDER_BOT_WEBHOOK_NAME = 'telegram'
+TELEGRAM_BUILDER_BOT_WEBHOOK_URL = ''
 # Token from https://telegram.me/BotFather
-TELEGRAM_BOT_TOKEN = '0000000000:aaaaaaaaaaaaaaaaaaaa'
+TELEGRAM_BUILDER_BOT_TOKEN = '0000000000:aaaaaaaaaaaaaaaaaaaa'
 # Telegram account IDs that will have administrator permissions of the bot
-TELEGRAM_BOT_ADMINS = '000000,000000,000000'
+TELEGRAM_BUILDER_BOT_ADMINS = '000000,000000,000000'
 # Chat that will receive the bot messages
 TELEGRAM_ADMIN_CHAT_ID = '-10000000000'
 # Group topic that will be used for bot logs
 TELEGRAM_LOG_TOPIC_ID = 1
 # Require admin approval to add new bot
 TELEGRAM_NEW_BOT_ADMIN_APPROVAL = "true"
+# Encryption key for storing feedback bots tokens
+# Generate with `mise r generate-encryption-key`
+TELEGRAM_ENCRYPTION_KEY = 'changeme'
+# Languages that the bots will support
 TELEGRAM_LANGUAGES = 'en ar'
 
 [env.mise]

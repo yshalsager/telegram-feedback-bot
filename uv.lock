@@ -216,7 +216,7 @@ requires-dist = [
     { name = "orjson", specifier = ">=3.10.18,<4" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.9,<4" },
     { name = "python-telegram-bot", specifier = ">=22.3" },
-    { name = "regex", specifier = ">=2024.11.6" },
+    { name = "regex", specifier = ">=2025.7.34" },
 ]
 
 [package.metadata.requires-dev]
