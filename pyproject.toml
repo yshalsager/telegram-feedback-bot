@@ -39,7 +39,7 @@ show_error_codes = true
 warn_unused_ignores = true
 disallow_incomplete_defs = true
 disallow_untyped_decorators = false
-plugins = ["sqlalchemy.ext.mypy.plugin"]
+plugins = []
 
 [tool.ruff]  # https://github.com/charliermarsh/ruff
 fix = true

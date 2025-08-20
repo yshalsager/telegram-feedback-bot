@@ -1,13 +1,11 @@
-import html
 import logging
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
 from django.conf import settings
-from django.utils.translation import activate, get_language_info
 from django.utils.translation import gettext_lazy as _
 from django_asgi_lifespan.types import LifespanManager
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, WebAppInfo
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
@@ -65,6 +63,12 @@ async def start(update: Update, context: CustomContext) -> None:
             [InlineKeyboardButton(f'{_("add_bot")}', callback_data='add_bot')],
             [InlineKeyboardButton(f'{_("manage_bots")}', callback_data='manage_bots')],
             [InlineKeyboardButton(f'{_("manage_settings")}', callback_data='manage_settings')],
+            [
+                InlineKeyboardButton(
+                    'Open Mini App',
+                    web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/app'),
+                )
+            ],
         ]
     )
 

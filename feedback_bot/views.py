@@ -1,9 +1,9 @@
 import logging
 
 import orjson
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.utils.decorators import method_decorator
-from django.views import View
+from django.conf import settings
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from telegram import Update
@@ -11,8 +11,44 @@ from telegram.ext import Application
 
 from feedback_bot.models import Bot
 from feedback_bot.telegram.bot import WebhookUpdate
+from feedback_bot.telegram.utils import validate_mini_app_init_data
 
 logger = logging.getLogger(__name__)
+
+
+# Mini App
+@csrf_exempt
+def app(request: HttpRequest) -> HttpResponse:
+    return render(request, 'mini_app/index.html')
+
+
+@csrf_exempt
+def validate_user(request: HttpRequest) -> JsonResponse:
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+    try:
+        body = orjson.loads(request.body)
+        init_data = body.get('initData')
+
+        if not init_data:
+            return JsonResponse({'status': 'error', 'message': 'initData not provided'}, status=400)
+
+        is_valid, user_data = validate_mini_app_init_data(
+            init_data, settings.TELEGRAM_BUILDER_BOT_TOKEN
+        )
+
+        if not is_valid:
+            return JsonResponse({'status': 'error', 'message': 'Invalid data'}, status=403)
+
+        logger.info(f'Successfully validated user: {user_data.get("username")}')
+        return JsonResponse({'status': 'success', 'user': user_data})
+
+    except orjson.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        logger.exception('An unexpected error occurred during validation.')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
 # This is the handler for your MAIN BUILDER BOT
@@ -61,31 +97,31 @@ async def custom_updates(request: HttpRequest) -> HttpResponse:
     return HttpResponse('OK')
 
 
-@method_decorator(csrf_exempt, name='dispatch')
-class TelegramWebhookView(View):
-    """Handle incoming Telegram webhook updates using UUID for security"""
+# @method_decorator(csrf_exempt, name='dispatch')
+# class TelegramWebhookView(View):
+#     """Handle incoming Telegram webhook updates using UUID for security"""
 
-    async def post(self, request: HttpRequest, bot_uuid: str) -> HttpRequest:
-        try:
-            try:
-                bot_config = Bot.objects.get(uuid=bot_uuid, enabled=True)
-            except Bot.DoesNotExist:
-                return HttpResponseBadRequest('Bot not found or disabled')
+#     async def post(self, request: HttpRequest, bot_uuid: str) -> HttpRequest:
+#         try:
+#             try:
+#                 bot_config = Bot.objects.get(uuid=bot_uuid, enabled=True)
+#             except Bot.DoesNotExist:
+#                 return HttpResponseBadRequest('Bot not found or disabled')
 
-            # Parse update
-            update_data = orjson.loads(request.body)
-            update = Update.de_json(update_data, bot=None)
+#             # Parse update
+#             update_data = orjson.loads(request.body)
+#             update = Update.de_json(update_data, bot=None)
 
-            # Process update
-            # await process_update(update, bot_config)
+#             # Process update
+#             # await process_update(update, bot_config)
 
-            return HttpResponse('OK')
+#             return HttpResponse('OK')
 
-        except orjson.JSONDecodeError:
-            return HttpResponseBadRequest('Invalid JSON')
-        except Exception as e:  # noqa: BLE001
-            logger.error(f'Error processing webhook: {e}')
-            return HttpResponseBadRequest('Internal error')
+#         except orjson.JSONDecodeError:
+#             return HttpResponseBadRequest('Invalid JSON')
+#         except Exception as e:
+#             logger.error(f'Error processing webhook: {e}')
+#             return HttpResponseBadRequest('Internal error')
 
 
 @csrf_exempt
