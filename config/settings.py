@@ -44,6 +44,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'feedback_bot.middleware.TelegramSecretTokenMiddleware',
     'django_asgi_lifespan.middleware.LifespanStateMiddleware',  # for passing ptb application to views
 ]
 
@@ -125,6 +126,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Telegram Bot Settings
 TELEGRAM_BUILDER_BOT_WEBHOOK_URL = getenv('TELEGRAM_BUILDER_BOT_WEBHOOK_URL', 'https://yourdomain.com')
 TELEGRAM_BUILDER_BOT_WEBHOOK_NAME = getenv('TELEGRAM_BUILDER_BOT_WEBHOOK_NAME', 'telegram')
+TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET = getenv('TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET', '')
 TELEGRAM_BUILDER_BOT_TOKEN = getenv('TELEGRAM_BUILDER_BOT_TOKEN', '')
 TELEGRAM_BUILDER_BOT_ADMINS = getenv('TELEGRAM_BUILDER_BOT_ADMINS', '').split(',')
 TELEGRAM_ENCRYPTION_KEY = getenv('TELEGRAM_ENCRYPTION_KEY', '')

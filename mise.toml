@@ -1,5 +1,5 @@
 [tools]
-"ubi:astral-sh/uv" = '0.8.12'
+"aqua:astral-sh/uv" = '0.8.12'
 python = '3.13'
 
 [tasks.default]
@@ -47,6 +47,7 @@ DJANGO_USE_SQLITE = false
 # Telegram
 TELEGRAM_BUILDER_BOT_WEBHOOK_NAME = 'telegram'
 TELEGRAM_BUILDER_BOT_WEBHOOK_URL = ''
+TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET = 'changeme'
 # Token from https://telegram.me/BotFather
 TELEGRAM_BUILDER_BOT_TOKEN = '0000000000:aaaaaaaaaaaaaaaaaaaa'
 # Telegram account IDs that will have administrator permissions of the bot
