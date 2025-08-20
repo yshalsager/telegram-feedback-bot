@@ -1,7 +1,32 @@
+---
+
+x-defaults: &defaults
+  restart: unless-stopped
+  logging:
+    driver: local
+    options:
+      max-size: "100m"
+
 services:
+  db:
+    <<: *defaults
+    image: public.ecr.aws/docker/library/postgres:16.1-alpine
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}' ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
   app:
     container_name: feedbackbot
-    restart: unless-stopped
     build:
       context: ./
       dockerfile: Dockerfile
@@ -17,3 +42,7 @@ services:
     command: >
       sh -c "alembic -c alembic.ini upgrade head &&
              python3 -m src"
+
+volumes:
+  postgres-data:
+    driver: local

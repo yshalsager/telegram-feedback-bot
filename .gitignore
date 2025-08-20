@@ -74,6 +74,7 @@ tmp_*
 restart.json
 *.session
 data/
+db.sqlite3
 
 # OS
 .DS_Store

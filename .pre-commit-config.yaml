@@ -55,5 +55,3 @@ repos:
       - id: mypy
         args:
           - --install-types
-        additional_dependencies:
-          - SQLAlchemy==2.0.43
