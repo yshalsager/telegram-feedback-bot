@@ -12,6 +12,9 @@ run = 'uv run manage.py migrate'
 [tasks.generate-encryption-key]
 run = 'uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"'
 
+[tasks.generate-secret-key]
+run = 'uv run python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"'
+
 [tasks.i18n_create]
 description = 'Create or update translation files for all enabled languages'
 run = '''
