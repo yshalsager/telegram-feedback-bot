@@ -1,6 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
+from typing import cast
 
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -42,7 +43,7 @@ class CustomContext(CallbackContext[ExtBot, dict, dict, dict]):
     ) -> 'CustomContext':
         if isinstance(update, WebhookUpdate):
             return cls(application=application, user_id=update.user_id)
-        return super().from_update(update, application)
+        return cast(CustomContext, super().from_update(update, application))
 
 
 async def start(update: Update, context: CustomContext) -> None:
@@ -125,5 +126,7 @@ async def ptb_lifespan_manager() -> LifespanManager:
 
             yield state
     finally:
+        await state['ptb_application'].bot.delete_webhook()
         await state['ptb_application'].stop()
+        await state['ptb_application'].shutdown()
         logger.info('ASGI Lifespan: PTB application stopped.')
