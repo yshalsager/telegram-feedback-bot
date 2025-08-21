@@ -67,7 +67,7 @@ async def start(update: Update, context: CustomContext) -> None:
             [
                 InlineKeyboardButton(
                     'Open Mini App',
-                    web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/app'),
+                    web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/app/'),
                 )
             ],
         ]

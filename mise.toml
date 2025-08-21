@@ -33,7 +33,7 @@ GRANIAN_RELOAD = 0
 GRANIAN_RELOAD_IGNORE_PATTERNS = '(?<!\.py)$'
 GRANIAN_PORT = 8000
 GRANIAN_WORKERS = 4
-GRANIAN_STATIC_PATH_ROUTE = 'feedback_bot/static'
+GRANIAN_STATIC_PATH_MOUNT = 'mini_app/static'
 
 # Postgres
 POSTGRES_DB = 'feedback_bot'

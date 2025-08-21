@@ -1,3 +1,5 @@
+from typing import cast
+
 from cryptography.fernet import Fernet
 from django.conf import settings
 
@@ -11,7 +13,7 @@ def encrypt_token(token: str) -> str:
     if not token:
         return ''
     encrypted_bytes = _fernet.encrypt(token.encode())
-    return encrypted_bytes.decode()
+    return cast(str, encrypted_bytes.decode())
 
 
 def decrypt_token(encrypted_token: str) -> str:
@@ -21,4 +23,4 @@ def decrypt_token(encrypted_token: str) -> str:
     if not encrypted_token:
         return ''
     decrypted_bytes = _fernet.decrypt(encrypted_token.encode())
-    return decrypted_bytes.decode()
+    return cast(str, decrypted_bytes.decode())

@@ -6,6 +6,7 @@ from feedback_bot.utils.cryptography import decrypt_token, encrypt_token
 
 # TODO: complete the models with old code
 
+
 class User(models.Model):
     """
     Represents a user of the main builder bot (@BotFather-like interface).
@@ -19,7 +20,7 @@ class User(models.Model):
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'@{self.username}' if self.username else str(self.telegram_id)
 
 
@@ -46,11 +47,11 @@ class Bot(models.Model):
     _token = models.CharField(max_length=255, db_column='token')
 
     @property
-    def token(self):
+    def token(self) -> str:
         return decrypt_token(self._token)
 
     @token.setter
-    def token(self, raw_token: str):
+    def token(self, raw_token: str) -> None:
         self._token = encrypt_token(raw_token)
 
     # The chat where feedback messages are forwarded (can be a group or the owner's private chat)
@@ -66,7 +67,7 @@ class Bot(models.Model):
     enabled = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'@{self.username}'
 
 
@@ -88,7 +89,7 @@ class FeedbackChat(models.Model):
     class Meta:
         unique_together = ('bot', 'user_telegram_id')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Chat with {self.user_telegram_id} for @{self.bot.username}'
 
 
@@ -122,7 +123,7 @@ class BotStats(models.Model):
     incoming_messages = models.PositiveIntegerField(default=0)
     outgoing_messages = models.PositiveIntegerField(default=0)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Stats for @{self.bot.username}'
 
 
@@ -137,5 +138,5 @@ class BannedUser(models.Model):
     class Meta:
         unique_together = ('bot', 'user_telegram_id')
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.user_telegram_id} banned from @{self.bot.username}'

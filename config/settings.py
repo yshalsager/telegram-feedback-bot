@@ -16,10 +16,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
 SECRET_KEY = getenv('DJANGO_SECRET_KEY', '')
 DEBUG = bool(getenv('DJANGO_DEBUG', ''))
 ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS', '').split()
@@ -34,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'feedback_bot',
+    'mini_app',
 ]
 
 MIDDLEWARE = [
@@ -44,8 +43,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'feedback_bot.middleware.TelegramSecretTokenMiddleware',
     'django_asgi_lifespan.middleware.LifespanStateMiddleware',  # for passing ptb application to views
+    'feedback_bot.middleware.TelegramSecretTokenMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -105,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 LANGUAGE_CODE = 'en-us'
@@ -124,7 +122,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Telegram Bot Settings
-TELEGRAM_BUILDER_BOT_WEBHOOK_URL = getenv('TELEGRAM_BUILDER_BOT_WEBHOOK_URL', 'https://yourdomain.com')
+TELEGRAM_BUILDER_BOT_WEBHOOK_URL = getenv(
+    'TELEGRAM_BUILDER_BOT_WEBHOOK_URL', 'https://yourdomain.com'
+)
 TELEGRAM_BUILDER_BOT_WEBHOOK_NAME = getenv('TELEGRAM_BUILDER_BOT_WEBHOOK_NAME', 'telegram')
 TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET = getenv('TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET', '')
 TELEGRAM_BUILDER_BOT_TOKEN = getenv('TELEGRAM_BUILDER_BOT_TOKEN', '')
@@ -132,7 +132,12 @@ TELEGRAM_BUILDER_BOT_ADMINS = getenv('TELEGRAM_BUILDER_BOT_ADMINS', '').split(',
 TELEGRAM_ENCRYPTION_KEY = getenv('TELEGRAM_ENCRYPTION_KEY', '')
 
 if not any(
-    (TELEGRAM_BUILDER_BOT_WEBHOOK_URL, TELEGRAM_ENCRYPTION_KEY, TELEGRAM_BUILDER_BOT_TOKEN, TELEGRAM_BUILDER_BOT_ADMINS)
+    (
+        TELEGRAM_BUILDER_BOT_WEBHOOK_URL,
+        TELEGRAM_ENCRYPTION_KEY,
+        TELEGRAM_BUILDER_BOT_TOKEN,
+        TELEGRAM_BUILDER_BOT_ADMINS,
+    )
 ):
     raise ValueError('One or more Telegram environment variables are not set!')
 

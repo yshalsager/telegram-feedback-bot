@@ -19,4 +19,5 @@ from django.urls import include, path
 
 urlpatterns = [
     path('', include('feedback_bot.urls')),
+    path('', include('mini_app.urls')),
 ]

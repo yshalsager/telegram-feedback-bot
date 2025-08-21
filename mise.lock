@@ -1,6 +1,0 @@
-[tools."ubi:astral-sh/uv"]
-version = "0.8.12"
-backend = "ubi:astral-sh/uv"
-
-[tools."ubi:astral-sh/uv".platforms.macos-arm64-uv]
-checksum = "blake3:c991e171ab80259dc8a2390610eb04549ce59126b00a37ab814f6b01ffe69695"
