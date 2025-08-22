@@ -1,48 +1,29 @@
 {
-  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
-  extends: [
-    'config:recommended',
-    ':enablePreCommit',
-    ':rebaseStalePrs',
-  ],
-  labels: [
-    'dependencies',
-  ],
-  schedule: [
-    'before 5am on saturday',
-  ],
-  lockFileMaintenance: {
-    enabled: true,
-    automerge: true,
-    schedule: [
-      'before 5am on saturday',
+    $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+    extends: ['config:recommended', ':enablePreCommit', ':rebaseStalePrs'],
+    labels: ['dependencies'],
+    schedule: ['before 5am on saturday'],
+    lockFileMaintenance: {
+        enabled: true,
+        automerge: true,
+        schedule: ['before 5am on saturday']
+    },
+    packageRules: [
+        {
+            matchUpdateTypes: ['minor', 'patch', 'pin', 'digest'],
+            automerge: true
+        }
     ],
-  },
-  packageRules: [
-    {
-      matchUpdateTypes: [
-        'minor',
-        'patch',
-        'pin',
-        'digest',
-      ],
-      automerge: true,
-    },
-  ],
-  customManagers: [
-    {
-      customType: 'regex',
-      fileMatch: [
-        '\\.pre-commit-config\\.yaml',
-      ],
-      matchStrings: [
-        '(?<depName>[^\'" ]+)==(?<currentValue>[^\'" ,\\s]+)',
-      ],
-      datasourceTemplate: 'pypi',
-      versioningTemplate: 'pep440',
-    },
-  ],
-  pip_requirements: {
-    enabled: false,
-  },
+    customManagers: [
+        {
+            customType: 'regex',
+            fileMatch: ['\\.pre-commit-config\\.yaml'],
+            matchStrings: ['(?<depName>[^\'" ]+)==(?<currentValue>[^\'" ,\\s]+)'],
+            datasourceTemplate: 'pypi',
+            versioningTemplate: 'pep440'
+        }
+    ],
+    pip_requirements: {
+        enabled: false
+    }
 }

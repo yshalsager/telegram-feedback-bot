@@ -8,28 +8,28 @@ A bot that builds feedback Telegram bots like Livegram but with topics support.
 
 ### Builder
 
-- Create new feedback bots.
-- Manage existing bots.
-    - Delete bot.
-    - Change its token.
-    - Change its group.
-    - Change bot messages (start, receive feedback, sent message feedback).
-- Admin options:
-    - Whitelist users and remove them, disabled by default.
-    - Broadcast messages to all users.
-    - Restart all bots.
-    - Enable or disable bots (via /manage).
-    - Update bot code (via /update).
-- Multi-language support (automatically selected based on Telegram language).
+-   Create new feedback bots.
+-   Manage existing bots.
+    -   Delete bot.
+    -   Change its token.
+    -   Change its group.
+    -   Change bot messages (start, receive feedback, sent message feedback).
+-   Admin options:
+    -   Whitelist users and remove them, disabled by default.
+    -   Broadcast messages to all users.
+    -   Restart all bots.
+    -   Enable or disable bots (via /manage).
+    -   Update bot code (via /update).
+-   Multi-language support (automatically selected based on Telegram language).
 
 ### Bots
 
-- Receive feedback messages from users.
-- Each user has its own topic that messages are sent to, so admins can reply to each user individually and chat history
-  is clear.
-- General topic messages aren't sent to users, so admins can discuss without spamming users.
-- Admins can broadcast messages to all users.
-- Bot statistics of users, received and sent messages.
+-   Receive feedback messages from users.
+-   Each user has its own topic that messages are sent to, so admins can reply to each user individually and chat history
+    is clear.
+-   General topic messages aren't sent to users, so admins can discuss without spamming users.
+-   Admins can broadcast messages to all users.
+-   Bot statistics of users, received and sent messages.
 
 ## Configuration
 
@@ -61,55 +61,55 @@ and update `ENCRYPTION_KEY` variable.
 
 ### Docker
 
-- `docker compose up`
+-   `docker compose up`
 
 ### Poetry
 
-- `poetry install`
-- `python3 -m src`
+-   `poetry install`
+-   `python3 -m src`
 
 ## Usage
 
 ### Builder
 
-- `/start`: sends the main menu to create and manage bots.
-- `/whitelist [user_id]`: adds new users to the whitelist.'
-- `/manage`: manage users and bots by admin.
-- `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
-- `/restart`: restarts the bot.
-- `/update`: updates the bot code.
+-   `/start`: sends the main menu to create and manage bots.
+-   `/whitelist [user_id]`: adds new users to the whitelist.'
+-   `/manage`: manage users and bots by admin.
+-   `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
+-   `/restart`: restarts the bot.
+-   `/update`: updates the bot code.
 
 ### Bots
 
-- `/start`: says hello.
-- Send a message, it will be forwarded to the bot owner or group.
-- Owner can reply to the message and it will be forwarded to the user.
-- `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
-- `/stats`: shows bot statistics.
+-   `/start`: says hello.
+-   Send a message, it will be forwarded to the bot owner or group.
+-   Owner can reply to the message and it will be forwarded to the user.
+-   `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
+-   `/stats`: shows bot statistics.
 
 ## How it works?
 
-- Instead of using Telegram bots HTTP API (with long polling or webhooks), we
-  use [MTProto](https://core.telegram.org/mtproto) directly via Pyrogram, since Pyrogram uses persistent connections via
-  TCP sockets to interact with Telegram servers instead of actively asking for updates.
-- The builder bot is responsible for creating Pyrogram clients for bots, and managing them.
-- Only builder bot owner can enable or disable bots. Builder bot users can create their own feedback bots and manage
-  them.
-- SQLAlchemy and Alembic are used for database management. When a new bot is created, a new database is created with
-  Alembic to ensure the schema is up to date for all bots.
-- Feedback bot forwards messages from users to its created bot owner or group, so it can be replied to. The bot will
-  only send the reply to the user if message is a reply to user's message.
+-   Instead of using Telegram bots HTTP API (with long polling or webhooks), we
+    use [MTProto](https://core.telegram.org/mtproto) directly via Pyrogram, since Pyrogram uses persistent connections via
+    TCP sockets to interact with Telegram servers instead of actively asking for updates.
+-   The builder bot is responsible for creating Pyrogram clients for bots, and managing them.
+-   Only builder bot owner can enable or disable bots. Builder bot users can create their own feedback bots and manage
+    them.
+-   SQLAlchemy and Alembic are used for database management. When a new bot is created, a new database is created with
+    Alembic to ensure the schema is up to date for all bots.
+-   Feedback bot forwards messages from users to its created bot owner or group, so it can be replied to. The bot will
+    only send the reply to the user if message is a reply to user's message.
 
 ## Acknowledgements
 
 ### Libraries, Tools, etc
 
-- [Python](https://www.python.org/)
-- [Pyrogram](https://github.com/Mayuri-Chan/pyrofork)
-- [Plate](https://github.com/delivrance/plate)
-- [regex](https://github.com/mrabarnett/mrab-regex)
-- [SQLAlchemy](https://www.sqlalchemy.org/)
-- [Alembic](https://alembic.sqlalchemy.org/)
+-   [Python](https://www.python.org/)
+-   [Pyrogram](https://github.com/Mayuri-Chan/pyrofork)
+-   [Plate](https://github.com/delivrance/plate)
+-   [regex](https://github.com/mrabarnett/mrab-regex)
+-   [SQLAlchemy](https://www.sqlalchemy.org/)
+-   [Alembic](https://alembic.sqlalchemy.org/)
 
 ## Development
 
@@ -152,8 +152,8 @@ poetry run jurigged -v -m src
 
 ## Internationalization (i18n)
 
-- We use [Plate](https://github.com/delivrance/plate) library to translate the bot's messages.
-- Translations are stored as JSON files in the `src/i18n/locales` directory, the default locale is `en_US`.
-- To add a new language, create a new JSON file in the `src/i18n/locales` directory, with the corresponding language
-  code,
-  translate the messages to that language.
+-   We use [Plate](https://github.com/delivrance/plate) library to translate the bot's messages.
+-   Translations are stored as JSON files in the `src/i18n/locales` directory, the default locale is `en_US`.
+-   To add a new language, create a new JSON file in the `src/i18n/locales` directory, with the corresponding language
+    code,
+    translate the messages to that language.
