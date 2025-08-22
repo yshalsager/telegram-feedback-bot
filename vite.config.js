@@ -13,8 +13,30 @@ export default defineConfig({
 		})
 	],
 	server: {
+		allowedHosts: [
+			'localhost',
+			'127.0.0.1',
+			'0.0.0.0',
+			...(process.env.TELEGRAM_BUILDER_BOT_WEBHOOK_URL
+				? [process.env.TELEGRAM_BUILDER_BOT_WEBHOOK_URL.replace(/^https?:\/\//, '')]
+				: [])
+		],
 		fs: {
 			allow: ['./frontend']
+		},
+		port: process.env.VITE_PORT ? parseInt(process.env.VITE_PORT) : 5173,
+		host: true,
+		proxy: {
+			'/api': {
+				target: `http://localhost:${process.env.GRANIAN_PORT}`,
+				changeOrigin: true,
+				secure: true,
+			},
+			'/webhook': {
+				target: `http://localhost:${process.env.GRANIAN_PORT}`,
+				changeOrigin: true,
+				secure: true,
+			}
 		}
 	},
 	test: {
