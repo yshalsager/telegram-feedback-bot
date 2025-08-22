@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-20 09:57+0000\n"
+"POT-Creation-Date: 2025-08-22 13:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,18 +18,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: feedback_bot/telegram/bot.py:62
+#: feedback_bot/telegram/bot.py:61
 msgid "welcome"
 msgstr "👋 Welcome to Feedback bot builder."
 
-#: feedback_bot/telegram/bot.py:65
+#: feedback_bot/telegram/bot.py:64
 msgid "add_bot"
 msgstr "🤖 Add new bot"
 
-#: feedback_bot/telegram/bot.py:66
+#: feedback_bot/telegram/bot.py:65
 msgid "manage_bots"
 msgstr "⚙️ Manage bots"
 
-#: feedback_bot/telegram/bot.py:67
+#: feedback_bot/telegram/bot.py:66
 msgid "manage_settings"
 msgstr "🛠️ Manage settings"

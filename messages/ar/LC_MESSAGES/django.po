@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-20 09:57+0000\n"
+"POT-Creation-Date: 2025-08-22 13:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,18 +19,18 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: feedback_bot/telegram/bot.py:62
+#: feedback_bot/telegram/bot.py:61
 msgid "welcome"
 msgstr "مرحبا بك في منشيء بوتات التغذية الراجعة 👋"
 
-#: feedback_bot/telegram/bot.py:65
+#: feedback_bot/telegram/bot.py:64
 msgid "add_bot"
 msgstr "إضافة بوت جديد 🤖"
 
-#: feedback_bot/telegram/bot.py:66
+#: feedback_bot/telegram/bot.py:65
 msgid "manage_bots"
 msgstr "⚙️ إدارة البوتات"
 
-#: feedback_bot/telegram/bot.py:67
+#: feedback_bot/telegram/bot.py:66
 msgid "manage_settings"
 msgstr "🛠️ إدارة الإعدادات"
