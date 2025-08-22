@@ -11,6 +11,7 @@ dependencies = [
     "cryptography>=45.0.6",
     "django>=5.2,<6",
     "django-asgi-lifespan>=0.4.1",
+    "django-ninja>=1.4.3",
     "granian[reload,rloop]>=2.5.0",
     "orjson>=3.10.18,<4",
     "psycopg[binary]>=3.2.9,<4",

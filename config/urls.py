@@ -1,22 +1,50 @@
-"""
-URL configuration for bot project.
+from typing import Any, cast
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+import orjson
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+from django.http import HttpRequest, HttpResponse
+from django.urls import path
+from ninja import NinjaAPI
+from ninja.errors import HttpError
+from ninja.renderers import BaseRenderer
 
-from django.urls import include, path
+
+class ORJSONRenderer(BaseRenderer):
+    media_type = 'application/json'
+
+    def render(self, request: HttpRequest, data: Any, *, response_status: int) -> bytes:
+        return cast(bytes, orjson.dumps(data))
+
+
+api = NinjaAPI(renderer=ORJSONRenderer(), csrf=True)
+
+
+@api.exception_handler(HttpError)
+@api.exception_handler(Exception)
+def exception_response(request: HttpRequest, exception: Exception) -> HttpResponse:
+    if settings.DEBUG:
+        raise exception
+    if isinstance(exception, ObjectDoesNotExist):
+        status_code = 404
+    else:
+        status_code = getattr(exception, 'status_code', 500)
+    if isinstance(exception, IntegrityError):
+        message = 'Integrity Error'
+    else:
+        message = getattr(exception, 'message', repr(exception))
+    return api.create_response(
+        request,
+        data={'error': True, 'message': message, 'success': False},
+        status=status_code,
+    )
+
+
+api.add_router('', 'config.api.router')
+api.add_router('', 'feedback_bot.api.miniapp.router')
+api.add_router('webhook', 'feedback_bot.api.webhooks.router')
 
 urlpatterns = [
-    path('api/', include('feedback_bot.urls')),
+    path('api/', api.urls),
 ]
