@@ -1,5 +1,7 @@
 [tools]
 "aqua:astral-sh/uv" = '0.8.12'
+"aqua:pnpm/pnpm" = '10.15.0'
+node = "24"
 python = '3.13'
 
 [tasks.default]
