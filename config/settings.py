@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv('DJANGO_SECRET_KEY', '')
 DEBUG = bool(getenv('DJANGO_DEBUG', ''))
 ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS', '').split()
-# CSRF_TRUSTED_ORIGINS = [f'https://{host}' for host in ALLOWED_HOSTS]
+CSRF_TRUSTED_ORIGINS = [f'https://{host}' for host in ALLOWED_HOSTS]
 
 # Application definition
 INSTALLED_APPS = [
@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'feedback_bot',
-    'mini_app',
 ]
 
 MIDDLEWARE = [

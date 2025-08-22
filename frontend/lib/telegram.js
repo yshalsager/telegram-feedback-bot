@@ -1,0 +1,77 @@
+import { init, initData, miniApp, popup } from "@telegram-apps/sdk-svelte";
+import { session } from "./stores.svelte";
+
+export async function initSDK() {
+  try {
+    await init();
+
+    if (miniApp.ready.isAvailable()) {
+      await miniApp.ready();
+      session.update((state) => ({ ...state, loaded: true }));
+    } else {
+      console.log("❌ Mini App is not available");
+    }
+  } catch (error) {
+    console.error("❌ Telegram SDK initialization error:", error);
+    session.update((state) => ({ ...state, notAvailable: true }));
+  }
+}
+
+/**
+ * @typedef {Object} InitData
+ * @property {string | undefined} queryId
+ * @property {import('@telegram-apps/sdk-svelte').User | undefined} user
+ * @property {import('@telegram-apps/sdk-svelte').User | undefined} receiver
+ * @property {import('@telegram-apps/sdk-svelte').Chat | undefined} chat
+ * @property {import('@telegram-apps/sdk-svelte').ChatType | undefined} chatType
+ * @property {string | undefined} chatInstance
+ * @property {string | undefined} startParam
+ * @property {number | undefined} canSendAfter
+ * @property {Date | undefined} authDate
+ * @property {string | undefined} hash
+ * @property {string | undefined} raw
+ */
+/**
+ * Get the init data
+ * @returns { InitData | null }
+ */
+
+export function getInitData() {
+  try {
+    return {
+      queryId: initData.queryId(),
+      user: initData.user(),
+      receiver: initData.receiver(),
+      chat: initData.chat(),
+      chatType: initData.chatType(),
+      chatInstance: initData.chatInstance(),
+      startParam: initData.startParam(),
+      canSendAfter: initData.canSendAfter(),
+      authDate: initData.authDate(),
+      hash: initData.hash(),
+      raw: initData.raw(),
+    };
+  } catch (error) {
+    console.warn("Failed to get init data:", error);
+    return null;
+  }
+}
+
+/**
+ * Show a notification in the mini app
+ * @param {string} title
+ * @param {string} message
+ * @param {'success' | 'error' | 'info'} type
+ */
+export function showNotification(title, message, type = "info") {
+  try {
+    popup.show({
+      title,
+      message,
+      buttons: [{ id: "ok", type: "ok" }],
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed to show notification: ${errorMessage}`);
+  }
+}

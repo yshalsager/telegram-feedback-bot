@@ -1,16 +1,51 @@
 import logging
 
 import orjson
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
-from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.views.decorators.csrf import csrf_exempt, get_token
 from django.views.decorators.http import require_http_methods
 from telegram import Update
 from telegram.ext import Application
 
 from feedback_bot.models import Bot
 from feedback_bot.telegram.bot import WebhookUpdate
+from feedback_bot.utils.telegram import validate_mini_app_init_data
 
 logger = logging.getLogger(__name__)
+
+
+def get_csrf_token(request: HttpRequest) -> JsonResponse:
+    return JsonResponse({'csrf_token': get_token(request)})
+
+
+# @csrf_exempt
+def validate_user(request: HttpRequest) -> JsonResponse:
+    if request.method != 'POST':
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+    try:
+        body = orjson.loads(request.body)
+        init_data = body.get('initData')
+
+        if not init_data:
+            return JsonResponse({'status': 'error', 'message': 'initData not provided'}, status=400)
+
+        is_valid, user_data = validate_mini_app_init_data(
+            init_data, settings.TELEGRAM_BUILDER_BOT_TOKEN
+        )
+
+        if not is_valid:
+            return JsonResponse({'status': 'error', 'message': 'Invalid data'}, status=403)
+
+        logger.info(f'Successfully validated user: {user_data.get("username")}')
+        return JsonResponse({'status': 'success', 'user': user_data})
+
+    except orjson.JSONDecodeError:
+        return JsonResponse({'status': 'error', 'message': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        logger.exception('An unexpected error occurred during validation.')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
 # This is the handler for your MAIN BUILDER BOT

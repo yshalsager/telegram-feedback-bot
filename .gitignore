@@ -80,6 +80,7 @@ db.sqlite3
 .DS_Store
 
 # js
+!frontend/lib/
 node_modules
 
 # Output
@@ -107,3 +108,6 @@ vite.config.ts.timestamp-*
 # Paraglide
 frontend/lib/paraglide
 project.inlang/cache/
+
+# others
+tmp_*

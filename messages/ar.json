@@ -1,4 +1,8 @@
 {
     "$schema": "https://inlang.com/schema/inlang-message-format",
-    "hello_world": "مرحبا, {name} من العربية!"
+    "hello_world": "مرحبا, {name} من العربية!",
+    "please_open_in_telegram": "يرجى فتح التطبيق في تليجرام",
+    "the_app_is_not_available_in_this_browser": "التطبيق غير متاح في المتصفح. يرجى فتحه في تليجرام.",
+    "app_name": "صانع بوتات التعليقات",
+    "invalid_session": "جلسة المستخدم غير صالحة"
 }

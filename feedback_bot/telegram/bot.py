@@ -67,7 +67,7 @@ async def start(update: Update, context: CustomContext) -> None:
             [
                 InlineKeyboardButton(
                     'Open Mini App',
-                    web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/app/'),
+                    web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/'),
                 )
             ],
         ]
@@ -115,7 +115,7 @@ async def ptb_lifespan_manager() -> LifespanManager:
         async with ptb_application:
             await ptb_application.start()
             await ptb_application.bot.set_webhook(
-                url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}',
+                url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}',
                 secret_token=settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET or None,
                 allowed_updates=Update.ALL_TYPES,
             )

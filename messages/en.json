@@ -1,4 +1,8 @@
 {
     "$schema": "https://inlang.com/schema/inlang-message-format",
-    "hello_world": "Hello, {name} from en!"
+    "hello_world": "Hello, {name} from en!",
+    "app_name": "Feedback Bot Builder",
+    "please_open_in_telegram": "Please open the app in Telegram",
+    "the_app_is_not_available_in_this_browser": "The app is not available in this browser. Please open it in Telegram.",
+    "invalid_session": "Invalid session"
 }

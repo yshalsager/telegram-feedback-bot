@@ -1,18 +1,16 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-
 <script lang="ts">
-  import { browser } from '$app/environment';
-  import { init } from '@telegram-apps/sdk-svelte';
-  import { onMount } from 'svelte';
-
-  import BackButton from '../components/back.svelte';
-
-  let isInitialized = false;
-
-  onMount(() => {
-      init();
-  });
+import BackButton from '../components/back.svelte'
+import {m} from '$lib/paraglide/messages.js'
+import {session} from '$lib/stores.svelte.js'
 </script>
+
+<h1>{m.app_name()}</h1>
+
+<p>
+    Welcome, {$session.data?.user?.first_name}
+    {$session.data?.user?.last_name || ''} (@{$session.data?.user?.username})
+</p>
+<p>Your User ID: {$session.data?.user?.id}</p>
+<p>Your Language: {$session.data?.user?.language_code}</p>
 
 <BackButton />

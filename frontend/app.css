@@ -1,2 +1,9 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
+
+body {
+  font-family: sans-serif;
+  padding: 1em;
+  color: var(--tg-theme-text-color);
+  background-color: var(--tg-theme-bg-color);
+}

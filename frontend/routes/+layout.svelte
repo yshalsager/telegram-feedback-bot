@@ -1,12 +1,56 @@
-<script>
-	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
+<script lang="ts">
+import '../app.css'
+// import favicon from '$lib/assets/favicon.svg';
+import {initData, viewport, mainButton} from '@telegram-apps/sdk-svelte'
+import {session} from '$lib/stores.svelte.js'
+import {getInitData, initSDK} from '$lib/telegram'
+// import { initializeTelegramTheme } from '$lib/telegramTheme'
+import {m} from '$lib/paraglide/messages.js'
+import {csrf_token, validate_user} from '$lib/api.js'
 
-	let { children } = $props();
+let {children} = $props()
+
+async function initialize() {
+    await initSDK()
+    // initializeTelegramTheme()
+    initData.restore()
+    viewport.mount()
+    mainButton.mount()
+    if (viewport.isMounted()) viewport.expand()
+    const data = await getInitData()
+    if (data) session.update(state => ({...state, data}))
+		const csrfToken = await csrf_token()
+    session.update(state => ({...state, csrfToken}))
+		const isValidSession = (data && data.raw) && await validate_user(data.raw)
+		session.update(state => ({...state, isValid: isValidSession || false}))
+}
+
+;(async () => {
+    await initialize()
+})()
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+    <!-- <link rel="icon" href={favicon} /> -->
+    <title>{m.app_name()}</title>
 </svelte:head>
 
-{@render children?.()}
+{#if $session.loaded && !$session.notAvailable && $session.isValid === true}
+    {@render children?.()}
+{/if}
+
+{#if $session.notAvailable}
+    <div class="flex h-screen flex-col items-center justify-center">
+        <h1 class="text-2xl font-bold">{m.please_open_in_telegram()}</h1>
+        <p class="mt-4 text-sm text-gray-500">
+            {m.the_app_is_not_available_in_this_browser()}
+        </p>
+    </div>
+{/if}
+
+
+{#if $session.isValid === false}
+	<div class="flex h-screen flex-col items-center justify-center">
+		<h1 class="text-2xl font-bold">{m.invalid_session()}</h1>
+	</div>
+{/if}

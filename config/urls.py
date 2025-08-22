@@ -18,6 +18,5 @@ Including another URLconf
 from django.urls import include, path
 
 urlpatterns = [
-    path('', include('feedback_bot.urls')),
-    path('', include('mini_app.urls')),
+    path('api/', include('feedback_bot.urls')),
 ]
