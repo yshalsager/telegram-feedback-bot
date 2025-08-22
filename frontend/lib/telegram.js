@@ -1,20 +1,20 @@
-import { init, initData, miniApp, popup } from "@telegram-apps/sdk-svelte";
-import { session } from "./stores.svelte";
+import {init, initData, miniApp, popup} from '@telegram-apps/sdk-svelte'
+import {session} from './stores.svelte'
 
 export async function initSDK() {
-  try {
-    await init();
+    try {
+        await init()
 
-    if (miniApp.ready.isAvailable()) {
-      await miniApp.ready();
-      session.update((state) => ({ ...state, loaded: true }));
-    } else {
-      console.log("❌ Mini App is not available");
+        if (miniApp.ready.isAvailable()) {
+            await miniApp.ready()
+            session.update(state => ({...state, loaded: true}))
+        } else {
+            console.log('❌ Mini App is not available')
+        }
+    } catch (error) {
+        console.error('❌ Telegram SDK initialization error:', error)
+        session.update(state => ({...state, notAvailable: true}))
     }
-  } catch (error) {
-    console.error("❌ Telegram SDK initialization error:", error);
-    session.update((state) => ({ ...state, notAvailable: true }));
-  }
 }
 
 /**
@@ -37,41 +37,40 @@ export async function initSDK() {
  */
 
 export function getInitData() {
-  try {
-    return {
-      queryId: initData.queryId(),
-      user: initData.user(),
-      receiver: initData.receiver(),
-      chat: initData.chat(),
-      chatType: initData.chatType(),
-      chatInstance: initData.chatInstance(),
-      startParam: initData.startParam(),
-      canSendAfter: initData.canSendAfter(),
-      authDate: initData.authDate(),
-      hash: initData.hash(),
-      raw: initData.raw(),
-    };
-  } catch (error) {
-    console.warn("Failed to get init data:", error);
-    return null;
-  }
+    try {
+        return {
+            queryId: initData.queryId(),
+            user: initData.user(),
+            receiver: initData.receiver(),
+            chat: initData.chat(),
+            chatType: initData.chatType(),
+            chatInstance: initData.chatInstance(),
+            startParam: initData.startParam(),
+            canSendAfter: initData.canSendAfter(),
+            authDate: initData.authDate(),
+            hash: initData.hash(),
+            raw: initData.raw()
+        }
+    } catch (error) {
+        console.warn('Failed to get init data:', error)
+        return null
+    }
 }
 
 /**
  * Show a notification in the mini app
  * @param {string} title
  * @param {string} message
- * @param {'success' | 'error' | 'info'} type
  */
-export function showNotification(title, message, type = "info") {
-  try {
-    popup.show({
-      title,
-      message,
-      buttons: [{ id: "ok", type: "ok" }],
-    });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`Failed to show notification: ${errorMessage}`);
-  }
+export function showNotification(title, message) {
+    try {
+        popup.show({
+            title,
+            message
+            // buttons: [{id: 'ok', type: 'ok'}]
+        })
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        console.error(`Failed to show notification: ${errorMessage}`)
+    }
 }

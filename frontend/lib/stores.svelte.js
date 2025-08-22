@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import {writable} from 'svelte/store'
 
 /**
  * Session store for managing application initialization state
@@ -12,9 +12,9 @@ import { writable } from "svelte/store";
  */
 
 export const session = writable({
-  loaded: false,
-  notAvailable: false,
-  isValid: undefined,
-  data: undefined,
-  csrfToken: undefined,
-});
+    loaded: false,
+    notAvailable: false,
+    isValid: undefined,
+    data: undefined,
+    csrfToken: undefined
+})

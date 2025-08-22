@@ -19,10 +19,10 @@ async function initialize() {
     if (viewport.isMounted()) viewport.expand()
     const data = await getInitData()
     if (data) session.update(state => ({...state, data}))
-		const csrfToken = await csrf_token()
+    const csrfToken = await csrf_token()
     session.update(state => ({...state, csrfToken}))
-		const isValidSession = (data && data.raw) && await validate_user(data.raw)
-		session.update(state => ({...state, isValid: isValidSession || false}))
+    const isValidSession = data && data.raw && (await validate_user(data.raw))
+    session.update(state => ({...state, isValid: isValidSession || false}))
 }
 
 ;(async () => {
@@ -48,9 +48,8 @@ async function initialize() {
     </div>
 {/if}
 
-
 {#if $session.isValid === false}
-	<div class="flex h-screen flex-col items-center justify-center">
-		<h1 class="text-2xl font-bold">{m.invalid_session()}</h1>
-	</div>
+    <div class="flex h-screen flex-col items-center justify-center">
+        <h1 class="text-2xl font-bold">{m.invalid_session()}</h1>
+    </div>
 {/if}
