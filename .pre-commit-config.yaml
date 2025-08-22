@@ -55,3 +55,10 @@ repos:
       - id: mypy
         args:
           - --install-types
+  - repo: local
+    hooks:
+    - id: frontend-lint
+      name: frontend-lint
+      language: system
+      entry: bash -c "cd frontend && pnpm run format || true && pnpm run lint"
+      files: \.(js|ts|svelte)$
