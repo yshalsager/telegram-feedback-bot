@@ -1,13 +1,6 @@
 <script lang="ts">
 import '../app.css'
 // import favicon from '$lib/assets/favicon.svg';
-import {
-    initData,
-    viewport,
-    mainButton,
-    themeParams,
-    bindThemeParamsCssVars
-} from '@telegram-apps/sdk-svelte'
 import {session} from '$lib/stores.svelte.js'
 import {getInitData, initSDK} from '$lib/telegram.js'
 import {m} from '$lib/paraglide/messages.js'
@@ -17,12 +10,6 @@ let {children} = $props()
 
 async function initialize() {
     await initSDK()
-    themeParams.mountSync()
-    bindThemeParamsCssVars()
-    initData.restore()
-    viewport.mount()
-    mainButton.mount()
-    if (viewport.isMounted()) viewport.expand()
     const data = await getInitData()
     if (data) session.update(state => ({...state, data}))
     const csrfToken = await csrf_token()

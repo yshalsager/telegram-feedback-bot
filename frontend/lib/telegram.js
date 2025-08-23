@@ -1,16 +1,32 @@
-import {init, initData, miniApp, popup} from '@telegram-apps/sdk-svelte'
+import {
+    init,
+    initData,
+    miniApp,
+    popup,
+    viewport,
+    mainButton,
+    themeParams
+} from '@telegram-apps/sdk-svelte'
 import {session} from './stores.svelte'
 
 export async function initSDK() {
     try {
         await init()
-
-        if (miniApp.ready.isAvailable()) {
-            await miniApp.ready()
-            session.update(state => ({...state, loaded: true}))
-        } else {
+        if (!miniApp.ready.isAvailable()) {
             console.log('❌ Mini App is not available')
+            return
         }
+
+        await miniApp.ready()
+        if (miniApp.bindCssVars.isAvailable()) miniApp.bindCssVars()
+        if (themeParams.mountSync.isAvailable()) themeParams.mountSync()
+        if (themeParams.bindCssVars.isAvailable()) themeParams.bindCssVars()
+        if (viewport.mount.isAvailable()) viewport.mount()
+        if (viewport.bindCssVars.isAvailable()) viewport.bindCssVars()
+        if (viewport.isMounted()) viewport.expand()
+        if (mainButton.mount.isAvailable()) mainButton.mount()
+        session.update(state => ({...state, loaded: true}))
+        initData.restore()
     } catch (error) {
         console.error('❌ Telegram SDK initialization error:', error)
         session.update(state => ({...state, notAvailable: true}))
