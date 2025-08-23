@@ -10,7 +10,7 @@ const config = {
             src: 'frontend' // TODO: remove this after removing old src
         },
         output: {
-            bundleStrategy: 'single'
+            bundleStrategy: 'inline'
         }
     }
 }

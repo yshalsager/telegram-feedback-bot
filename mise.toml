@@ -33,8 +33,9 @@ run = 'uv run manage.py compilemessages'
 # Granian
 GRANIAN_RELOAD = 0
 GRANIAN_RELOAD_IGNORE_PATTERNS = '(?<!\.py)$'
-GRANIAN_PORT = 6000
+GRANIAN_PORT = 8001
 GRANIAN_WORKERS = 4
+GRANIAN_STATIC_PATH_MOUNT = 'build'
 
 # Postgres
 POSTGRES_DB = 'feedback_bot'

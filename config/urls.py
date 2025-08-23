@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
-from django.urls import path
+from django.urls import include, path
 from ninja import NinjaAPI
 from ninja.errors import HttpError
 from ninja.renderers import BaseRenderer
@@ -47,4 +47,5 @@ api.add_router('webhook', 'feedback_bot.api.webhooks.router')
 
 urlpatterns = [
     path('api/', api.urls),
+    path('', include('feedback_bot.urls')),
 ]
