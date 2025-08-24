@@ -34,11 +34,11 @@ def validate_mini_app_init_data(init_data: str, bot_token: str) -> tuple[bool, d
         logger.error('Hash not found in initData.')
         return False, {}
 
-    # auth_date must not be older than 1 hour
+    # auth_date must not be older than 1 day
     if datetime.now(tz=UTC) - datetime.fromtimestamp(
         float(parsed_data.get('auth_date', 0)), tz=UTC
-    ) > timedelta(hours=1):
-        logger.error('Auth date is older than 1 hour.')
+    ) > timedelta(days=1):
+        logger.error('Auth date is older than 1 day.')
         return False, {}
 
     # The hash from Telegram is the one we need to compare against.
