@@ -29,31 +29,34 @@ run = 'uv run manage.py makemessages -a'
 [tasks.i18n_compile]
 run = 'uv run manage.py compilemessages'
 
+[tasks.update_dependencies]
+run = ['uv lock -U', 'uv sync', 'pnpm dlx npm-check-updates -u', 'pnpm install']
+
 [env]
 # Granian
+GRANIAN_PORT = 8001
 GRANIAN_RELOAD = 0
 GRANIAN_RELOAD_IGNORE_PATTERNS = '(?<!\.py)$'
-GRANIAN_PORT = 8001
-GRANIAN_WORKERS = 4
 GRANIAN_STATIC_PATH_MOUNT = 'build'
+GRANIAN_WORKERS = 4
 
 # Postgres
 POSTGRES_DB = 'feedback_bot'
-POSTGRES_USER = 'feedback_bot_user'
 POSTGRES_PASSWORD = 'SECRET_KEY'
 POSTGRES_PORT = 5432
+POSTGRES_USER = 'feedback_bot_user'
 
 # Django
-DJANGO_SETTINGS_MODULE = 'config.settings'
 DJANGO_ALLOWED_HOSTS = 'localhost 127.0.0.1 [::1]'
-DJANGO_SECRET_KEY = ''
 DJANGO_DEBUG = false
+DJANGO_SECRET_KEY = ''
+DJANGO_SETTINGS_MODULE = 'config.settings'
 DJANGO_USE_SQLITE = false
 
 # Telegram
 TELEGRAM_BUILDER_BOT_WEBHOOK_NAME = 'telegram'
-TELEGRAM_BUILDER_BOT_WEBHOOK_URL = ''
 TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET = 'changeme'
+TELEGRAM_BUILDER_BOT_WEBHOOK_URL = ''
 # Token from https://telegram.me/BotFather
 TELEGRAM_BUILDER_BOT_TOKEN = '0000000000:aaaaaaaaaaaaaaaaaaaa'
 # Telegram account IDs that will have administrator permissions of the bot
