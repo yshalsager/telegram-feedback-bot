@@ -5,6 +5,7 @@ import {session} from '$lib/stores.svelte.js'
 import {getInitData, initSDK} from '$lib/telegram.js'
 import {m} from '$lib/paraglide/messages.js'
 import {csrf_token, validate_user} from '$lib/api.js'
+import Navbar from '~/components/navbar.svelte'
 
 let {children} = $props()
 
@@ -29,7 +30,12 @@ async function initialize() {
 </svelte:head>
 
 {#if $session.loaded && !$session.notAvailable && $session.isValid === true}
-    {@render children?.()}
+    <div class="min-h-screen bg-background">
+        <Navbar />
+        <main class="container mx-auto px-4 py-6">
+            {@render children?.()}
+        </main>
+    </div>
 {/if}
 
 {#if $session.notAvailable}

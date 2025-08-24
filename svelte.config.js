@@ -6,6 +6,10 @@ const config = {
         adapter: adapter({
             fallback: 'index.html' // Enable SPA routing
         }),
+        alias: {
+            '~': './frontend',
+            $lib: './frontend/lib'
+        },
         files: {
             src: 'frontend' // TODO: remove this after removing old src
         },

@@ -23,5 +23,11 @@ export default [
     {
         files: ['**/*.svelte', '**/*.svelte.js'],
         languageOptions: {parserOptions: {svelteConfig}}
+    },
+    {
+        files: ['**/*.js'],
+        rules: {
+            'no-explicit-any': 'off'
+        }
     }
 ]
