@@ -14,7 +14,7 @@ async function initialize() {
     if (data) session.update(state => ({...state, data}))
     const csrfToken = await csrf_token()
     session.update(state => ({...state, csrfToken}))
-    const isValidSession = data && data.raw && (await validate_user(data.raw))
+    const isValidSession = data && data.raw && (await validate_user())
     session.update(state => ({...state, isValid: isValidSession || false}))
 }
 

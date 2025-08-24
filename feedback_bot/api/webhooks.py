@@ -5,17 +5,39 @@ from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from ninja import Router
+from ninja.errors import AuthenticationError
+from ninja.security.apikey import APIKeyHeader
 from telegram import Update
 from telegram.ext import Application
 
 from feedback_bot.models import Bot
 from feedback_bot.telegram.bot import WebhookUpdate
 
+
+class TelegramSecretTokenAuth(APIKeyHeader):
+    """Custom authentication class for Telegram webhook secret token validation."""
+
+    param_name = 'X-Telegram-Bot-Api-Secret-Token'
+
+    def authenticate(self, request: HttpRequest, api_key: str) -> bool:
+        """Validate the Telegram secret token."""
+        if api_key != settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET:
+            raise AuthenticationError('Invalid secret token')
+
+        return True
+
+
+telegram_auth = TelegramSecretTokenAuth()
+
 router = Router()
 logger = logging.getLogger(__name__)
 
 
-@router.post(f'/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}', url_name='telegram_webhook')
+@router.post(
+    f'/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}',
+    url_name='telegram_webhook',
+    auth=telegram_auth,
+)
 @csrf_exempt
 async def telegram_webhook(request: HttpRequest) -> HttpResponse:
     """Handle incoming Telegram updates by putting them into the `update_queue`"""

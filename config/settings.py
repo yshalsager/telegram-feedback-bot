@@ -44,7 +44,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_asgi_lifespan.middleware.LifespanStateMiddleware',  # for passing ptb application to views
-    'feedback_bot.middleware.TelegramSecretTokenMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
