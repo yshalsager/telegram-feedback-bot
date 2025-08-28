@@ -4,18 +4,19 @@ from dataclasses import dataclass
 from typing import cast
 
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 from django_asgi_lifespan.types import LifespanManager
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, WebAppInfo
+from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
     CallbackContext,
-    CommandHandler,
     ContextTypes,
     ExtBot,
     TypeHandler,
 )
+
+from feedback_bot.telegram.builder.modules import ALL_MODULES
+from feedback_bot.telegram.utils.modules_loader import load_modules
 
 logging.getLogger('httpx').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
@@ -46,36 +47,6 @@ class CustomContext(CallbackContext[ExtBot, dict, dict, dict]):
         return cast(CustomContext, super().from_update(update, application))
 
 
-async def start(update: Update, context: CustomContext) -> None:
-    """Display a message with instructions on how to use this bot."""
-    # payload_url = html.escape(
-    #     f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/submitpayload?user_id=<your user id>&payload=<payload>'
-    # )
-    # text = (
-    #     f'To check if the bot is still running, call <code>{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/healthcheck</code>.\n\n'
-    #     f'To post a custom update, call <code>{payload_url}</code>.'
-    # )
-    # logger.info(f'Language: {get_language_info(update.message.from_user.language_code)}')
-    # activate(update.message.from_user.language_code)
-    # activate('ar')
-    message = _('welcome')
-    keyboard = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton(f'{_("add_bot")}', callback_data='add_bot')],
-            [InlineKeyboardButton(f'{_("manage_bots")}', callback_data='manage_bots')],
-            [InlineKeyboardButton(f'{_("manage_settings")}', callback_data='manage_settings')],
-            [
-                InlineKeyboardButton(
-                    'Open Mini App',
-                    web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/'),
-                )
-            ],
-        ]
-    )
-
-    await update.message.reply_text(str(message), reply_markup=keyboard)
-
-
 async def webhook_update(update: WebhookUpdate, context: CustomContext) -> None:
     """Handle custom updates."""
     chat_member = await context.bot.get_chat_member(chat_id=update.user_id, user_id=update.user_id)
@@ -102,7 +73,7 @@ ptb_application = (
     .build()
 )
 
-ptb_application.add_handler(CommandHandler('start', start))
+
 ptb_application.add_handler(TypeHandler(type=WebhookUpdate, callback=webhook_update))
 
 
@@ -112,6 +83,9 @@ async def ptb_lifespan_manager() -> LifespanManager:
     state = {'ptb_application': ptb_application}
 
     try:
+        for module in load_modules(ALL_MODULES, 'feedback_bot.telegram.builder'):
+            if hasattr(module, 'HANDLERS'):
+                ptb_application.add_handlers(module.HANDLERS)
         async with ptb_application:
             await ptb_application.start()
             await ptb_application.bot.set_webhook(

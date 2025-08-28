@@ -17,3 +17,7 @@ async def create_user(user_data: dict[str, Any]) -> tuple[User, bool]:
         },
     )
     return user, created
+
+
+def get_whitelist_users() -> list[int]:
+    return list(User.objects.filter(is_whitelisted=True).values_list('telegram_id', flat=True))
