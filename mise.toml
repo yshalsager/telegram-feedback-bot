@@ -90,5 +90,10 @@ TELEGRAM_LANGUAGES = 'en ar'
 # Vite
 VITE_PORT = 8000
 
+# SvelteKit 
+# Development mode
+PUBLIC_DEBUG = true
+PUBLIC_TELEGRAM_USER_ID = 1
+
 [env.mise]
 file = '.env'

@@ -6,6 +6,7 @@ import {getInitData, initSDK} from '$lib/telegram.js'
 import {m} from '$lib/paraglide/messages.js'
 import {csrf_token, validate_user} from '$lib/api.js'
 import Navbar from '~/components/navbar.svelte'
+import {mockEnvInDev} from '$lib/telegram_debug.js'
 
 let {children} = $props()
 
@@ -20,6 +21,7 @@ async function initialize() {
 }
 
 ;(async () => {
+    mockEnvInDev()
     await initialize()
 })()
 </script>
