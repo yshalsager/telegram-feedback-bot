@@ -5,8 +5,13 @@ node = "24"
 python = '3.13'
 
 [tasks.default]
-depends = ['migrate']
+depends = ['migrate', 'api-dev', 'client-dev']
+
+[tasks.api-dev]
 run = 'uv run granian --interface asgi config.asgi:application'
+
+[tasks.client-dev]
+run = 'pnpm dev'
 
 [tasks.migrate]
 run = 'uv run manage.py migrate'
