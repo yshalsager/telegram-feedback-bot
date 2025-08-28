@@ -11,6 +11,15 @@ run = 'uv run granian --interface asgi config.asgi:application'
 [tasks.migrate]
 run = 'uv run manage.py migrate'
 
+[tasks.reset-migrations]
+run = [
+  'uv run manage.py migrate feedback_bot zero',
+  'rm -rf feedback_bot/migrations/0*.py',
+  'rm -rf feedback_bot/migrations/__pycache__',
+  'uv run manage.py makemigrations',
+  'uv run manage.py migrate',
+]
+
 [tasks.generate-encryption-key]
 run = 'uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"'
 
