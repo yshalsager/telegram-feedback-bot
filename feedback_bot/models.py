@@ -2,15 +2,21 @@ import uuid
 
 from django.db import models
 
-from feedback_bot.utils.cryptography import decrypt_token, encrypt_token
-
-# TODO: complete the models with old code
+from feedback_bot.telegram.utils.cryptography import decrypt_token, encrypt_token
 
 
-class User(models.Model):
+class TimestampedModel(models.Model):
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class User(TimestampedModel):
     """
-    Represents a user of the main builder bot (@BotFather-like interface).
-    This model consolidates the User and Whitelist concepts from telegram-feedback-bot.
+    Represents a user of the main builder bot.
     """
 
     telegram_id = models.BigIntegerField(unique=True, primary_key=True)
@@ -18,13 +24,12 @@ class User(models.Model):
     language_code = models.CharField(max_length=10, default='en')
     is_whitelisted = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f'@{self.username}' if self.username else str(self.telegram_id)
 
 
-class Bot(models.Model):
+class Bot(TimestampedModel):
     """
     The central model representing each feedback bot created by a User.
     This merges concepts from telegram-feedback-bot's Bot model and olgram's Bot model.
@@ -65,7 +70,6 @@ class Bot(models.Model):
     )
 
     enabled = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f'@{self.username}'
@@ -127,7 +131,7 @@ class BotStats(models.Model):
         return f'Stats for @{self.bot.username}'
 
 
-class BannedUser(models.Model):
+class BannedUser(TimestampedModel):
     """
     A user banned from a specific bot. Inspired by olgram.
     """
