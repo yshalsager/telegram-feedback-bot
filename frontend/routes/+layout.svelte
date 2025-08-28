@@ -29,7 +29,7 @@ async function initialize() {
     <title>{m.app_name()}</title>
 </svelte:head>
 
-{#if $session.loaded && !$session.notAvailable && $session.isValid === true}
+{#if $session.loaded && $session.available && $session.isValid === true}
     <div class="min-h-screen bg-background">
         <Navbar />
         <main class="container mx-auto px-4 py-6">
@@ -38,7 +38,7 @@ async function initialize() {
     </div>
 {/if}
 
-{#if $session.notAvailable}
+{#if !$session.available}
     <div class="flex h-screen flex-col items-center justify-center">
         <h1 class="text-2xl font-bold">{m.please_open_in_telegram()}</h1>
         <p class="mt-4 text-sm text-gray-500">

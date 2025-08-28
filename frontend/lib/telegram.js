@@ -29,7 +29,7 @@ export async function initSDK() {
         initData.restore()
     } catch (error) {
         console.error('❌ Telegram SDK initialization error:', error)
-        session.update(state => ({...state, notAvailable: true}))
+        session.update(state => ({...state, available: false}))
     }
 }
 
