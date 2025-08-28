@@ -7,6 +7,7 @@ from ninja import Router
 from ninja.errors import AuthenticationError
 from ninja.security import HttpBearer
 
+from feedback_bot.telegram.builder.crud import create_user
 from feedback_bot.telegram.utils.mini_app import validate_mini_app_init_data
 
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ class TelegramMiniAppAuth(HttpBearer):
             raise AuthenticationError('Invalid Telegram Mini App data')
 
         logger.info(f'Successfully authenticated user: {user_data.get("username")}')
+        await create_user(user_data)
         return user_data
 
 
