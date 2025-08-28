@@ -6,7 +6,6 @@ from feedback_bot.telegram.utils.cryptography import decrypt_token, encrypt_toke
 
 
 class TimestampedModel(models.Model):
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

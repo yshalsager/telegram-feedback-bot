@@ -7,7 +7,7 @@ from ninja import Router
 from ninja.errors import AuthenticationError
 from ninja.security import HttpBearer
 
-from feedback_bot.utils.telegram import validate_mini_app_init_data
+from feedback_bot.telegram.utils.mini_app import validate_mini_app_init_data
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class TelegramMiniAppAuth(HttpBearer):
     """Custom authentication class for Telegram Mini App validation using Bearer token."""
 
-    def authenticate(self, request: HttpRequest, token: str) -> dict[str, Any]:
+    async def authenticate(self, request: HttpRequest, token: str) -> dict[str, Any]:
         """Validate the Telegram Mini App init data from the Bearer token.
 
         The token should contain the Telegram Mini App init data.
