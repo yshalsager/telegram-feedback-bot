@@ -9,7 +9,21 @@ import orjson
 logger = logging.getLogger(__name__)
 
 
-def validate_mini_app_init_data(init_data: str, bot_token: str) -> tuple[bool, dict]:
+def parse_init_data(init_data: str) -> dict:
+    """
+    Parses the initData string received from a Telegram Mini App.
+    """
+    try:
+        return {
+            key: unquote(value)
+            for key, value in (item.split('=', 1) for item in init_data.split('&'))
+        }
+    except ValueError:
+        logger.error('Error parsing initData.')
+        return {}
+
+
+def validate_mini_app_init_data(parsed_data: dict[str, str], bot_token: str) -> tuple[bool, dict]:
     """
     Validates the initData string received from a Telegram Mini App.
 
@@ -21,15 +35,6 @@ def validate_mini_app_init_data(init_data: str, bot_token: str) -> tuple[bool, d
         A tuple containing a boolean indicating if the data is valid,
         and a dictionary with the parsed user data if valid.
     """
-    try:
-        parsed_data = {
-            key: unquote(value)
-            for key, value in (item.split('=', 1) for item in init_data.split('&'))
-        }
-    except ValueError:
-        logger.error('Error parsing initData.')
-        return False, {}
-
     if 'hash' not in parsed_data:
         logger.error('Hash not found in initData.')
         return False, {}

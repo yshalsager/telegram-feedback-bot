@@ -1,14 +1,15 @@
 import logging
-from typing import Any
+from typing import Any, cast
 
+import orjson
 from django.conf import settings
 from django.http import HttpRequest
 from ninja import Router
 from ninja.errors import AuthenticationError
 from ninja.security import HttpBearer
 
-from feedback_bot.telegram.builder.crud import create_user
-from feedback_bot.telegram.utils.mini_app import validate_mini_app_init_data
+from feedback_bot.telegram.builder.crud import user_is_whitelisted
+from feedback_bot.telegram.utils.mini_app import parse_init_data, validate_mini_app_init_data
 
 logger = logging.getLogger(__name__)
 
@@ -26,16 +27,27 @@ class TelegramMiniAppAuth(HttpBearer):
 
         # The token contains the init data for Telegram Mini App
         init_data = token
+        admins = list(settings.TELEGRAM_BUILDER_BOT_ADMINS)
+        parsed_data = parse_init_data(init_data)
+
+        if (
+            settings.DEBUG
+            and (user_data := orjson.loads(parsed_data.get('user', '{}')))
+            and user_data.get('id') in admins
+        ):
+            return cast(dict[str, Any], user_data)
 
         is_valid, user_data = validate_mini_app_init_data(
-            init_data, settings.TELEGRAM_BUILDER_BOT_TOKEN
+            parsed_data, settings.TELEGRAM_BUILDER_BOT_TOKEN
         )
 
         if not is_valid:
             raise AuthenticationError('Invalid Telegram Mini App data')
 
+        if not await user_is_whitelisted(user_data.get('id', 1)):
+            raise AuthenticationError('User is not whitelisted')
+
         logger.info(f'Successfully authenticated user: {user_data.get("username")}')
-        await create_user(user_data)
         return user_data
 
 
