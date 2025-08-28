@@ -9,11 +9,11 @@ license = { text = "MIT" }
 requires-python = ">=3.13"
 dependencies = [
     "cryptography>=45.0.6",
-    "django>=5.2,<6",
+    "django>=5.2.5,<6",
     "django-asgi-lifespan>=0.4.1",
     "django-ninja>=1.4.3",
-    "granian[reload,rloop]>=2.5.0",
-    "orjson>=3.10.18,<4",
+    "granian[reload,rloop]>=2.5.1",
+    "orjson>=3.11.3,<4",
     "psycopg[binary]>=3.2.9,<4",
     "python-telegram-bot>=22.3",
     "regex>=2025.7.34",
@@ -21,8 +21,8 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff>=0.12.10",
-    "pre-commit>=4.2.0",
+    "ruff>=0.12.11",
+    "pre-commit>=4.3.0",
     "mypy>=1.17.1",
     "ipython>=9.4.0",
     "rich>=14.1.0",
