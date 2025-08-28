@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import {sveltekit} from '@sveltejs/kit/vite'
 import {defineConfig} from 'vite'
 import path from 'path'
+import {compression, defineAlgorithm} from 'vite-plugin-compression2'
 
 export default defineConfig({
     plugins: [
@@ -11,11 +12,15 @@ export default defineConfig({
         paraglideVitePlugin({
             project: './project.inlang',
             outdir: './frontend/lib/paraglide'
+        }),
+        compression({
+            algorithms: ['gzip', 'brotliCompress', defineAlgorithm('deflate', {level: 9})],
+            threshold: 1000 // Only compress files larger than 1KB
         })
     ],
-		resolve: {
-			alias: [{find: '~', replacement: path.resolve('frontend')}]
-	},
+    resolve: {
+        alias: [{find: '~', replacement: path.resolve('frontend')}]
+    },
     server: {
         allowedHosts: [
             'localhost',
@@ -35,7 +40,7 @@ export default defineConfig({
                 target: `http://localhost:${process.env.GRANIAN_PORT}`,
                 changeOrigin: true,
                 secure: true
-            },
+            }
         }
     },
     test: {
