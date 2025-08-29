@@ -1,6 +1,5 @@
 <script lang="ts">
 import '../app.css'
-// import favicon from '$lib/assets/favicon.svg';
 import {session} from '$lib/stores.svelte.js'
 import {getInitData, initSDK} from '$lib/telegram.js'
 import {m} from '$lib/paraglide/messages.js'
@@ -25,7 +24,6 @@ async function initialize() {
 </script>
 
 <svelte:head>
-    <!-- <link rel="icon" href={favicon} /> -->
     <title>{m.app_name()}</title>
 </svelte:head>
 
