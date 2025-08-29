@@ -22,7 +22,12 @@ SVELTEKIT_BUILD_DIR = BASE_DIR / 'build'
 SECRET_KEY = getenv('DJANGO_SECRET_KEY', '')
 DEBUG = bool(getenv('DJANGO_DEBUG', ''))
 ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS', '').split()
-CSRF_TRUSTED_ORIGINS = [f'https://{host}' for host in ALLOWED_HOSTS]
+CSRF_TRUSTED_ORIGINS = [
+    f'http://{host}:{getenv("VITE_PORT", "8000")}'
+    if host in ('localhost', '127.0.0.1', '[::1]')
+    else f'https://{host}'
+    for host in ALLOWED_HOSTS
+]
 
 # Application definition
 INSTALLED_APPS = [
