@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 
 @router.post(
-    f'/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}',
+    f'/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_PATH}',
     url_name='telegram_webhook',
     auth=telegram_auth,
 )

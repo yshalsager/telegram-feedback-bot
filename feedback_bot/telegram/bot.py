@@ -89,12 +89,12 @@ async def ptb_lifespan_manager() -> LifespanManager:
         async with ptb_application:
             await ptb_application.start()
             await ptb_application.bot.set_webhook(
-                url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}',
+                url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_PATH}',
                 secret_token=settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET or None,
                 allowed_updates=Update.ALL_TYPES,
             )
             # logger.info(
-            #     f'Webhook for main bot set to {settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_NAME}'
+            #     f'Webhook for main bot set to {settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_PATH}'
             # )
             logger.info('ASGI Lifespan: PTB application started and webhook is set.')
 
