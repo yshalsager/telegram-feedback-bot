@@ -5,15 +5,18 @@ import {
     popup,
     viewport,
     mainButton,
+    settingsButton,
+    backButton,
     themeParams,
-    isTMA,
+    isTMA
 } from '@telegram-apps/sdk-svelte'
 import {session} from './stores.svelte'
 import {mockEnvInDev} from '$lib/telegram_debug.js'
+import {goto} from '$app/navigation'
 
 export async function initSDK() {
     try {
-        if (!await isTMA('complete')) mockEnvInDev()
+        if (!(await isTMA('complete'))) mockEnvInDev()
         await init()
         if (!miniApp.ready.isAvailable()) {
             console.log('❌ Mini App is not available')
@@ -27,6 +30,16 @@ export async function initSDK() {
         if (viewport.bindCssVars.isAvailable()) viewport.bindCssVars()
         if (viewport.isMounted()) viewport.expand()
         if (mainButton.mount.isAvailable()) mainButton.mount()
+        if (settingsButton.isSupported() && settingsButton.mount.isAvailable()) {
+            settingsButton.mount()
+            settingsButton.show()
+            settingsButton.onClick(() => goto('/settings'))
+        }
+        if (backButton.isSupported() && backButton.mount.isAvailable()) {
+            backButton.mount()
+            backButton.show()
+            backButton.onClick(() => goto('../'))
+        }
         session.update(state => ({...state, loaded: true}))
         initData.restore()
     } catch (error) {
