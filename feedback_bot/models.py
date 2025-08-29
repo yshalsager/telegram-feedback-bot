@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from feedback_bot.telegram.utils.cryptography import decrypt_token, encrypt_token
+from feedback_bot.telegram.utils.cryptography import decrypt_token, encrypt_token, fernet_telegram
 
 
 class TimestampedModel(models.Model):
@@ -52,11 +52,11 @@ class Bot(TimestampedModel):
 
     @property
     def token(self) -> str:
-        return decrypt_token(self._token)
+        return decrypt_token(self._token, fernet_telegram)
 
     @token.setter
     def token(self, raw_token: str) -> None:
-        self._token = encrypt_token(raw_token)
+        self._token = encrypt_token(raw_token, fernet_telegram)
 
     # The chat where feedback messages are forwarded (can be a group or the owner's private chat)
     forward_chat_id = models.BigIntegerField()

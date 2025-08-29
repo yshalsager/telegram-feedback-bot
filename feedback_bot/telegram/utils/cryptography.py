@@ -1,26 +1,29 @@
+from functools import lru_cache
 from typing import cast
 
 from cryptography.fernet import Fernet
 from django.conf import settings
 
-_fernet = Fernet(settings.TELEGRAM_ENCRYPTION_KEY.encode())
+fernet_telegram = Fernet(settings.TELEGRAM_ENCRYPTION_KEY.encode())
 
 
-def encrypt_token(token: str) -> str:
+@lru_cache
+def encrypt_token(token: str, encryptor: Fernet) -> str:
     """
     Encrypt a token using Fernet for production-grade security.
     """
     if not token:
         return ''
-    encrypted_bytes = _fernet.encrypt(token.encode())
+    encrypted_bytes = encryptor.encrypt(token.encode())
     return cast(str, encrypted_bytes.decode())
 
 
-def decrypt_token(encrypted_token: str) -> str:
+@lru_cache
+def decrypt_token(encrypted_token: str, decryptor: Fernet) -> str:
     """
     Decrypt a Fernet-encrypted token.
     """
     if not encrypted_token:
         return ''
-    decrypted_bytes = _fernet.decrypt(encrypted_token.encode())
+    decrypted_bytes = decryptor.decrypt(encrypted_token.encode())
     return cast(str, decrypted_bytes.decode())
