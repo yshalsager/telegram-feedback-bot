@@ -35,3 +35,18 @@ export async function validate_user() {
     const data = await response.json()
     return Boolean(data.status === 'success' && data.user)
 }
+
+/**
+ * Set the language of the user
+ * @param {string} language - The language to set
+ * @returns {Promise<boolean>} - True if the language was set successfully, false otherwise
+ */
+export async function set_language(language) {
+    const response = await fetch('/api/set_language/', {
+        method: 'POST',
+        headers: get_authorization_headers(),
+        body: JSON.stringify({language})
+    })
+    const data = await response.json()
+    return Boolean(data.status === 'success' && data.user?.language_code === language)
+}

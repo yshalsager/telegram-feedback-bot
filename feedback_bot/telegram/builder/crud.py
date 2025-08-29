@@ -19,8 +19,8 @@ async def create_user(user_data: dict[str, Any]) -> tuple[User, bool]:
     return user, created
 
 
-async def user_is_whitelisted(user_id: int) -> bool:
-    return bool(await User.objects.filter(telegram_id=user_id, is_whitelisted=True).aexists())
+async def user_is_whitelisted(user_id: int) -> User | None:
+    return await User.objects.filter(telegram_id=user_id, is_whitelisted=True).afirst()
 
 
 async def get_whitelist_users() -> list[int]:
@@ -30,3 +30,7 @@ async def get_whitelist_users() -> list[int]:
             'telegram_id', flat=True
         )
     ]
+
+
+async def update_user_language(user_id: int, language_code: str) -> None:
+    await User.objects.filter(telegram_id=user_id).aupdate(language_code=language_code)

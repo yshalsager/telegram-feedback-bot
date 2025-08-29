@@ -8,5 +8,7 @@
     "user_id": "User ID",
     "language": "Language",
     "profile_picture": "Profile Picture",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "failed_to_set_language": "Failed to set language",
+    "please_try_again_later": "Please try again later"
 }

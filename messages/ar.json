@@ -8,5 +8,7 @@
     "user_id": "معرف المستخدم",
     "language": "اللغة",
     "profile_picture": "صورة المستخدم",
-    "unknown": "غير معروف"
+    "unknown": "غير معروف",
+    "failed_to_set_language": "تعذر تغيير اللغة",
+    "please_try_again_later": "حاول مرة أخرى لاحقاً"
 }

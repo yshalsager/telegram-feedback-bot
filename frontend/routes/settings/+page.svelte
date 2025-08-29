@@ -1,11 +1,13 @@
 <script>
-import {locales, getLocale, setLocale} from '$lib/paraglide/runtime'
+import {locales, getLocale, setLocale} from '$lib/paraglide/runtime.js'
 import {session} from '$lib/stores.svelte.js'
 import * as Card from '$lib/components/ui/card/index.js'
 import * as Avatar from '$lib/components/ui/avatar/index.js'
 import {Separator} from '$lib/components/ui/separator/index.js'
 import {Hash, Globe} from '@lucide/svelte/icons'
 import {m} from '$lib/paraglide/messages.js'
+import {set_language} from '$lib/api.js'
+import {showNotification} from '$lib/telegram.js'
 
 let currentLocale = $state(getLocale())
 const languageNameFormatter = new Intl.DisplayNames([currentLocale], {type: 'language'})
@@ -116,7 +118,16 @@ function getUserInitials(firstName, lastName, username) {
                         currentLocale
                             ? 'bg-primary/25'
                             : ''}"
-                        onclick={() => setLocale(locale.locale)}
+                        onclick={async () => {
+                            if (await set_language(locale.locale)) {
+                                setLocale(locale.locale)
+                            } else {
+                                showNotification(
+                                    m.failed_to_set_language(),
+                                    m.please_try_again_later()
+                                )
+                            }
+                        }}
                     >
                         <span class="font-medium">{locale.name}</span>
                         {#if locale.locale === currentLocale}

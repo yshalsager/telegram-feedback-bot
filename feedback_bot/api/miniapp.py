@@ -1,14 +1,14 @@
 import logging
-from typing import Any, cast
+from typing import Any, Literal, cast
 
 import orjson
 from django.conf import settings
 from django.http import HttpRequest
-from ninja import Router
+from ninja import Field, Router, Schema
 from ninja.errors import AuthenticationError
 from ninja.security import HttpBearer
 
-from feedback_bot.telegram.builder.crud import user_is_whitelisted
+from feedback_bot.telegram.builder.crud import update_user_language, user_is_whitelisted
 from feedback_bot.telegram.utils.mini_app import parse_init_data, validate_mini_app_init_data
 
 logger = logging.getLogger(__name__)
@@ -44,8 +44,11 @@ class TelegramMiniAppAuth(HttpBearer):
         if not is_valid:
             raise AuthenticationError('Invalid Telegram Mini App data')
 
-        if not await user_is_whitelisted(user_data.get('id', 1)):
+        if not (user := await user_is_whitelisted(user_data.get('id', 1))):
             raise AuthenticationError('User is not whitelisted')
+
+        if user_data.get('language_code') != user.language_code:
+            await update_user_language(user.id, user_data.get('language_code'))
 
         logger.info(f'Successfully authenticated user: {user_data.get("username")}')
         return user_data
@@ -72,3 +75,24 @@ async def validate_user(request: HttpRequest) -> dict[str, Any]:
     with the validated user data from the Telegram Mini App.
     """
     return {'status': 'success', 'message': 'User successfully validated', 'user': request.auth}
+
+
+class LanguageIn(Schema):
+    language: Literal[*settings.TELEGRAM_LANGUAGES] = Field(..., description='The language to set')
+
+
+@router.post(
+    '/set_language/',
+    auth=miniapp_auth,
+    response={
+        200: dict[str, Any],
+        401: dict[str, str],
+    },
+    url_name='set_language',
+)
+async def set_language(request: HttpRequest, payload: LanguageIn) -> dict[str, Any]:
+    """Set language endpoint - authentication is handled by TelegramMiniAppAuth."""
+    user_data = request.auth
+    user_data['language_code'] = payload.language
+    await update_user_language(user_data['id'], payload.language)
+    return {'status': 'success', 'message': 'Language set successfully', 'user': user_data}
