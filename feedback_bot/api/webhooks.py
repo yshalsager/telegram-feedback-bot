@@ -13,6 +13,8 @@ from telegram.ext import Application
 from feedback_bot.models import Bot
 from feedback_bot.telegram.bot import WebhookUpdate
 
+logger = logging.getLogger(__name__)
+
 
 class TelegramSecretTokenAuth(APIKeyHeader):
     """Custom authentication class for Telegram webhook secret token validation."""
@@ -28,9 +30,7 @@ class TelegramSecretTokenAuth(APIKeyHeader):
 
 
 telegram_auth = TelegramSecretTokenAuth()
-
 router = Router()
-logger = logging.getLogger(__name__)
 
 
 @router.post(
