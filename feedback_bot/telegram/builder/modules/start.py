@@ -5,13 +5,12 @@ from telegram.ext import CommandHandler
 
 from feedback_bot.telegram.bot import CustomContext
 from feedback_bot.telegram.builder.crud import create_user
-from feedback_bot.telegram.builder.filters import is_whitelisted_user
+from feedback_bot.telegram.builder.filters import whitelisted_only
 
 
+@whitelisted_only
 async def start(update: Update, context: CustomContext) -> None:
     """Display a message with instructions on how to use this bot."""
-    if not await is_whitelisted_user(update.message):
-        return
     assert update.message.from_user is not None
     await create_user(update.message.from_user.to_dict())
     # payload_url = html.escape(
