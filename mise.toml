@@ -92,8 +92,7 @@ VITE_PORT = 8000
 
 # SvelteKit 
 # Development mode
-PUBLIC_DEBUG = true
-PUBLIC_TELEGRAM_USER_ID = 1
+PUBLIC_DEBUG = false
 
 [env.mise]
 file = '.env'

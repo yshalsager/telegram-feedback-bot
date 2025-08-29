@@ -5,18 +5,20 @@ import {
     popup,
     viewport,
     mainButton,
-    themeParams
+    themeParams,
+    isTMA,
 } from '@telegram-apps/sdk-svelte'
 import {session} from './stores.svelte'
+import {mockEnvInDev} from '$lib/telegram_debug.js'
 
 export async function initSDK() {
     try {
+        if (!await isTMA('complete')) mockEnvInDev()
         await init()
         if (!miniApp.ready.isAvailable()) {
             console.log('❌ Mini App is not available')
             return
         }
-
         await miniApp.ready()
         if (miniApp.bindCssVars.isAvailable()) miniApp.bindCssVars()
         if (themeParams.mountSync.isAvailable()) themeParams.mountSync()

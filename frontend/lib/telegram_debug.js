@@ -1,8 +1,17 @@
 import {env} from '$env/dynamic/public'
-import {mockTelegramEnv, emitEvent} from '@telegram-apps/sdk-svelte'
+import {mockTelegramEnv, emitEvent, setDebug} from '@telegram-apps/sdk-svelte'
+import eruda from 'eruda'
 
-const DEBUG = env.PUBLIC_DEBUG === 'true'
-const TELEGRAM_USER_ID = env.PUBLIC_TELEGRAM_USER_ID
+const DEBUG = env.PUBLIC_DEBUG === 'true' || false
+setDebug(DEBUG)
+
+if (DEBUG) {
+    eruda.init()
+    eruda.position({
+        x: window.innerWidth - 70,
+        y: 100
+    })
+}
 
 const noInsets = {
     left: 0,
@@ -39,12 +48,12 @@ export function mockEnvInDev() {
                 [
                     'user',
                     JSON.stringify({
-                        id: +TELEGRAM_USER_ID,
+                        id: 1,
                         first_name: 'Test',
                         last_name: 'Admin',
                         username: 'admin',
                         language_code: 'en',
-                        is_premium: true,
+                        is_premium: true
                     })
                 ],
                 ['hash', ''],
@@ -52,7 +61,7 @@ export function mockEnvInDev() {
                 ['auth_date', String(Math.floor(Date.now() / 1000))]
             ]),
             tgWebAppStartParam: 'debug',
-            tgWebAppVersion: '8',
+            tgWebAppVersion: '9',
             tgWebAppPlatform: 'tdesktop'
         },
         onEvent(e) {

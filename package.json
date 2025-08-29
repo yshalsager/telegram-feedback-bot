@@ -30,6 +30,7 @@
         "@vitest/browser": "^3.2.4",
         "bits-ui": "^2.9.4",
         "clsx": "^2.1.1",
+        "eruda": "^3.4.3",
         "eslint": "^9.34.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-svelte": "^3.11.0",
