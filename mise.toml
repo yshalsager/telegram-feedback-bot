@@ -1,6 +1,7 @@
 [tools]
 "aqua:astral-sh/uv" = 'latest'
 "aqua:pnpm/pnpm" = 'latest'
+lefthook = 'latest'
 node = "24"
 python = '3.13'
 
