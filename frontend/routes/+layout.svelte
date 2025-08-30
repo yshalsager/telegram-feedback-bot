@@ -1,9 +1,10 @@
 <script lang="ts">
-import '../app.css'
+import '~/app.css'
 import {session} from '$lib/stores.svelte.js'
 import {getInitData, initSDK} from '$lib/telegram.js'
 import {m} from '$lib/paraglide/messages.js'
 import {csrf_token, validate_user} from '$lib/api.js'
+import {setPageTransition} from '$lib/page_transition.js'
 
 let {children} = $props()
 
@@ -13,13 +14,15 @@ async function initialize() {
     if (data) session.update(state => ({...state, data}))
     const csrfToken = await csrf_token()
     session.update(state => ({...state, csrfToken}))
-    const isValidSession = data && data.raw && (await validate_user())
-    session.update(state => ({...state, isValid: isValidSession || false}))
+    const isValidSession = Boolean(data && data.raw && (await validate_user()))
+    session.update(state => ({...state, isValid: isValidSession}))
 }
 
 ;(async () => {
     await initialize()
 })()
+
+setPageTransition()
 </script>
 
 <svelte:head>
