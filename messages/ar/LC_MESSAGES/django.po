@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-22 13:19+0000\n"
+"POT-Creation-Date: 2025-08-30 21:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,18 +19,34 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: feedback_bot/telegram/bot.py:61
+#: feedback_bot/api/miniapp.py:147
+msgid "invalid_bot_token"
+msgstr "رمز البوت غير صالح، تحقق منه وحاول ومجددا"
+
+#: feedback_bot/api/miniapp.py:149
+msgid "unable_to_validate_bot_token"
+msgstr "تعذر التحقق من رمز البوت، تأكد منه وحاول مجددا"
+
+#: feedback_bot/api/miniapp.py:167
+msgid "cannot_add_builder_bot"
+msgstr "لا يمكنك إضافة صانع البوتات"
+
+#: feedback_bot/api/miniapp.py:171
+msgid "bot_already_exists"
+msgstr "البوت مضاف سابقا"
+
+#: feedback_bot/telegram/builder/modules/start.py:26
 msgid "welcome"
 msgstr "مرحبا بك في منشيء بوتات التغذية الراجعة 👋"
 
-#: feedback_bot/telegram/bot.py:64
+#: feedback_bot/telegram/builder/modules/start.py:29
 msgid "add_bot"
 msgstr "إضافة بوت جديد 🤖"
 
-#: feedback_bot/telegram/bot.py:65
+#: feedback_bot/telegram/builder/modules/start.py:30
 msgid "manage_bots"
 msgstr "⚙️ إدارة البوتات"
 
-#: feedback_bot/telegram/bot.py:66
+#: feedback_bot/telegram/builder/modules/start.py:31
 msgid "manage_settings"
 msgstr "🛠️ إدارة الإعدادات"

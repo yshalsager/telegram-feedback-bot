@@ -81,7 +81,7 @@ TELEGRAM_ADMIN_CHAT_ID = '-10000000000'
 # Group topic that will be used for bot logs
 TELEGRAM_LOG_TOPIC_ID = 1
 # Require admin approval to add new bot
-TELEGRAM_NEW_BOT_ADMIN_APPROVAL = "true"
+TELEGRAM_NEW_BOT_ADMIN_APPROVAL = true
 # Encryption key for storing feedback bots tokens
 # Generate with `mise r generate-encryption-key`
 TELEGRAM_ENCRYPTION_KEY = 'changeme'

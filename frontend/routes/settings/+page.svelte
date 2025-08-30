@@ -1,13 +1,13 @@
 <script>
-import {locales, getLocale, setLocale} from '$lib/paraglide/runtime.js'
-import {session} from '$lib/stores.svelte.js'
-import * as Card from '$lib/components/ui/card/index.js'
-import * as Avatar from '$lib/components/ui/avatar/index.js'
-import {Separator} from '$lib/components/ui/separator/index.js'
-import {Hash, Globe} from '@lucide/svelte/icons'
-import {m} from '$lib/paraglide/messages.js'
 import {set_language} from '$lib/api.js'
+import * as Avatar from '$lib/components/ui/avatar/index.js'
+import * as Card from '$lib/components/ui/card/index.js'
+import {Separator} from '$lib/components/ui/separator/index.js'
+import {m} from '$lib/paraglide/messages.js'
+import {getLocale, locales, setLocale} from '$lib/paraglide/runtime.js'
+import {session} from '$lib/stores.svelte.js'
 import {showNotification} from '$lib/telegram.js'
+import {Globe, Hash} from '@lucide/svelte/icons'
 
 let currentLocale = $state(getLocale())
 const languageNameFormatter = new Intl.DisplayNames([currentLocale], {type: 'language'})
@@ -124,7 +124,8 @@ function getUserInitials(firstName, lastName, username) {
                             } else {
                                 showNotification(
                                     m.failed_to_set_language(),
-                                    m.please_try_again_later()
+                                    m.please_try_again_later(),
+                                    [{id: 'language_error_close', type: 'close'}]
                                 )
                             }
                         }}

@@ -92,13 +92,14 @@ export function getInitData() {
  * Show a notification in the mini app
  * @param {string} title
  * @param {string} message
+ * @param {import('@telegram-apps/sdk-svelte').ShowPopupOptionsButton[]} [buttons] - Optional array of buttons. Defaults to [{type: 'close'}]
  */
-export function showNotification(title, message) {
+export function showNotification(title, message, buttons = [{type: 'close'}]) {
     try {
         popup.show({
             title,
-            message
-            // buttons: [{id: 'ok', type: 'ok'}]
+            message,
+            buttons
         })
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error)

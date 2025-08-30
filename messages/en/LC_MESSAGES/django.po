@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-22 13:19+0000\n"
+"POT-Creation-Date: 2025-08-30 21:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,18 +18,34 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: feedback_bot/telegram/bot.py:61
+#: feedback_bot/api/miniapp.py:147
+msgid "invalid_bot_token"
+msgstr "Invalid bot token. Please check your token and try again."
+
+#: feedback_bot/api/miniapp.py:149
+msgid "unable_to_validate_bot_token"
+msgstr "Unable to validate bot token. Please check your token format and try again."
+
+#: feedback_bot/api/miniapp.py:167
+msgid "cannot_add_builder_bot"
+msgstr "You cannot add the builder bot as a bot"
+
+#: feedback_bot/api/miniapp.py:171
+msgid "bot_already_exists"
+msgstr "Bot already exists"
+
+#: feedback_bot/telegram/builder/modules/start.py:26
 msgid "welcome"
 msgstr "👋 Welcome to Feedback bot builder."
 
-#: feedback_bot/telegram/bot.py:64
+#: feedback_bot/telegram/builder/modules/start.py:29
 msgid "add_bot"
 msgstr "🤖 Add new bot"
 
-#: feedback_bot/telegram/bot.py:65
+#: feedback_bot/telegram/builder/modules/start.py:30
 msgid "manage_bots"
 msgstr "⚙️ Manage bots"
 
-#: feedback_bot/telegram/bot.py:66
+#: feedback_bot/telegram/builder/modules/start.py:31
 msgid "manage_settings"
 msgstr "🛠️ Manage settings"

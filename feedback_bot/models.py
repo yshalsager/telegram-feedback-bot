@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 
 from feedback_bot.telegram.utils.cryptography import decrypt_token, encrypt_token, fernet_telegram
@@ -19,7 +20,7 @@ class User(TimestampedModel):
     """
 
     telegram_id = models.BigIntegerField(unique=True, primary_key=True)
-    username = models.CharField(max_length=255, null=True, blank=True)
+    username = models.CharField(max_length=32, null=True, blank=True)
     language_code = models.CharField(max_length=10, default='en')
     is_whitelisted = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
@@ -43,12 +44,12 @@ class Bot(TimestampedModel):
         help_text='UUID for webhook URL to avoid exposing tokens.',
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bots')
-    name = models.CharField(max_length=255)
-    username = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=64)
+    username = models.CharField(max_length=32, unique=True)
     telegram_id = models.BigIntegerField(unique=True)
 
     # Encrypted token storage
-    _token = models.CharField(max_length=255, db_column='token')
+    _token = models.CharField(unique=True, max_length=255, db_column='token')
 
     @property
     def token(self) -> str:
@@ -59,16 +60,18 @@ class Bot(TimestampedModel):
         self._token = encrypt_token(raw_token, fernet_telegram)
 
     # The chat where feedback messages are forwarded (can be a group or the owner's private chat)
-    forward_chat_id = models.BigIntegerField()
+    forward_chat_id = models.BigIntegerField(blank=True, null=True)
 
     # Settings (migrated from JSON to plain fields for easier querying)
-    start_message = models.TextField(default='Welcome! Send your feedback here.')
-    feedback_received_message = models.TextField(default='Thank you for your feedback!')
+    start_message = models.TextField(default='Welcome! Send your feedback here.', max_length=4096)
+    feedback_received_message = models.TextField(
+        default='Thank you for your feedback!', max_length=4096
+    )
     confirmations_on = models.BooleanField(
         default=True, help_text='Send confirmation messages to users.'
     )
 
-    enabled = models.BooleanField(default=True)
+    enabled = models.BooleanField(default=not settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL)
 
     def __str__(self) -> str:
         return f'@{self.username}'
