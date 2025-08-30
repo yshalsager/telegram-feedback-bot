@@ -48,7 +48,7 @@ class TelegramMiniAppAuth(HttpBearer):
             raise AuthenticationError('User is not whitelisted')
 
         if user_data.get('language_code') != user.language_code:
-            await update_user_language(user.id, user_data.get('language_code'))
+            await update_user_language(user_data.get('id', 1), user_data.get('language_code'))
 
         logger.info(f'Successfully authenticated user: {user_data.get("username")}')
         return user_data
