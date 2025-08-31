@@ -8,7 +8,7 @@ fernet_telegram = Fernet(settings.TELEGRAM_ENCRYPTION_KEY.encode())
 
 
 @lru_cache
-def encrypt_token(token: str, encryptor: Fernet) -> str:
+def encrypt_token(token: str, encryptor: Fernet = fernet_telegram) -> str:
     """
     Encrypt a token using Fernet for production-grade security.
     """
@@ -19,7 +19,7 @@ def encrypt_token(token: str, encryptor: Fernet) -> str:
 
 
 @lru_cache
-def decrypt_token(encrypted_token: str, decryptor: Fernet) -> str:
+def decrypt_token(encrypted_token: str, decryptor: Fernet = fernet_telegram) -> str:
     """
     Decrypt a Fernet-encrypted token.
     """

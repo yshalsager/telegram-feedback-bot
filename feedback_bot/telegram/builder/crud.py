@@ -1,9 +1,9 @@
 from typing import Any
 
 from django.conf import settings
-from django.db.models import QuerySet
 
 from feedback_bot.models import Bot, User
+from feedback_bot.telegram.utils.cryptography import decrypt_token
 
 
 async def create_user(user_data: dict[str, Any]) -> tuple[User, bool]:
@@ -78,5 +78,16 @@ async def bot_exists(telegram_id: int) -> bool:
     return bool(await Bot.objects.filter(telegram_id=telegram_id).afirst())
 
 
-async def get_bots_uuids() -> QuerySet[str]:
-    return await Bot.objects.filter(enabled=True).values_list('uuid', flat=True)
+async def get_bots_keys():
+    """Get all enabled bots with their UUID and token."""
+    return [
+        (bot[0], decrypt_token(bot[1]))
+        async for bot in Bot.objects.filter(enabled=True).values_list('uuid', '_token')
+    ]
+
+
+async def get_bots_tokens() -> list[str]:
+    return [
+        decrypt_token(bot_token)
+        async for bot_token in Bot.objects.filter(enabled=True).values_list('_token', flat=True)
+    ]
