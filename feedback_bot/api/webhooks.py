@@ -7,11 +7,12 @@ from django.views.decorators.csrf import csrf_exempt
 from ninja import Router
 from ninja.errors import AuthenticationError
 from ninja.security.apikey import APIKeyHeader
-from telegram import Update
+from telegram import Bot, Update
 from telegram.ext import Application
 
-from feedback_bot.models import Bot
+from feedback_bot.models import Bot as BotConfig
 from feedback_bot.telegram.bot import WebhookUpdate
+from feedback_bot.telegram.feedback_bot.bot import process_update
 
 logger = logging.getLogger(__name__)
 
@@ -53,19 +54,26 @@ async def telegram_webhook(request: HttpRequest) -> HttpResponse:
         return HttpResponseBadRequest('Invalid JSON')
 
 
-@router.post('/webhook/<uuid:bot_uuid>/', url_name='feedback_bot_webhook')
+@router.post('/{bot_uuid}/', url_name='feedback_bot_webhook')
 @csrf_exempt
 async def feedback_bot_webhook_handler(request: HttpRequest, bot_uuid: str) -> HttpResponse:
+    """Handle incoming Telegram updates for a feedback bot"""
     try:
-        bot_config = await Bot.objects.aget(uuid=bot_uuid, enabled=True)
-    except Bot.DoesNotExist:
+        bot_config = await BotConfig.objects.aget(uuid=bot_uuid, enabled=True)
+    except BotConfig.DoesNotExist:
         return HttpResponseBadRequest('Bot not found or disabled')
 
-    # TODO: Implement the logic from your handlers.py here
-    # You will need to build a temporary PTB application for this bot
-    # and process the update directly, since the main `ptb_application`
-    # is only for the builder bot.
-    logger.info(f'Received update for feedback bot @{bot_config.username}')
+    try:
+        telegram_bot = Bot(token=bot_config.token)
+        update = Update.de_json(data=orjson.loads(request.body), bot=telegram_bot)
+    except orjson.JSONDecodeError:
+        logger.error('Failed to decode JSON from Telegram webhook.')
+        return HttpResponseBadRequest('Invalid JSON')
+    except (ValueError, TypeError) as e:
+        logger.error(f'Failed to parse Telegram update: {e}')
+        return HttpResponseBadRequest('Invalid update format')
+
+    await process_update(update, telegram_bot, bot_config)
 
     return HttpResponse('OK')
 
