@@ -189,7 +189,7 @@ async def add_bot(request: HttpRequest, payload: AddBotIn) -> dict[str, Any]:
         try:
             ptb_bot = Bot(token=bot.token)
             await ptb_bot.set_webhook(
-                f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}'
+                f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/'
             )
         except Exception as err:  # noqa: BLE001
             return 400, {'status': 'error', 'message': f'Failed to set webhook: {err}'}

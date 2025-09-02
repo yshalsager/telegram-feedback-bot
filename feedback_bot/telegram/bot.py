@@ -70,7 +70,7 @@ async def setup_bots_webhooks() -> None:
     bots_keys = await get_bots_keys()
     for bot_uuid, bot_token in bots_keys:
         ptb_bot = Bot(token=bot_token)
-        webhook_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot_uuid}'
+        webhook_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot_uuid}/'
         await ptb_bot.set_webhook(
             webhook_url,
             secret_token=settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET or None,
