@@ -112,7 +112,7 @@ async def ptb_lifespan_manager() -> LifespanManager:
     state = {'ptb_application': ptb_application}
 
     try:
-        for module in load_modules(ALL_MODULES, 'feedback_bot.telegram.builder'):
+        for module in load_modules(ALL_MODULES):
             if hasattr(module, 'HANDLERS'):
                 ptb_application.add_handlers(module.HANDLERS)
         async with ptb_application:
