@@ -1,11 +1,12 @@
 from telegram import Update
-
-from feedback_bot.models import Bot as BotConfig
-from feedback_bot.telegram.feedback_bot.dispatcher import dispatcher
+from telegram.ext import CommandHandler, ContextTypes
 
 
-@dispatcher.command('start')
-async def start(update: Update, **kwargs) -> None:
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Display a welcome message."""
-    bot_config: BotConfig = kwargs['bot_config']
-    await update.message.reply_text(bot_config.start_message)
+    await update.message.reply_text(context.bot_data['bot_config'].start_message)
+
+
+HANDLERS = [
+    CommandHandler('start', start),
+]

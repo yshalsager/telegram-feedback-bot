@@ -91,3 +91,18 @@ async def get_bots_tokens() -> list[str]:
         decrypt_token(bot_token)
         async for bot_token in Bot.objects.filter(enabled=True).values_list('_token', flat=True)
     ]
+
+
+async def get_bot_config(uuid: str) -> Bot:
+    return (
+        await Bot.objects.filter(uuid=uuid, enabled=True)
+        .only(
+            'owner',
+            'start_message',
+            'feedback_received_message',
+            'forward_chat_id',
+            'confirmations_on',
+            '_token',
+        )
+        .afirst()
+    )

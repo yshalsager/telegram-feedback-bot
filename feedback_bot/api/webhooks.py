@@ -7,12 +7,13 @@ from django.views.decorators.csrf import csrf_exempt
 from ninja import Router
 from ninja.errors import AuthenticationError
 from ninja.security.apikey import APIKeyHeader
-from telegram import Bot, Update
+from telegram import Update
 from telegram.ext import Application
 
 from feedback_bot.models import Bot as BotConfig
 from feedback_bot.telegram.bot import WebhookUpdate
-from feedback_bot.telegram.feedback_bot.bot import process_update
+from feedback_bot.telegram.builder.crud import get_bot_config
+from feedback_bot.telegram.feedback_bot.bot import build_feedback_bot_application
 from feedback_bot.telegram.utils.cryptography import verify_bot_webhook_secret
 
 logger = logging.getLogger(__name__)
@@ -70,21 +71,23 @@ async def telegram_webhook(request: HttpRequest) -> HttpResponse:
 async def feedback_bot_webhook_handler(request: HttpRequest, bot_uuid: str) -> HttpResponse:
     """Handle incoming Telegram updates for a feedback bot"""
     try:
-        bot_config = await BotConfig.objects.aget(uuid=bot_uuid, enabled=True)
+        bot_config = await get_bot_config(bot_uuid)
     except BotConfig.DoesNotExist:
         return HttpResponseBadRequest('Bot not found or disabled')
 
+    ptb_application = build_feedback_bot_application(bot_config)
+
     try:
-        telegram_bot = Bot(token=bot_config.token)
-        update = Update.de_json(data=orjson.loads(request.body), bot=telegram_bot)
-    except orjson.JSONDecodeError:
-        logger.error('Failed to decode JSON from Telegram webhook.')
+        update = Update.de_json(data=orjson.loads(request.body), bot=ptb_application.bot)
+    except orjson.JSONDecodeError as e:
+        logger.error(f'Failed to decode JSON from Telegram webhook: {e}')
         return HttpResponseBadRequest('Invalid JSON')
     except (ValueError, TypeError) as e:
         logger.error(f'Failed to parse Telegram update: {e}')
         return HttpResponseBadRequest('Invalid update format')
 
-    await process_update(update, telegram_bot, bot_config)
+    async with ptb_application:
+        await ptb_application.process_update(update)
 
     return HttpResponse('OK')
 
