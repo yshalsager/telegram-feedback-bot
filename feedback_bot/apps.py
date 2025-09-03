@@ -3,7 +3,7 @@ import logging
 from django.apps import AppConfig
 from django_asgi_lifespan.register import register_lifespan_manager
 
-from feedback_bot.telegram.builder.bot import ptb_lifespan_manager
+from feedback_bot.telegram.init import ptb_lifespan_manager
 
 logger = logging.getLogger(__name__)
 
