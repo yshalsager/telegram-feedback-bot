@@ -11,7 +11,6 @@ from telegram import Update
 from telegram.ext import Application
 
 from feedback_bot.models import Bot as BotConfig
-from feedback_bot.telegram.bot import WebhookUpdate
 from feedback_bot.telegram.builder.crud import get_bot_config
 from feedback_bot.telegram.feedback_bot.bot import build_feedback_bot_application
 from feedback_bot.telegram.utils.cryptography import verify_bot_webhook_secret
@@ -58,8 +57,6 @@ async def telegram_webhook(request: HttpRequest) -> HttpResponse:
         ptb_application: Application = request.state['ptb_application']
         update = Update.de_json(data=orjson.loads(request.body), bot=ptb_application.bot)
         await ptb_application.update_queue.put(update)
-        # logger.info(f'ptb_application._initialized: {ptb_application._initialized}')
-        # logger.info(f'Update queued {update}. Queue size: {ptb_application.update_queue.qsize()}')
         return HttpResponse('OK')
     except orjson.JSONDecodeError:
         logger.error('Failed to decode JSON from Telegram.')
@@ -89,18 +86,4 @@ async def feedback_bot_webhook_handler(request: HttpRequest, bot_uuid: str) -> H
     async with ptb_application:
         await ptb_application.process_update(update)
 
-    return HttpResponse('OK')
-
-
-@router.post('/submitpayload', url_name='submit_payload')
-@csrf_exempt
-async def custom_updates(request: HttpRequest) -> HttpResponse:
-    ptb_application: Application = request.state['ptb_application']
-    try:
-        user_id = int(request.GET['user_id'])
-        payload = request.GET['payload']
-    except (KeyError, ValueError):
-        return HttpResponseBadRequest('Invalid `user_id` or `payload` parameters.')
-
-    await ptb_application.update_queue.put(WebhookUpdate(user_id=user_id, payload=payload))
     return HttpResponse('OK')
