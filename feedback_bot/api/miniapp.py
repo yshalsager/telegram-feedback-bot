@@ -13,7 +13,7 @@ from telegram import Bot, Update
 from telegram.constants import MessageLimit
 from telegram.error import InvalidToken
 
-from feedback_bot.telegram.builder.crud import (
+from feedback_bot.telegram.crud import (
     bot_exists,
     create_bot,
     update_user_language,

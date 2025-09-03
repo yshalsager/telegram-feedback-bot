@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 async def setup_bots_webhooks() -> None:
     """Setup webhooks for bots."""
     logger.info('Bots webhooks setup...')
-    from feedback_bot.telegram.builder.crud import get_bots_keys  # noqa: PLC0415
+    from feedback_bot.telegram.crud import get_bots_keys  # noqa: PLC0415
 
     bots_keys = await get_bots_keys()
     for bot_uuid, bot_token in bots_keys:
@@ -34,7 +34,7 @@ async def setup_bots_webhooks() -> None:
 async def remove_bots_webhooks() -> None:
     """Remove webhooks for bots."""
     logger.info('Removing bots webhooks...')
-    from feedback_bot.telegram.builder.crud import get_bots_tokens  # noqa: PLC0415
+    from feedback_bot.telegram.crud import get_bots_tokens  # noqa: PLC0415
 
     bots_tokens = await get_bots_tokens()
     for bot_token in bots_tokens:

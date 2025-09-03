@@ -11,7 +11,7 @@ from telegram import Update
 from telegram.ext import Application
 
 from feedback_bot.models import Bot as BotConfig
-from feedback_bot.telegram.builder.crud import get_bot_config
+from feedback_bot.telegram.crud import get_bot_config
 from feedback_bot.telegram.feedback_bot.bot import build_feedback_bot_application
 from feedback_bot.telegram.utils.cryptography import verify_bot_webhook_secret
 

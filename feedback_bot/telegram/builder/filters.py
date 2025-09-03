@@ -6,7 +6,7 @@ from django.conf import settings
 from telegram import Message, Update
 from telegram.ext import CallbackContext
 
-from feedback_bot.telegram.builder.crud import get_whitelist_users
+from feedback_bot.telegram.crud import get_whitelist_users
 
 
 async def is_whitelisted_user(message: Message) -> bool:

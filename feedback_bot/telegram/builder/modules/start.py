@@ -3,8 +3,8 @@ from django.utils.translation import gettext_lazy as _
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, WebAppInfo
 from telegram.ext import CallbackContext, CommandHandler
 
-from feedback_bot.telegram.builder.crud import create_user
 from feedback_bot.telegram.builder.filters import whitelisted_only
+from feedback_bot.telegram.crud import create_user
 
 
 @whitelisted_only
