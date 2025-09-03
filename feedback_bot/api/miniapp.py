@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from ninja import Field, Router, Schema
 from ninja.errors import AuthenticationError, ValidationError
 from ninja.security import HttpBearer
-from telegram import Bot
+from telegram import Bot, Update
 from telegram.constants import MessageLimit
 from telegram.error import InvalidToken
 
@@ -19,6 +19,7 @@ from feedback_bot.telegram.builder.crud import (
     update_user_language,
     user_is_whitelisted,
 )
+from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 from feedback_bot.telegram.utils.mini_app import parse_init_data, validate_mini_app_init_data
 
 logger = logging.getLogger(__name__)
@@ -189,7 +190,9 @@ async def add_bot(request: HttpRequest, payload: AddBotIn) -> dict[str, Any]:
         try:
             ptb_bot = Bot(token=bot.token)
             await ptb_bot.set_webhook(
-                f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/'
+                f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/',
+                secret_token=generate_bot_webhook_secret(bot.uuid),
+                allowed_updates=Update.ALL_TYPES,
             )
         except Exception as err:  # noqa: BLE001
             return 400, {'status': 'error', 'message': f'Failed to set webhook: {err}'}

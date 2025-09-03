@@ -16,6 +16,7 @@ from telegram.ext import (
 )
 
 from feedback_bot.telegram.builder.modules import ALL_MODULES
+from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 from feedback_bot.telegram.utils.modules_loader import load_modules
 
 logging.getLogger('httpx').setLevel(logging.WARNING)
@@ -73,7 +74,7 @@ async def setup_bots_webhooks() -> None:
         webhook_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot_uuid}/'
         await ptb_bot.set_webhook(
             webhook_url,
-            secret_token=settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET or None,
+            secret_token=generate_bot_webhook_secret(str(bot_uuid)),
             allowed_updates=Update.ALL_TYPES,
         )
     logger.info(f'Bots webhooks setup done for {len(bots_keys)} bots.')
@@ -119,7 +120,7 @@ async def ptb_lifespan_manager() -> LifespanManager:
             await ptb_application.start()
             await ptb_application.bot.set_webhook(
                 url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_PATH}',
-                secret_token=settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET or None,
+                secret_token=settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET,
                 allowed_updates=Update.ALL_TYPES,
             )
             logger.info('ASGI Lifespan: Main bot webhook is set.')
