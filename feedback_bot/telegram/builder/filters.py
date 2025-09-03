@@ -4,8 +4,8 @@ from typing import Any
 
 from django.conf import settings
 from telegram import Message, Update
+from telegram.ext import CallbackContext
 
-from feedback_bot.telegram.bot import CustomContext
 from feedback_bot.telegram.builder.crud import get_whitelist_users
 
 
@@ -17,10 +17,10 @@ async def is_whitelisted_user(message: Message) -> bool:
 
 
 def whitelisted_only(
-    func: Callable[[Update, CustomContext], Awaitable[Any]],
-) -> Callable[[Update, CustomContext], Awaitable[Any]]:
+    func: Callable[[Update, CallbackContext], Awaitable[Any]],
+) -> Callable[[Update, CallbackContext], Awaitable[Any]]:
     @wraps(func)
-    async def wrapper(update: Update, context: CustomContext, *args: Any, **kwargs: Any) -> Any:
+    async def wrapper(update: Update, context: CallbackContext, *args: Any, **kwargs: Any) -> Any:
         if not await is_whitelisted_user(update.message):
             return None
         return await func(update, context, *args, **kwargs)
