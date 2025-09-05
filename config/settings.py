@@ -29,6 +29,24 @@ CSRF_TRUSTED_ORIGINS = [
     for host in ALLOWED_HOSTS
 ]
 
+# Security Settings
+SECURE_SSL_REDIRECT = not DEBUG  # Redirect HTTP to HTTPS in production
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0  # 1 year in production
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
+# Session Cookie Security
+SESSION_COOKIE_SECURE = not DEBUG  # Only send over HTTPS in production
+SESSION_COOKIE_SAMESITE = None  # CSRF protection while allowing navigation
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+
+# CSRF Cookie Security
+CSRF_COOKIE_SECURE = not DEBUG  # Only send over HTTPS in production
+CSRF_COOKIE_SAMESITE = None  # Disable SameSite attribute for CSRF cookies
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
