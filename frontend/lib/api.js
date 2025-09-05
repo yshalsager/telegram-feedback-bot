@@ -79,7 +79,7 @@ export async function add_bot(
     start_message,
     feedback_received_message
 ) {
-    const response = await fetch('/api/add_bot/', {
+    const response = await fetch('/api/bot/', {
         method: 'POST',
         headers: get_authorization_headers(),
         body: JSON.stringify({
@@ -88,6 +88,14 @@ export async function add_bot(
             start_message,
             feedback_received_message
         })
+    })
+    const data = await response.json()
+    return data
+}
+
+export async function list_bots() {
+    const response = await fetch('/api/bot/', {
+        headers: get_authorization_headers()
     })
     const data = await response.json()
     return data

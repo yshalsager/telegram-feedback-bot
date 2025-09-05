@@ -106,3 +106,16 @@ async def get_bot_config(uuid: str) -> Bot:
         )
         .afirst()
     )
+
+
+async def get_bots(owner: int) -> list[Bot]:
+    qs = Bot.objects.select_related('owner').only(
+        'name',
+        'telegram_id',
+        'username',
+        'owner__username',
+        'owner__telegram_id',
+    )
+    if owner in settings.TELEGRAM_BUILDER_BOT_ADMINS:
+        return [bot async for bot in qs.all()]
+    return [bot async for bot in qs.filter(owner=owner)]

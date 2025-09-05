@@ -11,7 +11,8 @@ from telegram.constants import MessageLimit
 from telegram.error import InvalidToken
 
 from feedback_bot.api.miniapp import router
-from feedback_bot.telegram.crud import bot_exists, create_bot
+from feedback_bot.models import Bot as BotModel
+from feedback_bot.telegram.crud import bot_exists, create_bot, get_bots
 from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 
 
@@ -28,6 +29,14 @@ class AddBotIn(Schema):
         description='The feedback received message for the bot',
         max_length=MessageLimit.MAX_TEXT_LENGTH,
     )
+
+
+class BotOut(Schema):
+    name: str
+    telegram_id: int
+    username: str
+    owner_username: str = Field(..., alias='owner.username')
+    owner_telegram_id: int = Field(..., alias='owner.telegram_id')
 
 
 async def validate_bot_token(bot_token: str) -> bool:
@@ -58,11 +67,11 @@ async def validate_bot_token(bot_token: str) -> bool:
 
 
 @router.post(
-    '/add_bot/',
+    '/bot/',
     response={200: dict[str, Any], 400: dict[str, str]},
     url_name='add_bot',
 )
-async def add_bot(request: HttpRequest, payload: AddBotIn) -> dict[str, Any]:
+async def add_bot(request: HttpRequest, payload: AddBotIn) -> dict[str, Any]:  # noqa: PLR0911
     """Add bot endpoint"""
     user_data = request.auth
     activate(user_data['language_code'])
@@ -92,15 +101,26 @@ async def add_bot(request: HttpRequest, payload: AddBotIn) -> dict[str, Any]:
     if not bot:
         return 400, {'status': 'error', 'message': 'Failed to add bot'}
 
-    if not settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL:
-        try:
-            ptb_bot = Bot(token=bot.token)
-            await ptb_bot.set_webhook(
-                f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/',
-                secret_token=generate_bot_webhook_secret(bot.uuid),
-                allowed_updates=Update.ALL_TYPES,
-            )
-        except Exception as err:  # noqa: BLE001
-            return 400, {'status': 'error', 'message': f'Failed to set webhook: {err}'}
+    if settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL:
+        return 200, {'status': 'success', 'bot': bot_info}
+
+    try:
+        ptb_bot = Bot(token=bot.token)
+        await ptb_bot.set_webhook(
+            f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/',
+            secret_token=generate_bot_webhook_secret(bot.uuid),
+            allowed_updates=Update.ALL_TYPES,
+        )
+    except Exception as err:  # noqa: BLE001
+        return 400, {'status': 'error', 'message': f'Failed to set webhook: {err}'}
 
     return 200, {'status': 'success', 'bot': bot_info}
+
+
+@router.get(
+    '/bot/',
+    response=list[BotOut],
+    url_name='list_bots',
+)
+async def list_bots(request: HttpRequest) -> list[BotModel]:
+    return await get_bots(request.auth['id'])
