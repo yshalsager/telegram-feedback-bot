@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-05 15:50+0000\n"
+"POT-Creation-Date: 2025-09-05 17:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,6 +50,15 @@ msgstr "⚙️ Manage bots"
 #: feedback_bot/telegram/builder/modules/start.py:20
 msgid "manage_settings"
 msgstr "🛠️ Manage settings"
+
+#: feedback_bot/telegram/builder/modules/whitelist.py:17
+msgid "cant_whitelist_hidden_user"
+msgstr "Can't add a hidden usser, use the command with user's ID."
+
+#: feedback_bot/telegram/builder/modules/whitelist.py:22
+#: feedback_bot/telegram/builder/modules/whitelist.py:31
+msgid "user_whitelisted"
+msgstr "User whitelisted successfully."
 
 #: feedback_bot/telegram/utils/restart.py:13
 msgid "restarted_successfully"

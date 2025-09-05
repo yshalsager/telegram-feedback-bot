@@ -3,7 +3,7 @@ from functools import wraps
 from typing import Any
 
 from django.conf import settings
-from telegram import Message, Update
+from telegram import Message, MessageOriginHiddenUser, MessageOriginUser, Update
 from telegram.ext import CallbackContext
 from telegram.ext.filters import MessageFilter
 
@@ -34,4 +34,18 @@ class IsAdmin(MessageFilter):
         return message.from_user.id in settings.TELEGRAM_BUILDER_BOT_ADMINS
 
 
+class IsReplyToForwardedMessage(MessageFilter):
+    def filter(self, message: Message) -> bool:
+        """Check if this message is a reply to a forwarded message from a user"""
+        if not message.reply_to_message:
+            return False
+        if not message.reply_to_message.forward_origin:
+            return False
+        # Only allow forwarded messages from users (known or hidden)
+        return isinstance(
+            message.reply_to_message.forward_origin, MessageOriginUser | MessageOriginHiddenUser
+        )
+
+
 is_admin = IsAdmin()
+is_reply_to_forwarded_message = IsReplyToForwardedMessage()
