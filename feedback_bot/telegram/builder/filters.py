@@ -5,6 +5,7 @@ from typing import Any
 from django.conf import settings
 from telegram import Message, Update
 from telegram.ext import CallbackContext
+from telegram.ext.filters import MessageFilter
 
 from feedback_bot.telegram.crud import get_whitelist_users
 
@@ -26,3 +27,11 @@ def whitelisted_only(
         return await func(update, context, *args, **kwargs)
 
     return wrapper
+
+
+class IsAdmin(MessageFilter):
+    def filter(self, message: Message) -> bool:
+        return message.from_user.id in settings.TELEGRAM_BUILDER_BOT_ADMINS
+
+
+is_admin = IsAdmin()

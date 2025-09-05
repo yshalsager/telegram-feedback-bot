@@ -6,6 +6,7 @@ from django_asgi_lifespan.types import LifespanManager
 from telegram import Update
 
 from feedback_bot.telegram.builder.bot import load_builder_modules, ptb_application
+from feedback_bot.telegram.utils.restart import handle_restart
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ async def ptb_lifespan_manager() -> LifespanManager:
                 allowed_updates=Update.ALL_TYPES,
             )
             logger.info('ASGI Lifespan: Main bot webhook is set.')
+            await handle_restart(ptb_application)
             logger.info('ASGI Lifespan: Setting up webhooks for bots...')
             from feedback_bot.telegram.feedback_bot.bot import setup_bots_webhooks  # noqa: PLC0415
 
