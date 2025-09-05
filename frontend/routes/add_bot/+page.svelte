@@ -1,5 +1,6 @@
 <script lang="ts">
 import {goto} from '$app/navigation'
+import {resolve} from '$app/paths'
 import {add_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
 import * as Card from '$lib/components/ui/card/index.js'
@@ -39,7 +40,7 @@ function formatCharacterCount(count: number) {
 }
 
 const onBotSuccessfullyAdded = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
-    if (payload.button_id === 'bot_successfully_added_close') goto('/')
+    if (payload.button_id === 'bot_successfully_added_close') goto(resolve('/'))
     onBotSuccessfullyAdded()
 })
 

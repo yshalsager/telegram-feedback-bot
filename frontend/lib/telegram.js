@@ -1,18 +1,20 @@
+import {browser} from '$app/environment'
+import {goto} from '$app/navigation'
+import {resolve} from '$app/paths'
+import {mockEnvInDev} from '$lib/telegram_debug.js'
 import {
+    backButton,
     init,
     initData,
+    isTMA,
+    mainButton,
     miniApp,
     popup,
-    viewport,
-    mainButton,
     settingsButton,
-    backButton,
     themeParams,
-    isTMA
+    viewport
 } from '@telegram-apps/sdk-svelte'
 import {session} from './stores.svelte'
-import {mockEnvInDev} from '$lib/telegram_debug.js'
-import {goto} from '$app/navigation'
 
 export async function initSDK() {
     try {
@@ -33,12 +35,12 @@ export async function initSDK() {
         if (settingsButton.isSupported() && settingsButton.mount.isAvailable()) {
             settingsButton.mount()
             settingsButton.show()
-            settingsButton.onClick(() => goto('/settings'))
+            settingsButton.onClick(() => goto(resolve('/settings')))
         }
         if (backButton.isSupported() && backButton.mount.isAvailable()) {
             backButton.mount()
             backButton.show()
-            backButton.onClick(() => goto('../'))
+            backButton.onClick(() => browser && history.back())
         }
         session.update(state => ({...state, loaded: true}))
         initData.restore()
