@@ -5,15 +5,15 @@ import svelte from 'eslint-plugin-svelte'
 import globals from 'globals'
 import {fileURLToPath} from 'node:url'
 import svelteConfig from './svelte.config.js'
-import ts from 'typescript-eslint'
+import tseslint from 'typescript-eslint'
 
 const gitignorePath = fileURLToPath(new URL('./.gitignore', import.meta.url))
 
 /** @type {import('eslint').Linter.Config[]} */
-export default ts.config(
+export default [
     includeIgnoreFile(gitignorePath),
     js.configs.recommended,
-    ...ts.configs.recommended,
+    ...tseslint.configs.recommended,
     ...svelte.configs.recommended,
     prettier,
     ...svelte.configs.prettier,
@@ -28,7 +28,7 @@ export default ts.config(
             parserOptions: {
                 projectService: true,
                 extraFileExtensions: ['.svelte'],
-                parser: ts.parser,
+                parser: tseslint.parser,
                 svelteConfig
             }
         }
@@ -44,7 +44,9 @@ export default ts.config(
         rules: {
             // Enable TypeScript import type rules for Svelte files
             '@typescript-eslint/consistent-type-imports': 'error',
-            '@typescript-eslint/no-import-type-side-effects': 'error'
+            '@typescript-eslint/no-import-type-side-effects': 'error',
+            // Allow href attributes in button components that handle resolution internally
+            'svelte/no-navigation-without-resolve': ['error', {ignoreLinks: true}]
         }
     }
-)
+]
