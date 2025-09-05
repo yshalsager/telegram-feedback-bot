@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from django.conf import settings
 from django_asgi_lifespan.types import LifespanManager
-from telegram import Update
+from telegram import BotCommandScopeAllPrivateChats, Update
 
 from feedback_bot.telegram.builder.bot import load_builder_modules, ptb_application
 from feedback_bot.telegram.utils.restart import handle_restart
@@ -17,7 +17,7 @@ async def ptb_lifespan_manager() -> LifespanManager:
     state = {'ptb_application': ptb_application}
 
     try:
-        load_builder_modules()
+        commands = load_builder_modules()
         async with ptb_application:
             await ptb_application.start()
             await ptb_application.bot.set_webhook(
@@ -27,6 +27,9 @@ async def ptb_lifespan_manager() -> LifespanManager:
             )
             logger.info('ASGI Lifespan: Main bot webhook is set.')
             await handle_restart(ptb_application)
+            await ptb_application.bot.set_my_commands(
+                commands, scope=BotCommandScopeAllPrivateChats()
+            )
             logger.info('ASGI Lifespan: Setting up webhooks for bots...')
             from feedback_bot.telegram.feedback_bot.bot import setup_bots_webhooks  # noqa: PLC0415
 

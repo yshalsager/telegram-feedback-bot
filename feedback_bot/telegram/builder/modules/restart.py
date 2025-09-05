@@ -11,7 +11,7 @@ from feedback_bot.telegram.builder.filters import is_admin
 
 
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """restarts the bot."""
+    """Restart the bot."""
     restart_message = await update.message.reply_text(
         'Restarting, please wait...',
         reply_to_message_id=update.message.message_id,

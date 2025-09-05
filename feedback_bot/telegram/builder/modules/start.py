@@ -9,7 +9,7 @@ from feedback_bot.telegram.crud import create_user
 
 @whitelisted_only
 async def start(update: Update, context: CallbackContext) -> None:
-    """Display a message with instructions on how to use this bot."""
+    """Start the bot and show the main menu."""
     assert update.message.from_user is not None
     await create_user(update.message.from_user.to_dict())
     message = _('welcome')
