@@ -5,7 +5,7 @@ from telegram import BotCommand
 from telegram.ext import Application, CommandHandler
 
 from feedback_bot.telegram.builder.modules import ALL_MODULES
-from feedback_bot.telegram.utils.modules_loader import load_modules
+from feedback_bot.utils.modules_loader import load_modules
 
 logging.getLogger('httpx').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)

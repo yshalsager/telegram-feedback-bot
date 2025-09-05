@@ -12,7 +12,7 @@ from ninja.security import HttpBearer
 
 from feedback_bot.telegram.crud import user_is_whitelisted
 from feedback_bot.telegram.utils.mini_app import parse_init_data, validate_mini_app_init_data
-from feedback_bot.telegram.utils.modules_loader import get_modules
+from feedback_bot.utils.modules_loader import get_modules
 
 logger = logging.getLogger(__name__)
 

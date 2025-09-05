@@ -8,7 +8,7 @@ from telegram.ext import Application
 from feedback_bot.models import Bot as BotConfig
 from feedback_bot.telegram.crud import get_bots_keys, get_bots_tokens
 from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
-from feedback_bot.telegram.utils.modules_loader import get_modules, load_modules
+from feedback_bot.utils.modules_loader import get_modules, load_modules
 
 logger = logging.getLogger(__name__)
 
