@@ -1,4 +1,3 @@
-import {browser} from '$app/environment'
 import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
 import {mockEnvInDev} from '$lib/telegram_debug.js'
@@ -40,7 +39,7 @@ export async function initSDK() {
         if (backButton.isSupported() && backButton.mount.isAvailable()) {
             backButton.mount()
             backButton.show()
-            backButton.onClick(() => browser && history.back())
+            backButton.onClick(() => history.back())
         }
         session.update(state => ({...state, loaded: true}))
         initData.restore()
