@@ -3,12 +3,26 @@ import {get} from 'svelte/store'
 
 /**
  * Get the CSRF token
- * @returns {Promise<string>} - The CSRF token
+ * @returns {Promise<string | undefined>} - The CSRF token
  */
 export async function csrf_token() {
-    const response = await fetch('/api/csrf/')
-    const data = await response.json()
-    return data.csrf_token
+    await fetch('/api/csrf/')
+    const csrfToken = getCookie('csrftoken')
+    return csrfToken
+}
+
+/**
+ * Get a cookie value by name
+ * @param {string} name - The cookie name
+ * @returns {string | undefined} - The cookie value or undefined if not found
+ */
+function getCookie(name) {
+    const cookies = document.cookie.split('; ')
+    for (const cookie of cookies) {
+        const [key, value] = cookie.split('=')
+        if (key === name) return value
+    }
+    return undefined
 }
 
 /**
