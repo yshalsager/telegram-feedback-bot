@@ -37,6 +37,8 @@ class BotOut(Schema):
     username: str
     owner_username: str = Field(..., alias='owner.username')
     owner_telegram_id: int = Field(..., alias='owner.telegram_id')
+    created_at: str = Field(..., alias='created_at.isoformat')
+    updated_at: str = Field(..., alias='updated_at.isoformat')
 
 
 async def validate_bot_token(bot_token: str) -> bool:

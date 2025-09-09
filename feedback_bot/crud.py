@@ -24,6 +24,10 @@ async def get_user(user_id: int, **kwargs: Any) -> User | None:
     return await User.objects.filter(telegram_id=user_id, **kwargs).afirst()
 
 
+async def get_users() -> list[User]:
+    return [user async for user in User.objects.all()]
+
+
 async def get_user_language(user_id: int) -> str:
     return (
         await User.objects.filter(telegram_id=user_id)
@@ -115,6 +119,8 @@ async def get_bots(owner: int) -> list[Bot]:
         'username',
         'owner__username',
         'owner__telegram_id',
+        'created_at',
+        'updated_at',
     )
     if owner in settings.TELEGRAM_BUILDER_BOT_ADMINS:
         return [bot async for bot in qs.all()]

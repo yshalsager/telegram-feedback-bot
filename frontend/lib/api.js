@@ -100,3 +100,11 @@ export async function list_bots() {
     const data = await response.json()
     return data
 }
+
+export async function list_users() {
+    const response = await fetch('/api/user/', {
+        headers: get_authorization_headers()
+    })
+    const data = await response.json()
+    return data
+}
