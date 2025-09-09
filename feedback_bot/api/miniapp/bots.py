@@ -11,8 +11,8 @@ from telegram.constants import MessageLimit
 from telegram.error import InvalidToken
 
 from feedback_bot.api.miniapp import router
+from feedback_bot.crud import bot_exists, create_bot, get_bots
 from feedback_bot.models import Bot as BotModel
-from feedback_bot.telegram.crud import bot_exists, create_bot, get_bots
 from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 
 

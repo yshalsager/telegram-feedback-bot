@@ -5,8 +5,8 @@ from telegram import MessageOriginHiddenUser, Update, User
 from telegram.ext import CommandHandler, ContextTypes
 from telegram.ext.filters import Regex
 
+from feedback_bot.crud import create_user
 from feedback_bot.telegram.builder.filters import is_admin, is_reply_to_forwarded_message
-from feedback_bot.telegram.crud import create_user
 
 
 async def whitelist_user_from_reply(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

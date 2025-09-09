@@ -5,7 +5,7 @@ from django.http import HttpRequest
 from ninja import Field, Schema
 
 from feedback_bot.api.miniapp import router
-from feedback_bot.telegram.crud import update_user_language
+from feedback_bot.crud import update_user_language
 
 
 class LanguageIn(Schema):

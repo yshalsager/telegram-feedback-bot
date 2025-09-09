@@ -7,7 +7,7 @@ from telegram import Message, MessageOriginHiddenUser, MessageOriginUser, Update
 from telegram.ext import CallbackContext
 from telegram.ext.filters import MessageFilter
 
-from feedback_bot.telegram.crud import get_whitelist_users
+from feedback_bot.crud import get_whitelist_users
 
 
 async def is_whitelisted_user(message: Message) -> bool:
