@@ -30,7 +30,7 @@ class TelegramMiniAppAuth(HttpBearer):
 
         # The token contains the init data for Telegram Mini App
         init_data = token
-        admins = list(settings.TELEGRAM_BUILDER_BOT_ADMINS)
+        admins = settings.TELEGRAM_BUILDER_BOT_ADMINS
         parsed_data = parse_init_data(init_data)
 
         if (
