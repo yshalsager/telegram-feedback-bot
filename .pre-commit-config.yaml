@@ -44,7 +44,7 @@ repos:
         types: [ python ]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
-    rev: 'v0.13.0'
+    rev: 'v0.13.1'
     hooks:
       - id: ruff-check
         args: [--fix, --exit-non-zero-on-fix]
