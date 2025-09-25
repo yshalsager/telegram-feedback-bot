@@ -1,38 +1,47 @@
-<script>
+<script lang="ts">
 import {set_language} from '$lib/api.js'
 import * as Avatar from '$lib/components/ui/avatar/index.js'
 import * as Card from '$lib/components/ui/card/index.js'
 import {Separator} from '$lib/components/ui/separator/index.js'
-import {m} from '$lib/paraglide/messages.js'
-import {getLocale, locales, setLocale} from '$lib/paraglide/runtime.js'
+import {availableLocales, locale, applyLocale} from '$lib/i18n'
 import {session} from '$lib/stores.svelte.js'
 import {showNotification} from '$lib/telegram.js'
 import {Globe, Hash} from '@lucide/svelte/icons'
 
-let currentLocale = $state(getLocale())
-const languageNameFormatter = new Intl.DisplayNames([currentLocale], {type: 'language'})
-const availableLanguages = locales.map(locale => ({
-    locale,
-    name: languageNameFormatter.of(locale)
-}))
-
-/**
- * Returns the user's initials based on their first name, last name, or username.
- *
- * @param {string} firstName - The user's first name.
- * @param {string} lastName - The user's last name.
- * @param {string} username - The user's username.
- * @returns {string} The initials to display for the user.
- */
-function getUserInitials(firstName, lastName, username) {
+function getUserInitials(firstName: string, lastName: string, username: string) {
     if (firstName && lastName) {
         return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
-    } else if (firstName) {
+    }
+    if (firstName) {
         return firstName.charAt(0).toUpperCase()
-    } else if (username) {
+    }
+    if (username) {
         return username.charAt(0).toUpperCase()
     }
     return 'U'
+}
+
+async function handleLanguageSelect(code: string) {
+    if (code === $locale) return
+
+    const updated = await set_language(code)
+    if (updated) {
+        await applyLocale(code)
+        session.update(state => ({
+            ...state,
+            data: state.data
+                ? {
+                      ...state.data,
+                      user: {...state.data.user, language_code: code}
+                  }
+                : undefined
+        }))
+        return
+    }
+
+    showNotification('Failed to set language', 'Please try again later', [
+        {id: 'language_error_close', type: 'close'}
+    ])
 }
 </script>
 
@@ -46,7 +55,7 @@ function getUserInitials(firstName, lastName, username) {
                         <Avatar.Image
                             class="h-16 w-16"
                             src={$session.data.user.photo_url}
-                            alt={m.profile_picture()}
+                            alt="Profile Picture"
                         />
                         <Avatar.Fallback class="bg-primary text-primary-foreground">
                             {getUserInitials(
@@ -87,7 +96,7 @@ function getUserInitials(firstName, lastName, username) {
             <div class="flex items-start gap-3">
                 <Hash class="mt-0.5 h-4 w-4 text-muted-foreground" />
                 <div class="flex-1">
-                    <p class="text-sm font-medium">{m.user_id()}</p>
+                    <p class="text-sm font-medium">User ID</p>
                     <p class="font-mono text-xs break-all text-muted-foreground">
                         {$session.data?.user?.id || 'N/A'}
                     </p>
@@ -96,9 +105,9 @@ function getUserInitials(firstName, lastName, username) {
             <div class="flex items-start gap-3">
                 <Globe class="mt-0.5 h-4 w-4 text-muted-foreground" />
                 <div class="flex-1">
-                    <p class="text-sm font-medium">{m.language()}</p>
+                    <p class="text-sm font-medium">Language</p>
                     <p class="text-xs text-muted-foreground">
-                        {$session.data?.user?.language_code || m.unknown()}
+                        {$session.data?.user?.language_code || 'Unknown'}
                     </p>
                 </div>
             </div>
@@ -108,30 +117,20 @@ function getUserInitials(firstName, lastName, username) {
     <!-- Language Settings Card -->
     <Card.Root class="shadow-2xl backdrop-blur-sm">
         <Card.Header class="">
-            <Card.Title class="">{m.language()}</Card.Title>
+            <Card.Title class="">Language</Card.Title>
         </Card.Header>
         <Card.Content class="">
             <div class="space-y-2">
-                {#each availableLanguages as locale (locale.locale)}
+                {#each $availableLocales as option (option.locale)}
                     <button
-                        class="group flex w-full items-center justify-between rounded-lg p-3 transition-all duration-300 hover:bg-primary/50 {locale.locale ===
-                        currentLocale
+                        class="group flex w-full items-center justify-between rounded-lg p-3 transition-all duration-300 hover:bg-primary/50 {option.locale ===
+                        $locale
                             ? 'bg-primary/25'
                             : ''}"
-                        onclick={async () => {
-                            if (await set_language(locale.locale)) {
-                                setLocale(locale.locale)
-                            } else {
-                                showNotification(
-                                    m.failed_to_set_language(),
-                                    m.please_try_again_later(),
-                                    [{id: 'language_error_close', type: 'close'}]
-                                )
-                            }
-                        }}
+                        onclick={() => handleLanguageSelect(option.locale)}
                     >
-                        <span class="font-medium">{locale.name}</span>
-                        {#if locale.locale === currentLocale}
+                        <span class="font-medium">{option.name}</span>
+                        {#if option.locale === $locale}
                             <div class="h-2 w-2 rounded-full bg-primary"></div>
                         {/if}
                     </button>

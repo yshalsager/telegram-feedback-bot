@@ -1,18 +1,11 @@
-import {paraglideVitePlugin} from '@inlang/paraglide-js'
-import tailwindcss from '@tailwindcss/vite'
 import {sveltekit} from '@sveltejs/kit/vite'
-import {defineConfig} from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+import {wuchale} from '@wuchale/vite-plugin'
 import path from 'path'
+import {defineConfig} from 'vite'
 
 export default defineConfig({
-    plugins: [
-        tailwindcss(),
-        sveltekit(),
-        paraglideVitePlugin({
-            project: './project.inlang',
-            outdir: './frontend/lib/paraglide'
-        })
-    ],
+    plugins: [tailwindcss(), wuchale(), sveltekit()],
     resolve: {
         alias: [{find: '~', replacement: path.resolve('frontend')}]
     },

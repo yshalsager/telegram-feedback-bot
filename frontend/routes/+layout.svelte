@@ -2,8 +2,8 @@
 import '~/app.css'
 import {session} from '$lib/stores.svelte.js'
 import {getInitData, initSDK} from '$lib/telegram.js'
-import {m} from '$lib/paraglide/messages.js'
 import {csrf_token, validate_user} from '$lib/api.js'
+import {initLocale} from '$lib/i18n'
 import {setPageTransition} from '$lib/page_transition.js'
 
 let {children} = $props()
@@ -11,7 +11,12 @@ let {children} = $props()
 async function initialize() {
     await initSDK()
     const data = await getInitData()
-    if (data) session.update(state => ({...state, data}))
+    if (data) {
+        session.update(state => ({...state, data}))
+        await initLocale(data.user?.language_code)
+    } else {
+        await initLocale(undefined)
+    }
     const csrfToken = await csrf_token()
     if (!csrfToken) {
         session.update(state => ({...state, isValid: false}))
@@ -30,7 +35,7 @@ setPageTransition()
 </script>
 
 <svelte:head>
-    <title>{m.app_name()}</title>
+    <title>Feedback Bot Builder</title>
 </svelte:head>
 
 {#if $session.loaded && $session.available && $session.isValid === true}
@@ -43,15 +48,15 @@ setPageTransition()
 
 {#if !$session.available}
     <div class="flex h-screen flex-col items-center justify-center">
-        <h1 class="text-2xl font-bold">{m.please_open_in_telegram()}</h1>
+        <h1 class="text-2xl font-bold">Please open the app in Telegram</h1>
         <p class="mt-4 text-sm text-gray-500">
-            {m.the_app_is_not_available_in_this_browser()}
+            The app is not available in this browser. Please open it in Telegram.
         </p>
     </div>
 {/if}
 
 {#if $session.isValid === false}
     <div class="flex h-screen flex-col items-center justify-center">
-        <h1 class="text-2xl font-bold">{m.invalid_session()}</h1>
+        <h1 class="text-2xl font-bold">Invalid session</h1>
     </div>
 {/if}

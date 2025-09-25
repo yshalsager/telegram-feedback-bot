@@ -1,0 +1,302 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
+"PO-Revision-Date: 2025-09-25T21:12:32.489Z\n"
+"Last-Translator: \n"
+"Language: ar\n"
+"Language-Team: \n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
+"MIME-Version: 1.0\n"
+
+#: frontend/routes/settings/+page.svelte
+msgid "U"
+msgstr "م"
+
+#: frontend/routes/settings/+page.svelte
+msgid "N/A"
+msgstr "غير معروف"
+
+#: frontend/routes/+page.svelte
+msgid "Bot management interface"
+msgstr "واجهة إدارة البوتات"
+
+#: frontend/routes/+page.svelte
+msgid "Bot Logo"
+msgstr "شعار البوت"
+
+#: frontend/routes/+page.svelte
+msgid "Search bots by name or username..."
+msgstr "ابحث عن البوتات بالاسم أو اسم المستخدم..."
+
+#: frontend/routes/+page.svelte
+msgid "Search bots"
+msgstr "بحث عن البوتات"
+
+#: frontend/routes/+page.svelte
+msgid "My bots"
+msgstr "بوتاتي"
+
+#. placeholder {0}: searchQuery
+#: frontend/routes/+page.svelte
+msgid "No bots found matching \"{0}\""
+msgstr "لا يوجد بوتات تطابق \"{0}\""
+
+#: frontend/routes/+page.svelte
+msgid "Click \"Create a New Bot\" to get started."
+msgstr "انقر \"إنشاء بوت جديد\" للبدء."
+
+#: frontend/routes/+page.svelte
+msgid "User Management"
+msgstr "إدارة المستخدمين"
+
+#~ msgid "No users found"
+#~ msgstr ""
+
+#~ msgid "Click \"Add New User\" to get started."
+#~ msgstr ""
+
+#~ msgid "Add New User"
+#~ msgstr ""
+
+#. placeholder {0}: item.name
+#. placeholder {1}: item.username
+#: frontend/components/management/ListItem.svelte
+msgid "Open bot {0} (@{1})"
+msgstr "افتح البوت {0} (@{1})"
+
+#. placeholder {0}: item.username
+#: frontend/components/management/ListItem.svelte
+msgid "Manage user @{0}"
+msgstr "إدارة المستخدم @{0}"
+
+#: frontend/routes/add_bot/+page.svelte
+msgid "Adding Bot interface"
+msgstr "واجهة إضافة البوت"
+
+#: frontend/routes/+layout.svelte
+#: frontend/routes/+page.svelte
+msgid "Feedback Bot Builder"
+msgstr "صانع بوتات التعليقات"
+
+#: frontend/routes/+layout.svelte
+msgid "Please open the app in Telegram"
+msgstr "يرجى فتح التطبيق في تليجرام"
+
+#: frontend/routes/+layout.svelte
+msgid "The app is not available in this browser. Please open it in Telegram."
+msgstr "التطبيق غير متاح في هذا المتصفح. يرجى فتحه في تليجرام."
+
+#: frontend/routes/+layout.svelte
+msgid "Invalid session"
+msgstr "جلسة المستخدم غير صالحة"
+
+#: frontend/routes/+page.svelte
+msgid "You don't have any bots yet. Please add one."
+msgstr "ليس لديك أي بوت بعد. يرجى إضافة واحد."
+
+#: frontend/routes/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
+msgid "Add new bot"
+msgstr "إضافة بوت جديد"
+
+#: frontend/routes/+page.svelte
+msgid "You don't have any users yet."
+msgstr "ليس لديك أي مستخدمين بعد."
+
+#: frontend/routes/+page.svelte
+msgid "Click \"Add new user\" to get started."
+msgstr "انقر \"إضافة مستخدم جديد\" للبدء."
+
+#: frontend/routes/+page.svelte
+#: frontend/routes/add_user/+page.svelte
+msgid "Add new user"
+msgstr "إضافة مستخدم جديد"
+
+#: frontend/routes/settings/+page.svelte
+msgid "Profile Picture"
+msgstr "صورة المستخدم"
+
+#: frontend/routes/settings/+page.svelte
+#: frontend/routes/add_user/+page.svelte
+msgid "User ID"
+msgstr "معرف المستخدم"
+
+#: frontend/routes/settings/+page.svelte
+#: frontend/routes/settings/+page.svelte
+#: frontend/routes/add_user/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Language"
+msgstr "اللغة"
+
+#: frontend/routes/settings/+page.svelte
+msgid "Unknown"
+msgstr "غير معروف"
+
+#: frontend/routes/settings/+page.svelte
+msgid "Failed to set language"
+msgstr "تعذر تغيير اللغة"
+
+#: frontend/routes/settings/+page.svelte
+msgid "Please try again later"
+msgstr "حاول مرة أخرى لاحقاً"
+
+#. placeholder {0}: identifier
+#: frontend/routes/add_user/+page.svelte
+msgid "Successfully updated access for {0}."
+msgstr "تم تحديث صلاحيات {0} بنجاح."
+
+#: frontend/routes/add_user/+page.svelte
+msgid "Failed to add user"
+msgstr "فشل إضافة المستخدم"
+
+#: frontend/routes/add_user/+page.svelte
+msgid "Adding User interface"
+msgstr "واجهة إضافة المستخدم"
+
+#: frontend/routes/add_user/+page.svelte
+msgid "Enter a valid numeric Telegram user ID."
+msgstr "أدخل معرف مستخدم تيليجرام مكونًا من أرقام فقط."
+
+#: frontend/routes/add_user/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#: frontend/routes/add_user/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Optional. Enter the Telegram username without the @ symbol."
+msgstr "اختياري. أدخل اسم مستخدم تيليجرام بدون رمز @."
+
+#: frontend/routes/add_user/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Whitelist access"
+msgstr "السماح بالوصول"
+
+#: frontend/routes/add_user/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Allows the user to open the builder mini app."
+msgstr "يسمح للمستخدم بفتح تطبيق الباني المصغر."
+
+#: frontend/routes/add_user/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Admin access"
+msgstr "صلاحيات المشرف"
+
+#: frontend/routes/add_user/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Grants builder admin permissions to this user."
+msgstr "يمنح هذا المستخدم صلاحيات إدارة البوت."
+
+#: frontend/routes/add_user/+page.svelte
+#: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
+msgid "Save"
+msgstr "حفظ"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Failed to update bot"
+msgstr "فشل تحديث البوت"
+
+#. placeholder {0}: bot.username
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Delete @{0}?"
+msgstr "حذف @{0}؟"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Failed to delete bot"
+msgstr "فشل حذف البوت"
+
+#. placeholder {0}: bot.name
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Managing bot {0}"
+msgstr "إدارة البوت {0}"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Manage bot"
+msgstr "إدارة البوت"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
+msgid "Start message"
+msgstr "رسالة البداية"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
+msgid "Feedback received message"
+msgstr "رسالة التعليقات المستقبلة"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
+msgid "Message received confirmations"
+msgstr "تأكيد استلام الرسالة"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Bot status"
+msgstr "حالة البوت"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Enabled"
+msgstr "مفعل"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Disabled"
+msgstr "معطل"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "<0/> Delete bot"
+msgstr "<0/> حذف البوت"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Bot not found"
+msgstr "البوت غير موجود"
+
+#. placeholder {0}: response.bot?.username || ''
+#: frontend/routes/add_bot/+page.svelte
+msgid "Successfully added @{0} to your bots list. Please add to a group to work better."
+msgstr "أضيف بوت @{0} بنجاح. من فضلك أضفه إلى مجموعة ليعمل بشكل أفضل."
+
+#: frontend/routes/add_bot/+page.svelte
+msgid "Failed to add bot"
+msgstr "فشل إضافة البوت"
+
+#: frontend/routes/add_bot/+page.svelte
+msgid "Bot token"
+msgstr "الرمز الخاص بالبوت"
+
+#: frontend/routes/add_bot/+page.svelte
+msgid "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
+msgstr "الرمز الخاص بالبوت يجب أن يكون بالشكل التالي: الأرقام:الأحرف (8-10 أرقام : 35 حرفًا)"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "No changes to update."
+msgstr "لا شيء لتحديثه"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Failed to update user"
+msgstr "فشل تحديث المستخدم"
+
+#. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Managing user {0}"
+msgstr "إدارة المستخدم {0}"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Manage user"
+msgstr "إدارة المستخدم"
+
+#. placeholder {0}: user.telegram_id
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Telegram ID: {0}"
+msgstr "معرف تليجرام: {0}"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Save changes"
+msgstr "حفظ التغييرات"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "User not found."
+msgstr "المستخدم غير موجود"
