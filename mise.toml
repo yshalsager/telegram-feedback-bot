@@ -39,7 +39,7 @@ echo $TELEGRAM_LANGUAGES | tr ' ' '\n' | xargs -n1 -I {} uv run manage.py makeme
 '''
 
 [tasks.i18n_update]
-run = 'uv run manage.py makemessages -a'
+run = ['uv run manage.py makemessages -a', 'pnpm exec wuchale --clean']
 
 [tasks.i18n_compile]
 run = 'uv run manage.py compilemessages'
