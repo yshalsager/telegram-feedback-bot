@@ -1,8 +1,8 @@
 from typing import Any
+from uuid import UUID
 
 from django.conf import settings
 from django.http import HttpRequest
-from django.utils.translation import activate
 from django.utils.translation import gettext_lazy as _
 from ninja import Field, Schema
 from ninja.errors import ValidationError
@@ -11,7 +11,15 @@ from telegram.constants import MessageLimit
 from telegram.error import InvalidToken
 
 from feedback_bot.api.miniapp import router
-from feedback_bot.crud import bot_exists, create_bot, get_bots
+from feedback_bot.api.miniapp.decorators import with_locale
+from feedback_bot.crud import (
+    bot_exists,
+    create_bot,
+    delete_bot,
+    get_bot,
+    get_bots,
+    update_bot_settings,
+)
 from feedback_bot.models import Bot as BotModel
 from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 
@@ -31,14 +39,43 @@ class AddBotIn(Schema):
     )
 
 
+class UpdateBotIn(Schema):
+    enable_confirmations: bool | None = Field(alias='confirmations_on', default=None)
+    start_message: str | None = Field(
+        default=None,
+        description='Updated start message',
+        max_length=MessageLimit.MAX_TEXT_LENGTH,
+    )
+    feedback_received_message: str | None = Field(
+        default=None,
+        description='Updated feedback received message',
+        max_length=MessageLimit.MAX_TEXT_LENGTH,
+    )
+    enabled: bool | None = Field(default=None)
+
+
+class ErrorResponse(Schema):
+    status: str
+    message: str
+
+
 class BotOut(Schema):
+    uuid: UUID
     name: str
     telegram_id: int
     username: str
     owner_username: str = Field(..., alias='owner.username')
     owner_telegram_id: int = Field(..., alias='owner.telegram_id')
+    start_message: str
+    feedback_received_message: str
+    confirmations_on: bool
+    enabled: bool
+    forward_chat_id: int | None
     created_at: str = Field(..., alias='created_at.isoformat')
     updated_at: str = Field(..., alias='updated_at.isoformat')
+
+    class Meta:
+        from_attributes = True
 
 
 async def validate_bot_token(bot_token: str) -> bool:
@@ -73,10 +110,12 @@ async def validate_bot_token(bot_token: str) -> bool:
     response={200: dict[str, Any], 400: dict[str, str]},
     url_name='add_bot',
 )
-async def add_bot(request: HttpRequest, payload: AddBotIn) -> dict[str, Any]:  # noqa: PLR0911
+@with_locale
+async def add_bot(  # noqa: PLR0911
+    request: HttpRequest, payload: AddBotIn
+) -> tuple[int, dict[str, Any]]:
     """Add bot endpoint"""
     user_data = request.auth
-    activate(user_data['language_code'])
     try:
         bot_info = await validate_bot_token(payload.bot_token)
     except Exception as err:  # noqa: BLE001
@@ -126,3 +165,61 @@ async def add_bot(request: HttpRequest, payload: AddBotIn) -> dict[str, Any]:  #
 )
 async def list_bots(request: HttpRequest) -> list[BotModel]:
     return await get_bots(request.auth['id'])
+
+
+@router.get(
+    '/bot/{bot_uuid}/',
+    response={200: BotOut, 404: ErrorResponse},
+    url_name='get_bot',
+)
+@with_locale
+async def retrieve_bot(
+    request: HttpRequest, bot_uuid: UUID
+) -> BotModel | tuple[int, dict[str, Any]]:
+    user_data = request.auth
+
+    bot = await get_bot(bot_uuid, user_data['id'])
+    if not bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    return bot
+
+
+@router.put(
+    '/bot/{bot_uuid}/',
+    response={200: BotOut, 400: ErrorResponse, 404: ErrorResponse},
+    url_name='update_bot',
+)
+@with_locale
+async def update_bot(
+    request: HttpRequest, bot_uuid: UUID, payload: UpdateBotIn
+) -> tuple[int, BotModel | dict[str, Any]]:
+    user_data = request.auth
+    update_data = payload.dict(exclude_unset=True)
+
+    if not update_data:
+        return 400, {'status': 'error', 'message': str(_('no_fields_to_update'))}
+
+    bot = await update_bot_settings(bot_uuid, user_data['id'], update_data)
+    if not bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    return 200, bot
+
+
+@router.delete(
+    '/bot/{bot_uuid}/',
+    response={200: dict[str, str], 404: ErrorResponse},
+    url_name='delete_bot',
+)
+@with_locale
+async def remove_bot(
+    request: HttpRequest, bot_uuid: UUID
+) -> dict[str, str] | tuple[int, dict[str, Any]]:
+    user_data = request.auth
+
+    deleted = await delete_bot(bot_uuid, user_data['id'])
+    if not deleted:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    return {'status': 'success', 'message': str(_('bot_deleted'))}

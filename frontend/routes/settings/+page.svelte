@@ -1,12 +1,12 @@
 <script lang="ts">
+import {Globe, Hash} from '@lucide/svelte/icons'
 import {set_language} from '$lib/api.js'
 import * as Avatar from '$lib/components/ui/avatar/index.js'
 import * as Card from '$lib/components/ui/card/index.js'
 import {Separator} from '$lib/components/ui/separator/index.js'
-import {availableLocales, locale, applyLocale} from '$lib/i18n'
+import {applyLocale, availableLocales, locale} from '$lib/i18n'
 import {session} from '$lib/stores.svelte.js'
 import {showNotification} from '$lib/telegram.js'
-import {Globe, Hash} from '@lucide/svelte/icons'
 
 function getUserInitials(firstName: string, lastName: string, username: string) {
     if (firstName && lastName) {
@@ -27,15 +27,18 @@ async function handleLanguageSelect(code: string) {
     const updated = await set_language(code)
     if (updated) {
         await applyLocale(code)
-        session.update(state => ({
-            ...state,
-            data: state.data
-                ? {
-                      ...state.data,
-                      user: {...state.data.user, language_code: code}
-                  }
-                : undefined
-        }))
+        session.update(state => {
+            const current = state.data
+            if (!current?.user) return state
+
+            return {
+                ...state,
+                data: {
+                    ...current,
+                    user: {...current.user, language_code: code}
+                }
+            }
+        })
         return
     }
 
@@ -54,8 +57,8 @@ async function handleLanguageSelect(code: string) {
                     <Avatar.Root class="h-16 w-16">
                         <Avatar.Image
                             class="h-16 w-16"
-                            src={$session.data.user.photo_url}
                             alt="Profile Picture"
+                            src={$session.data.user.photo_url}
                         />
                         <Avatar.Fallback class="bg-primary text-primary-foreground">
                             {getUserInitials(

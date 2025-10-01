@@ -1,27 +1,91 @@
 from typing import Any
+from uuid import UUID
 
 from django.conf import settings
+from django.db.models import Q
 
 from feedback_bot.models import Bot, User
 from feedback_bot.telegram.utils.cryptography import decrypt_token
 
+BOT_MANAGEMENT_FIELDS = (
+    'name',
+    'telegram_id',
+    'username',
+    'uuid',
+    'enabled',
+    'confirmations_on',
+    'start_message',
+    'feedback_received_message',
+    'forward_chat_id',
+    'owner__username',
+    'owner__telegram_id',
+    'created_at',
+    'updated_at',
+)
+
 
 async def create_user(user_data: dict[str, Any]) -> tuple[User, bool]:
-    user, created = await User.objects.aget_or_create(
-        telegram_id=user_data.get('id'),
-        defaults={
-            'telegram_id': user_data.get('id'),
-            'username': user_data.get('username', ''),
-            'language_code': user_data.get('language_code', 'en'),
-            'is_whitelisted': True,
-            'is_admin': user_data.get('id') in settings.TELEGRAM_BUILDER_BOT_ADMINS,
-        },
+    """Create a user or update the existing entry with the provided data."""
+
+    return await upsert_user(user_data)
+
+
+async def upsert_user(user_data: dict[str, Any]) -> tuple[User, bool]:
+    telegram_id = user_data.get('telegram_id') or user_data.get('id')
+    if telegram_id is None:
+        raise ValueError('User data must include "id" or "telegram_id"')
+
+    try:
+        telegram_id = int(telegram_id)
+    except (TypeError, ValueError) as exc:
+        raise ValueError('Invalid telegram ID') from exc
+
+    username = user_data.get('username')
+    username = '' if username is None else username.strip()
+
+    language_code = user_data.get('language_code') or (
+        settings.TELEGRAM_LANGUAGES[0] if settings.TELEGRAM_LANGUAGES else 'en'
     )
+
+    defaults = {
+        'username': username,
+        'language_code': language_code,
+        'is_whitelisted': user_data.get('is_whitelisted', True),
+        'is_admin': user_data.get('is_admin', telegram_id in settings.TELEGRAM_BUILDER_BOT_ADMINS),
+    }
+
+    user, created = await User.objects.aget_or_create(
+        telegram_id=telegram_id,
+        defaults={'telegram_id': telegram_id, **defaults},
+    )
+
+    if not created:
+        await User.objects.filter(telegram_id=telegram_id).aupdate(**defaults)
+        user = await User.objects.aget(telegram_id=telegram_id)
+
     return user, created
 
 
 async def get_user(user_id: int, **kwargs: Any) -> User | None:
     return await User.objects.filter(telegram_id=user_id, **kwargs).afirst()
+
+
+async def update_user_details(telegram_id: int, data: dict[str, Any]) -> User | None:
+    """Update selected fields on a user and return the updated instance."""
+
+    if not data:
+        return await get_user(telegram_id)
+
+    updated = await User.objects.filter(telegram_id=telegram_id).aupdate(**data)
+    if not updated:
+        return None
+
+    return await User.objects.aget(telegram_id=telegram_id)
+
+
+async def delete_user(telegram_id: int) -> bool:
+    deleted, _ = await User.objects.filter(telegram_id=telegram_id).adelete()
+    return bool(deleted)
 
 
 async def get_users() -> list[User]:
@@ -113,15 +177,39 @@ async def get_bot_config(uuid: str) -> Bot:
 
 
 async def get_bots(owner: int) -> list[Bot]:
-    qs = Bot.objects.select_related('owner').only(
-        'name',
-        'telegram_id',
-        'username',
-        'owner__username',
-        'owner__telegram_id',
-        'created_at',
-        'updated_at',
-    )
+    qs = Bot.objects.select_related('owner').only(*BOT_MANAGEMENT_FIELDS)
     if owner in settings.TELEGRAM_BUILDER_BOT_ADMINS:
         return [bot async for bot in qs.all()]
     return [bot async for bot in qs.filter(owner=owner)]
+
+
+def _bot_owner_filter(bot_uuid: UUID | str, owner: int) -> Q:
+    filters = Q(uuid=bot_uuid)
+    if owner not in settings.TELEGRAM_BUILDER_BOT_ADMINS:
+        filters &= Q(owner_id=owner)
+    return filters
+
+
+async def update_bot_settings(bot_uuid: UUID | str, owner: int, data: dict[str, Any]) -> Bot | None:
+    if not data:
+        return None
+
+    updated = await Bot.objects.filter(_bot_owner_filter(bot_uuid, owner)).aupdate(**data)
+    if not updated:
+        return None
+
+    return await get_bot(bot_uuid, owner)
+
+
+async def delete_bot(bot_uuid: UUID | str, owner: int) -> bool:
+    deleted, _ = await Bot.objects.filter(_bot_owner_filter(bot_uuid, owner)).adelete()
+    return bool(deleted)
+
+
+async def get_bot(bot_uuid: UUID | str, owner: int) -> Bot | None:
+    return (
+        await Bot.objects.select_related('owner')
+        .only(*BOT_MANAGEMENT_FIELDS)
+        .filter(_bot_owner_filter(bot_uuid, owner))
+        .afirst()
+    )

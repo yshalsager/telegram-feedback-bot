@@ -1,5 +1,5 @@
-import {session} from '$lib/stores.svelte.js'
 import {get} from 'svelte/store'
+import {session} from '$lib/stores.svelte.js'
 
 /**
  * Get the CSRF token
@@ -93,6 +93,31 @@ export async function add_bot(
     return data
 }
 
+/**
+ * Add a user
+ * @param {number} telegram_id - The Telegram user ID
+ * @param {string | null} username - Optional Telegram username without the @ symbol
+ * @param {string} language_code - Preferred language code for the user
+ * @param {boolean} is_whitelisted - Whether the user is allowed to access the mini app
+ * @param {boolean} is_admin - Whether the user should receive admin privileges
+ * @returns {Promise<object>} - The response data
+ */
+export async function add_user(telegram_id, username, language_code, is_whitelisted, is_admin) {
+    const response = await fetch('/api/user/', {
+        method: 'POST',
+        headers: get_authorization_headers(),
+        body: JSON.stringify({
+            telegram_id,
+            username,
+            language_code,
+            is_whitelisted,
+            is_admin
+        })
+    })
+    const data = await response.json()
+    return data
+}
+
 export async function list_bots() {
     const response = await fetch('/api/bot/', {
         headers: get_authorization_headers()
@@ -101,10 +126,81 @@ export async function list_bots() {
     return data
 }
 
+/**
+ * Get a bot by UUID
+ * @param {string} uuid - The UUID of the bot
+ * @returns {Promise<object>} - The response data
+ */
+export async function get_bot(uuid) {
+    const response = await fetch(`/api/bot/${uuid}/`, {
+        headers: get_authorization_headers()
+    })
+    return response.json()
+}
+
+/**
+ * Update a bot
+ * @param {string} uuid - The UUID of the bot
+ * @param {object} payload - The payload to update the bot with
+ * @returns {Promise<object>} - The response data
+ */
+export async function update_bot(uuid, payload) {
+    const response = await fetch(`/api/bot/${uuid}/`, {
+        method: 'PUT',
+        headers: get_authorization_headers(),
+        body: JSON.stringify(payload)
+    })
+    return response.json()
+}
+
+/**
+ * Delete a bot
+ * @param {string} uuid - The UUID of the bot
+ * @returns {Promise<object>} - The response data
+ */
+export async function delete_bot(uuid) {
+    const response = await fetch(`/api/bot/${uuid}/`, {
+        method: 'DELETE',
+        headers: get_authorization_headers()
+    })
+    return response.json()
+}
+
+/**
+ * List all users
+ * @returns {Promise<object>} - The response data
+ */
 export async function list_users() {
     const response = await fetch('/api/user/', {
         headers: get_authorization_headers()
     })
     const data = await response.json()
     return data
+}
+
+/**
+ * Retrieve a single user by Telegram ID
+ * @param {number} telegram_id - The Telegram user ID
+ * @returns {Promise<object>} - The response data
+ */
+export async function get_user_detail(telegram_id) {
+    const response = await fetch(`/api/user/${telegram_id}/`, {
+        headers: get_authorization_headers()
+    })
+    return response.json()
+}
+
+/**
+ * Update an existing user
+ * @param {number} telegram_id - The Telegram user ID
+ * @param {Record<string, unknown>} payload - The fields to update
+ * @returns {Promise<object>} - The response data
+ */
+export async function update_user_detail(telegram_id, payload) {
+    const response = await fetch(`/api/user/${telegram_id}/`, {
+        method: 'PUT',
+        headers: get_authorization_headers(),
+        body: JSON.stringify(payload)
+    })
+    return response.json()
 }

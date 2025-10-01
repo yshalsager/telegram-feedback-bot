@@ -8,32 +8,74 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-05 17:13+0000\n"
+"POT-Creation-Date: 2025-10-01 21:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: feedback_bot/api/miniapp.py:148
+#: feedback_bot/api/miniapp/bots.py:103
 msgid "invalid_bot_token"
 msgstr "Invalid bot token. Please check your token and try again."
 
-#: feedback_bot/api/miniapp.py:150
+#: feedback_bot/api/miniapp/bots.py:105
 msgid "unable_to_validate_bot_token"
 msgstr ""
 "Unable to validate bot token. Please check your token format and try again."
 
-#: feedback_bot/api/miniapp.py:169
+#: feedback_bot/api/miniapp/bots.py:125
 msgid "cannot_add_builder_bot"
 msgstr "You cannot add the builder bot as a bot"
 
-#: feedback_bot/api/miniapp.py:173
+#: feedback_bot/api/miniapp/bots.py:129
 msgid "bot_already_exists"
 msgstr "Bot already exists"
+
+#: feedback_bot/api/miniapp/bots.py:183 feedback_bot/api/miniapp/bots.py:205
+#: feedback_bot/api/miniapp/bots.py:223
+msgid "bot_not_found"
+msgstr "Bot not found"
+
+#: feedback_bot/api/miniapp/bots.py:201
+msgid "no_fields_to_update"
+msgstr "No fields to update"
+
+#: feedback_bot/api/miniapp/bots.py:225
+msgid "bot_deleted"
+msgstr "Bot deleted"
+
+#: feedback_bot/api/miniapp/users.py:26 feedback_bot/api/miniapp/users.py:29
+msgid "not_authorized"
+msgstr "You are not authorized to perform this action."
+
+#: feedback_bot/api/miniapp/users.py:38
+msgid "username_too_long"
+msgstr "Username is too long"
+
+#: feedback_bot/api/miniapp/users.py:41
+msgid "username_invalid_characters"
+msgstr "Username contains invalid characters"
+
+#: feedback_bot/api/miniapp/users.py:144 feedback_bot/api/miniapp/users.py:201
+#: feedback_bot/api/miniapp/users.py:219
+msgid "user_not_found"
+msgstr "User not found"
+
+#: feedback_bot/api/miniapp/users.py:177
+msgid "user_added_successfully"
+msgstr "User added successfully."
+
+#: feedback_bot/api/miniapp/users.py:177 feedback_bot/api/miniapp/users.py:223
+msgid "user_updated_successfully"
+msgstr "User updated successfully."
+
+#: feedback_bot/api/miniapp/users.py:215
+msgid "user_no_changes"
+msgstr "No changes to update."
 
 #: feedback_bot/telegram/builder/modules/start.py:15
 msgid "welcome"
@@ -51,7 +93,7 @@ msgstr "⚙️ Manage bots"
 msgid "manage_settings"
 msgstr "🛠️ Manage settings"
 
-#: feedback_bot/telegram/builder/modules/whitelist.py:17
+#: feedback_bot/telegram/builder/modules/whitelist.py:18
 msgid "cant_whitelist_hidden_user"
 msgstr "Can't add a hidden usser, use the command with user's ID."
 

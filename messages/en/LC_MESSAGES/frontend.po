@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-09-25T21:10:06.741Z\n"
+"PO-Revision-Date: 2025-10-01T21:34:14.584Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -59,8 +59,6 @@ msgstr "N/A"
 
 #: frontend/routes/settings/+page.svelte
 #: frontend/routes/settings/+page.svelte
-#: frontend/routes/add_user/+page.svelte
-#: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Language"
 msgstr "Language"
 
@@ -89,8 +87,8 @@ msgstr "Failed to add user"
 msgid "Adding User interface"
 msgstr "Adding User interface"
 
-#: frontend/routes/add_user/+page.svelte
 #: frontend/routes/+page.svelte
+#: frontend/routes/add_user/+page.svelte
 msgid "Add new user"
 msgstr "Add new user"
 
@@ -98,37 +96,10 @@ msgstr "Add new user"
 msgid "Enter a valid numeric Telegram user ID."
 msgstr "Enter a valid numeric Telegram user ID."
 
-#: frontend/routes/add_user/+page.svelte
-#: frontend/routes/user/[telegram_id]/+page.svelte
-msgid "Username"
-msgstr "Username"
-
-#: frontend/routes/add_user/+page.svelte
-#: frontend/routes/user/[telegram_id]/+page.svelte
+#: frontend/components/management/UserAccessForm.svelte
 msgid "Optional. Enter the Telegram username without the @ symbol."
 msgstr "Optional. Enter the Telegram username without the @ symbol."
 
-#: frontend/routes/add_user/+page.svelte
-#: frontend/routes/user/[telegram_id]/+page.svelte
-msgid "Whitelist access"
-msgstr "Whitelist access"
-
-#: frontend/routes/add_user/+page.svelte
-#: frontend/routes/user/[telegram_id]/+page.svelte
-msgid "Allows the user to open the builder mini app."
-msgstr "Allows the user to open the builder mini app."
-
-#: frontend/routes/add_user/+page.svelte
-#: frontend/routes/user/[telegram_id]/+page.svelte
-msgid "Admin access"
-msgstr "Admin access"
-
-#: frontend/routes/add_user/+page.svelte
-#: frontend/routes/user/[telegram_id]/+page.svelte
-msgid "Grants builder admin permissions to this user."
-msgstr "Grants builder admin permissions to this user."
-
-#: frontend/routes/add_user/+page.svelte
 #: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
 msgid "Save"
@@ -147,18 +118,14 @@ msgstr "Failed to add bot"
 msgid "Adding Bot interface"
 msgstr "Adding Bot interface"
 
-#: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
 msgid "Add new bot"
 msgstr "Add new bot"
 
 #: frontend/routes/add_bot/+page.svelte
 msgid "Bot token"
 msgstr "Bot token"
-
-#: frontend/routes/add_bot/+page.svelte
-msgid "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
-msgstr "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
 
 #: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
@@ -291,3 +258,26 @@ msgstr "Save changes"
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "User not found."
 msgstr "User not found."
+
+#: frontend/routes/add_bot/+page.svelte
+msgid "Welcome to [name] bot. Please send your feedback."
+msgstr "Welcome to [name] bot. Please send your feedback."
+
+#: frontend/routes/add_bot/+page.svelte
+msgid "Thank you for your feedback. We will get back to you soon."
+msgstr "Thank you for your feedback. We will get back to you soon."
+
+#: frontend/routes/add_bot/+page.svelte
+msgid ""
+"Bot token must be in format: numbers:letters (8-10 digits : 35\n"
+"characters)"
+msgstr ""
+"Bot token must be in format: numbers:letters (8-10 digits : 35\n"
+"characters)"
+
+#. placeholder {0}: formatter.format(count)
+#. placeholder {1}: formatter.format(limit)
+#. placeholder {2}: characters
+#: frontend/lib/i18n.ts
+msgid "{0}/{1} {2}"
+msgstr "{0}/{1} {2}"

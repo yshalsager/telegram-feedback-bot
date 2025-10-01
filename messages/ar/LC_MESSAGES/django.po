@@ -3,37 +3,78 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-05 17:13+0000\n"
+"POT-Creation-Date: 2025-10-01 21:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: feedback_bot/api/miniapp.py:148
+#: feedback_bot/api/miniapp/bots.py:103
 msgid "invalid_bot_token"
 msgstr "رمز البوت غير صالح، تحقق منه وحاول ومجددا"
 
-#: feedback_bot/api/miniapp.py:150
+#: feedback_bot/api/miniapp/bots.py:105
 msgid "unable_to_validate_bot_token"
 msgstr "تعذر التحقق من رمز البوت، تأكد منه وحاول مجددا"
 
-#: feedback_bot/api/miniapp.py:169
+#: feedback_bot/api/miniapp/bots.py:125
 msgid "cannot_add_builder_bot"
 msgstr "لا يمكنك إضافة صانع البوتات"
 
-#: feedback_bot/api/miniapp.py:173
+#: feedback_bot/api/miniapp/bots.py:129
 msgid "bot_already_exists"
 msgstr "البوت مضاف سابقا"
+
+#: feedback_bot/api/miniapp/bots.py:183 feedback_bot/api/miniapp/bots.py:205
+#: feedback_bot/api/miniapp/bots.py:223
+msgid "bot_not_found"
+msgstr "البوت غير موجود."
+
+#: feedback_bot/api/miniapp/bots.py:201
+msgid "no_fields_to_update"
+msgstr "لا توجد بيانات لتحديثها."
+
+#: feedback_bot/api/miniapp/bots.py:225
+msgid "bot_deleted"
+msgstr "حذف البوت بنجاح."
+
+#: feedback_bot/api/miniapp/users.py:26 feedback_bot/api/miniapp/users.py:29
+msgid "not_authorized"
+msgstr "ليس لديك صلاحية لتنفيذ هذا الإجراء."
+
+#: feedback_bot/api/miniapp/users.py:38
+msgid "username_too_long"
+msgstr "اسم المستخدم أطول من المسموح."
+
+#: feedback_bot/api/miniapp/users.py:41
+msgid "username_invalid_characters"
+msgstr "اسم المستخدم يحتوي على رموز غير مسموح بها."
+
+#: feedback_bot/api/miniapp/users.py:144 feedback_bot/api/miniapp/users.py:201
+#: feedback_bot/api/miniapp/users.py:219
+msgid "user_not_found"
+msgstr "المستخدم غير موجود."
+
+#: feedback_bot/api/miniapp/users.py:177
+msgid "user_added_successfully"
+msgstr "أضيف المستخدم بنجاح."
+
+#: feedback_bot/api/miniapp/users.py:177 feedback_bot/api/miniapp/users.py:223
+msgid "user_updated_successfully"
+msgstr "حدث المستخدم بنجاح."
+
+#: feedback_bot/api/miniapp/users.py:215
+msgid "user_no_changes"
+msgstr "لا توجد تغييرات لحفظها."
 
 #: feedback_bot/telegram/builder/modules/start.py:15
 msgid "welcome"
@@ -51,9 +92,11 @@ msgstr "⚙️ إدارة البوتات"
 msgid "manage_settings"
 msgstr "🛠️ إدارة الإعدادات"
 
-#: feedback_bot/telegram/builder/modules/whitelist.py:17
+#: feedback_bot/telegram/builder/modules/whitelist.py:18
 msgid "cant_whitelist_hidden_user"
-msgstr "لا يمكن إضافة المستخدم من حسابه المخفي. استخدم الأمر مع رقم المستخدم التعريفي."
+msgstr ""
+"لا يمكن إضافة المستخدم من حسابه المخفي. استخدم الأمر مع رقم المستخدم "
+"التعريفي."
 
 #: feedback_bot/telegram/builder/modules/whitelist.py:22
 #: feedback_bot/telegram/builder/modules/whitelist.py:31
