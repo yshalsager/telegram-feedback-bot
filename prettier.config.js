@@ -1,6 +1,10 @@
 /** @type {import('prettier').Config} */
 export default {
-    plugins: ['prettier-plugin-svelte', 'prettier-plugin-tailwindcss'],
+    plugins: [
+        '@ianvs/prettier-plugin-sort-imports',
+        'prettier-plugin-svelte',
+        'prettier-plugin-tailwindcss'
+    ],
     semi: false,
     singleQuote: true,
     tabWidth: 4,
@@ -33,5 +37,12 @@ export default {
             }
         }
     ],
+    importOrder: [
+        '^(svelte|@sveltejs/kit|\\$app)',
+        '<THIRD_PARTY_MODULES>',
+        '^(\\$lib|~)(/.*)?$',
+        '^[./]'
+    ],
+    importOrderParserPlugins: ['svelte', 'typescript', 'decorators-legacy'],
     tailwindStylesheet: './frontend/app.css'
 }

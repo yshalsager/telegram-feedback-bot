@@ -1,0 +1,17 @@
+{
+    "extends": "./jsconfig.json",
+    "compilerOptions": {
+        "types": [
+            "svelte"
+        ],
+        "allowUnusedLabels": false
+    },
+    "include": [
+        "frontend/**/*.ts",
+        "frontend/**/*.svelte",
+        "frontend/**/*.js"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
