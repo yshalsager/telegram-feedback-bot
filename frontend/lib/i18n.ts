@@ -1,6 +1,6 @@
 import {derived, get, writable} from 'svelte/store'
-import {loadLocale} from 'wuchale/load-utils'
 import {locales as supportedLocales} from 'virtual:wuchale/locales'
+import {loadLocale} from 'wuchale/load-utils'
 import './wuchale-loader.svelte.js'
 
 const STORAGE_KEY = 'telegram_feedback_bot.locale'
@@ -64,5 +64,6 @@ export function formatNumber(value: number, localeOverride?: string) {
 export function formatCharacterCount(count: number, limit = 4096, localeOverride?: string) {
     const targetLocale = localeOverride ?? get(locale)
     const formatter = new Intl.NumberFormat(targetLocale)
-    return `${formatter.format(count)}/${formatter.format(limit)} characters`
+    const characters = 'characters' /* @wc-include */
+    return `${formatter.format(count)}/${formatter.format(limit)} ${characters}`
 }
