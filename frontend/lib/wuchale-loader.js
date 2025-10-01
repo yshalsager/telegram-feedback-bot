@@ -3,7 +3,7 @@
 
 /// <reference types="wuchale/virtual" />
 
-import {loadCatalog, loadIDs, key} from 'virtual:wuchale/proxy' // or proxy/sync
+import {key, loadCatalog, loadIDs} from 'virtual:wuchale/proxy' // or proxy/sync
 import {registerLoaders} from 'wuchale/load-utils'
 
 // two exports. can be used anywhere

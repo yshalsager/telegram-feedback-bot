@@ -1,5 +1,5 @@
+import {emitEvent, mockTelegramEnv, setDebug} from '@telegram-apps/sdk-svelte'
 import {env} from '$env/dynamic/public'
-import {mockTelegramEnv, emitEvent, setDebug} from '@telegram-apps/sdk-svelte'
 import eruda from 'eruda'
 
 const DEBUG = env.PUBLIC_DEBUG === 'true' || false

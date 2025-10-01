@@ -1,6 +1,5 @@
 import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
-import {mockEnvInDev} from '$lib/telegram_debug.js'
 import {
     backButton,
     init,
@@ -13,6 +12,7 @@ import {
     themeParams,
     viewport
 } from '@telegram-apps/sdk-svelte'
+import {mockEnvInDev} from '$lib/telegram_debug.js'
 import {session} from './stores.svelte'
 
 export async function initSDK() {

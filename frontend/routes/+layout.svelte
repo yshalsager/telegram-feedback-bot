@@ -1,10 +1,10 @@
 <script lang="ts">
 import '~/app.css'
-import {session} from '$lib/stores.svelte.js'
-import {getInitData, initSDK} from '$lib/telegram.js'
 import {csrf_token, validate_user} from '$lib/api.js'
 import {initLocale} from '$lib/i18n'
 import {setPageTransition} from '$lib/page_transition.js'
+import {session} from '$lib/stores.svelte.js'
+import {getInitData, initSDK} from '$lib/telegram.js'
 
 let {children} = $props()
 
