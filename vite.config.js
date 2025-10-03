@@ -1,11 +1,12 @@
+import path from 'path'
 import {sveltekit} from '@sveltejs/kit/vite'
 import tailwindcss from '@tailwindcss/vite'
 import {wuchale} from '@wuchale/vite-plugin'
-import path from 'path'
 import {defineConfig} from 'vite'
+import domain from 'vite-plugin-domain'
 
 export default defineConfig({
-    plugins: [tailwindcss(), wuchale(), sveltekit()],
+    plugins: [tailwindcss(), wuchale(), sveltekit(), domain({nameSource: 'pkg', tld: 'localhost'})],
     resolve: {
         alias: [{find: '~', replacement: path.resolve('frontend')}]
     },

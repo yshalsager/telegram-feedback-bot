@@ -59,5 +59,8 @@
             "@tailwindcss/oxide",
             "esbuild"
         ]
+    },
+    "dependencies": {
+        "vite-plugin-domain": "^1.0.4"
     }
 }

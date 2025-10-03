@@ -39,7 +39,10 @@ echo $TELEGRAM_LANGUAGES | tr ' ' '\n' | xargs -n1 -I {} uv run manage.py makeme
 '''
 
 [tasks.i18n_update]
-run = ['uv run manage.py makemessages -a  --no-obsolete', 'pnpm exec wuchale --clean']
+run = [
+  'uv run manage.py makemessages -a  --no-obsolete',
+  'pnpm exec wuchale --clean',
+]
 
 [tasks.i18n_compile]
 run = 'uv run manage.py compilemessages'
@@ -48,6 +51,8 @@ run = 'uv run manage.py compilemessages'
 run = ['uv lock -U', 'uv sync', 'pnpm dlx npm-check-updates -u', 'pnpm install']
 
 [env]
+MISE_ENV = 'development'
+
 # Granian
 GRANIAN_PORT = 8001
 GRANIAN_RELOAD = 0
@@ -62,7 +67,7 @@ POSTGRES_PORT = 5432
 POSTGRES_USER = 'feedback_bot_user'
 
 # Django
-DJANGO_ALLOWED_HOSTS = 'localhost 127.0.0.1 [::1]'
+DJANGO_ALLOWED_HOSTS = 'localhost 127.0.0.1 [::1] telegram-feedback-bot.localhost'
 DJANGO_DEBUG = false
 DJANGO_SECRET_KEY = ''
 DJANGO_SETTINGS_MODULE = 'config.settings'
