@@ -25,6 +25,9 @@ dev = [
     "mypy>=1.18.2",
     "ipython>=9.5.0",
     "rich>=14.1.0",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+    "pytest-django>=4.11.1",
 ]
 
 [tool.mypy]
@@ -72,3 +75,12 @@ unfixable = [
 quote-style = "single"
 indent-style = "space"
 line-ending = "lf"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+asyncio_mode = "strict"
+markers = [
+    "django: Django ORM/services tests",
+    "api: Django Ninja API tests",
+    "ptb: python-telegram-bot handlers/filters",
+]
