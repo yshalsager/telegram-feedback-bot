@@ -110,9 +110,27 @@ async function handleUpdateUser() {
 {:else if user}
     <SettingsPage
         ariaLabel={`Managing user ${user.username ? `@${user.username}` : user.telegram_id}`}
-        subtitle={`Telegram ID: ${user.telegram_id}`}
         title="Manage user"
     >
+        {#snippet header()}
+            <div class="space-y-2 text-center">
+                <h2 class="text-xl font-bold sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
+                    Manage user
+                </h2>
+                <a
+                    class="text-sm font-medium text-[var(--tg-theme-button-color)] underline"
+                    href={`tg://user?id=${user?.telegram_id}`}
+                >
+                    {user?.username ? `@${user?.username}` : user?.telegram_id.toLocaleString()}
+                </a>
+                {#if user?.username}
+                    <p class="text-xs text-muted-foreground">
+                        Telegram ID: {user?.telegram_id.toLocaleString()}
+                    </p>
+                {/if}
+            </div>
+        {/snippet}
+
         <UserAccessForm
             isSubmitting={disableSubmit}
             onsubmit={handleUpdateUser}
