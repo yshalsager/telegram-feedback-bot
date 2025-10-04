@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-01T21:34:14.584Z\n"
+"PO-Revision-Date: 2025-10-04T20:16:03.474Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -68,8 +68,8 @@ msgstr "إدارة المستخدم @{0}"
 msgid "Adding Bot interface"
 msgstr "واجهة إضافة البوت"
 
-#: frontend/routes/+layout.svelte
 #: frontend/routes/+page.svelte
+#: frontend/routes/+layout.svelte
 msgid "Feedback Bot Builder"
 msgstr "صانع بوتات التعليقات"
 
@@ -89,8 +89,8 @@ msgstr "جلسة المستخدم غير صالحة"
 msgid "You don't have any bots yet. Please add one."
 msgstr "ليس لديك أي بوت بعد. يرجى إضافة واحد."
 
-#: frontend/routes/+page.svelte
 #: frontend/routes/add_bot/+page.svelte
+#: frontend/routes/+page.svelte
 msgid "Add new bot"
 msgstr "إضافة بوت جديد"
 
@@ -102,8 +102,8 @@ msgstr "ليس لديك أي مستخدمين بعد."
 msgid "Click \"Add new user\" to get started."
 msgstr "انقر \"إضافة مستخدم جديد\" للبدء."
 
-#: frontend/routes/+page.svelte
 #: frontend/routes/add_user/+page.svelte
+#: frontend/routes/+page.svelte
 msgid "Add new user"
 msgstr "إضافة مستخدم جديد"
 
@@ -154,8 +154,8 @@ msgstr "أدخل معرف مستخدم تيليجرام مكونًا من أرق
 msgid "Optional. Enter the Telegram username without the @ symbol."
 msgstr "اختياري. أدخل اسم مستخدم تيليجرام بدون رمز @."
 
-#: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
 msgid "Save"
 msgstr "حفظ"
 
@@ -178,21 +178,22 @@ msgid "Managing bot {0}"
 msgstr "إدارة البوت {0}"
 
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/bot/[uuid]/+page.svelte
 msgid "Manage bot"
 msgstr "إدارة البوت"
 
-#: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
 msgid "Start message"
 msgstr "رسالة البداية"
 
-#: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
 msgid "Feedback received message"
 msgstr "رسالة التعليقات المستقبلة"
 
-#: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
 msgid "Message received confirmations"
 msgstr "تأكيد استلام الرسالة"
 
@@ -243,10 +244,11 @@ msgid "Managing user {0}"
 msgstr "إدارة المستخدم {0}"
 
 #: frontend/routes/user/[telegram_id]/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Manage user"
 msgstr "إدارة المستخدم"
 
-#. placeholder {0}: user.telegram_id
+#. placeholder {0}: user?.telegram_id.toLocaleString()
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Telegram ID: {0}"
 msgstr "معرف تليجرام: {0}"
@@ -267,15 +269,33 @@ msgstr "مرحبا بك في بوت [name] اترك رسالتك وسنجيبك 
 msgid "Thank you for your feedback. We will get back to you soon."
 msgstr "شكرا لك على رسالتك. سنرد عليك قريبًا إن شاء الله."
 
-#: frontend/routes/add_bot/+page.svelte
-msgid ""
-"Bot token must be in format: numbers:letters (8-10 digits : 35\n"
-"characters)"
-msgstr "الرمز الخاص بالبوت يجب أن يكون بالشكل التالي: الأرقام:الأحرف (8-10 أرقام : 35 أحرف)"
-
 #. placeholder {0}: formatter.format(count)
 #. placeholder {1}: formatter.format(limit)
 #. placeholder {2}: characters
 #: frontend/lib/i18n.ts
 msgid "{0}/{1} {2}"
 msgstr "{0}/{1} أحرف"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Bot information"
+msgstr "معلومات البوت"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Telegram ID"
+msgstr "معرف تليجرام"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Owner"
+msgstr "المالك"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Created"
+msgstr "أنشيء في"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Updated"
+msgstr "آخر تعديل"
+
+#: frontend/routes/add_bot/+page.svelte
+msgid "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
+msgstr "الرمز الخاص بالبوت يجب أن يكون بالشكل التالي: الأرقام:الأحرف (8-10 أرقام : 35 أحرف)"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-01T21:34:14.584Z\n"
+"PO-Revision-Date: 2025-10-04T20:16:03.473Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -48,8 +48,8 @@ msgstr "U"
 msgid "Profile Picture"
 msgstr "Profile Picture"
 
-#: frontend/routes/settings/+page.svelte
 #: frontend/routes/add_user/+page.svelte
+#: frontend/routes/settings/+page.svelte
 msgid "User ID"
 msgstr "User ID"
 
@@ -87,8 +87,8 @@ msgstr "Failed to add user"
 msgid "Adding User interface"
 msgstr "Adding User interface"
 
-#: frontend/routes/+page.svelte
 #: frontend/routes/add_user/+page.svelte
+#: frontend/routes/+page.svelte
 msgid "Add new user"
 msgstr "Add new user"
 
@@ -118,8 +118,8 @@ msgstr "Failed to add bot"
 msgid "Adding Bot interface"
 msgstr "Adding Bot interface"
 
-#: frontend/routes/+page.svelte
 #: frontend/routes/add_bot/+page.svelte
+#: frontend/routes/+page.svelte
 msgid "Add new bot"
 msgstr "Add new bot"
 
@@ -160,6 +160,7 @@ msgstr "Failed to delete bot"
 msgid "Managing bot {0}"
 msgstr "Managing bot {0}"
 
+#: frontend/routes/bot/[uuid]/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
 msgid "Manage bot"
 msgstr "Manage bot"
@@ -243,10 +244,11 @@ msgid "Managing user {0}"
 msgstr "Managing user {0}"
 
 #: frontend/routes/user/[telegram_id]/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Manage user"
 msgstr "Manage user"
 
-#. placeholder {0}: user.telegram_id
+#. placeholder {0}: user?.telegram_id.toLocaleString()
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Telegram ID: {0}"
 msgstr "Telegram ID: {0}"
@@ -267,17 +269,33 @@ msgstr "Welcome to [name] bot. Please send your feedback."
 msgid "Thank you for your feedback. We will get back to you soon."
 msgstr "Thank you for your feedback. We will get back to you soon."
 
-#: frontend/routes/add_bot/+page.svelte
-msgid ""
-"Bot token must be in format: numbers:letters (8-10 digits : 35\n"
-"characters)"
-msgstr ""
-"Bot token must be in format: numbers:letters (8-10 digits : 35\n"
-"characters)"
-
 #. placeholder {0}: formatter.format(count)
 #. placeholder {1}: formatter.format(limit)
 #. placeholder {2}: characters
 #: frontend/lib/i18n.ts
 msgid "{0}/{1} {2}"
 msgstr "{0}/{1} {2}"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Bot information"
+msgstr "Bot information"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Telegram ID"
+msgstr "Telegram ID"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Owner"
+msgstr "Owner"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Created"
+msgstr "Created"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Updated"
+msgstr "Updated"
+
+#: frontend/routes/add_bot/+page.svelte
+msgid "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
+msgstr "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
