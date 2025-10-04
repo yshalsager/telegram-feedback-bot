@@ -4,13 +4,13 @@ import {resolve} from '$app/paths'
 import {Loader} from '@lucide/svelte'
 import type {EventPayload} from '@telegram-apps/sdk-svelte'
 import {on} from '@telegram-apps/sdk-svelte'
+import SettingsPage from '~/components/management/SettingsPage.svelte'
+import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
 import {add_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
-import * as Card from '$lib/components/ui/card/index.js'
 import {Input} from '$lib/components/ui/input'
 import {Separator} from '$lib/components/ui/separator/index.js'
-import {Switch} from '$lib/components/ui/switch'
 import {Textarea} from '$lib/components/ui/textarea'
 import {formatCharacterCount} from '$lib/i18n'
 
@@ -70,138 +70,98 @@ async function handleSaveBot() {
 }
 </script>
 
-<div
-    class="mx-auto min-h-screen max-w-lg py-8"
-    aria-label="Adding Bot interface"
-    dir="auto"
-    role="application"
->
-    <!-- Header Section -->
-    <div class="mb-8 text-center">
-        <h2 class="text-xl font-bold sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
-            Add new bot
-        </h2>
-    </div>
+<SettingsPage ariaLabel="Adding Bot interface" dir="auto" title="Add new bot">
+    <div class="space-y-6">
+        <section class="space-y-2">
+            <label
+                class="mb-2 block text-start text-sm font-medium text-foreground"
+                for="bot-token"
+            >
+                Bot token
+            </label>
+            <Input
+                id="bot-token"
+                class={`w-full ${!isTokenValid ? 'border-destructive focus-visible:ring-destructive/20' : ''}`}
+                aria-describedby={!isTokenValid ? 'token-error' : undefined}
+                aria-invalid={!isTokenValid}
+                aria-required="true"
+                dir="ltr"
+                placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz123456789"
+                required
+                type="text"
+                bind:value={botToken}
+            />
+            {#if !isTokenValid}
+                <p id="token-error" class="text-start text-sm text-destructive" role="alert">
+                    Bot token must be in format: numbers:letters (8-10 digits : 35 characters)
+                </p>
+            {/if}
+        </section>
 
-    <!-- Bot Configuration Card -->
-    <Card.Root class="mb-6 shadow-2xl backdrop-blur-sm">
-        <div class="p-6">
-            <!-- Form Container -->
-            <div class="space-y-6">
-                <!-- Bot Token Input -->
-                <div class="space-y-2">
-                    <label
-                        class="mb-2 block text-start text-sm font-medium text-foreground"
-                        for="bot-token"
-                    >
-                        Bot token
-                    </label>
-                    <Input
-                        id="bot-token"
-                        class={`w-full ${!isTokenValid ? 'border-destructive focus-visible:ring-destructive/20' : ''}`}
-                        aria-describedby={!isTokenValid ? 'token-error' : undefined}
-                        aria-invalid={!isTokenValid}
-                        aria-required="true"
-                        dir="ltr"
-                        placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz123456789"
-                        required
-                        type="text"
-                        bind:value={botToken}
-                    />
-                    {#if !isTokenValid}
-                        <p
-                            id="token-error"
-                            class="text-start text-sm text-destructive"
-                            role="alert"
-                        >
-                            Bot token must be in format: numbers:letters (8-10 digits : 35
-                            characters)
-                        </p>
-                    {/if}
-                </div>
+        <Separator class="my-6" />
 
-                <Separator class="my-6" />
+        <section class="space-y-2">
+            <label
+                class="mb-2 block text-start text-sm font-medium text-foreground"
+                for="start-message"
+            >
+                Start message
+            </label>
+            <Textarea
+                id="start-message"
+                class="min-h-[80px] w-full resize-none"
+                aria-required="true"
+                maxlength="4096"
+                required
+                bind:value={startMessage}
+            />
+            <p class="text-end text-xs text-muted-foreground">
+                {formatCharacterCount(startMessage.length)}
+            </p>
+        </section>
 
-                <!-- Start Message Input -->
-                <div class="space-y-2">
-                    <label
-                        class="mb-2 block text-start text-sm font-medium text-foreground"
-                        for="start-message"
-                    >
-                        Start message
-                    </label>
-                    <Textarea
-                        id="start-message"
-                        class="min-h-[80px] w-full resize-none"
-                        aria-required="true"
-                        maxlength="4096"
-                        required
-                        bind:value={startMessage}
-                    />
-                    <p class="text-end text-xs text-muted-foreground">
-                        {formatCharacterCount(startMessage.length)}
-                    </p>
-                </div>
+        <section class="space-y-2">
+            <label
+                class="mb-2 block text-start text-sm font-medium text-foreground"
+                for="feedback-message"
+            >
+                Feedback received message
+            </label>
+            <Textarea
+                id="feedback-message"
+                class="min-h-[80px] w-full resize-none"
+                aria-required="true"
+                maxlength="4096"
+                required
+                bind:value={feedbackReceivedMessage}
+            />
+            <p class="text-end text-xs text-muted-foreground">
+                {formatCharacterCount(feedbackReceivedMessage.length)}
+            </p>
+        </section>
 
-                <!-- Feedback Received Message Input -->
-                <div class="space-y-2">
-                    <label
-                        class="mb-2 block text-start text-sm font-medium text-foreground"
-                        for="feedback-message"
-                    >
-                        Feedback received message
-                    </label>
-                    <Textarea
-                        id="feedback-message"
-                        class="min-h-[80px] w-full resize-none"
-                        aria-required="true"
-                        maxlength="4096"
-                        required
-                        bind:value={feedbackReceivedMessage}
-                    />
-                    <p class="text-end text-xs text-muted-foreground">
-                        {formatCharacterCount(feedbackReceivedMessage.length)}
-                    </p>
-                </div>
+        <Separator class="my-6" />
 
-                <Separator class="my-6" />
+        <SwitchRow
+            id="enable-confirmations"
+            label="Message received confirmations"
+            bind:checked={enableConfirmations}
+        />
 
-                <!-- Enable Message Confirmations Toggle -->
-                <div
-                    class="flex items-center justify-between rounded-lg bg-secondary/30 px-4 py-4 transition-colors hover:bg-secondary/50"
-                >
-                    <div class="space-y-0.5 text-start">
-                        <label
-                            class="block text-sm font-medium text-foreground"
-                            for="enable-confirmations"
-                        >
-                            Message received confirmations
-                        </label>
-                    </div>
-                    <Switch
-                        id="enable-confirmations"
-                        class="ms-4 me-0 data-[state=checked]:bg-[var(--tg-theme-button-color)] data-[state=unchecked]:bg-muted-foreground/30"
-                        bind:checked={enableConfirmations}
-                    />
-                </div>
+        <Separator class="my-6" />
 
-                <Separator class="my-6" />
-
-                <!-- Save Button -->
-                <div class="pt-4">
-                    <Button
-                        class="h-11 w-full text-base font-medium disabled:opacity-50"
-                        disabled={!isFormValid || disableSubmit}
-                        onclick={handleSaveBot}
-                    >
-                        {#if disableSubmit}
-                            <Loader class="size-4 animate-spin" />
-                        {:else}
-                            Save
-                        {/if}
-                    </Button>
-                </div>
-            </div>
+        <div class="pt-4">
+            <Button
+                class="h-11 w-full text-base font-medium disabled:opacity-50"
+                disabled={!isFormValid || disableSubmit}
+                onclick={handleSaveBot}
+            >
+                {#if disableSubmit}
+                    <Loader class="size-4 animate-spin" />
+                {:else}
+                    Save
+                {/if}
+            </Button>
         </div>
-    </Card.Root>
-</div>
+    </div>
+</SettingsPage>

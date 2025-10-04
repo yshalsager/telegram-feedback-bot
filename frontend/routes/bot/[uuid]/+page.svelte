@@ -5,12 +5,12 @@ import {page} from '$app/state'
 import {Loader, Trash2} from '@lucide/svelte'
 import type {EventPayload} from '@telegram-apps/sdk-svelte'
 import {on} from '@telegram-apps/sdk-svelte'
+import SettingsPage from '~/components/management/SettingsPage.svelte'
+import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
 import {delete_bot, update_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
-import * as Card from '$lib/components/ui/card/index.js'
 import {Separator} from '$lib/components/ui/separator/index.js'
-import {Switch} from '$lib/components/ui/switch'
 import {Textarea} from '$lib/components/ui/textarea'
 import {formatCharacterCount} from '$lib/i18n'
 import {mapBotResponse} from '$lib/mappers/bot'
@@ -53,6 +53,12 @@ const onBotDeleted = on('popup_closed', (payload: EventPayload<'popup_closed'>) 
 })
 
 const data = pageData
+
+function formatTimestamp(value: string | null | undefined) {
+    if (!value) return '—'
+    const parsed = new Date(value)
+    return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString()
+}
 
 if (data) {
     const initialError = data.errorMessage ?? null
@@ -129,132 +135,148 @@ async function handleDeleteBot() {
         <Loader class="size-6 animate-spin" />
     </div>
 {:else if bot}
-    <div
-        class="mx-auto min-h-screen max-w-lg py-8"
-        aria-label={`Managing bot ${bot.name}`}
-        dir="auto"
-        role="application"
-    >
-        <div class="mb-8 space-y-2 text-center">
-            <h2 class="text-xl font-bold sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
-                Manage bot
-            </h2>
-            <p class="text-sm text-muted-foreground">
-                @{bot.username}
-            </p>
-        </div>
-
-        <Card.Root class="mb-6 shadow-2xl backdrop-blur-sm">
-            <div class="space-y-6 p-6">
-                <div class="space-y-2">
-                    <label
-                        class="mb-2 block text-start text-sm font-medium text-foreground"
-                        for="start-message"
-                    >
-                        Start message
-                    </label>
-                    <Textarea
-                        id="start-message"
-                        class="min-h-[80px] w-full resize-none"
-                        maxlength="4096"
-                        required
-                        bind:value={startMessage}
-                    />
-                    <p class="text-end text-xs text-muted-foreground">
-                        {formatCharacterCount(startMessage.length)}
-                    </p>
-                </div>
-
-                <div class="space-y-2">
-                    <label
-                        class="mb-2 block text-start text-sm font-medium text-foreground"
-                        for="feedback-message"
-                    >
-                        Feedback received message
-                    </label>
-                    <Textarea
-                        id="feedback-message"
-                        class="min-h-[80px] w-full resize-none"
-                        maxlength="4096"
-                        required
-                        bind:value={feedbackReceivedMessage}
-                    />
-                    <p class="text-end text-xs text-muted-foreground">
-                        {formatCharacterCount(feedbackReceivedMessage.length)}
-                    </p>
-                </div>
-
-                <Separator class="my-4" />
-
-                <div
-                    class="flex items-center justify-between rounded-lg bg-secondary/30 px-4 py-4 transition-colors hover:bg-secondary/50"
+    <SettingsPage ariaLabel={`Managing bot ${bot.name}`} dir="auto" title="Manage bot">
+        {#snippet header()}
+            <div class="space-y-2 text-center">
+                <h2 class="text-xl font-bold sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
+                    Manage bot
+                </h2>
+                <a
+                    class="text-sm font-medium text-[var(--tg-theme-button-color)] underline"
+                    href={`https://t.me/${bot?.username}`}
+                    rel="noopener noreferrer"
+                    target="_blank"
                 >
-                    <div class="space-y-0.5 text-start">
-                        <p
-                            id="confirmations-label"
-                            class="block text-sm font-medium text-foreground"
-                        >
-                            Message received confirmations
-                        </p>
-                    </div>
-                    <Switch
-                        id="enable-confirmations-toggle"
-                        class="ms-4 data-[state=checked]:bg-[var(--tg-theme-button-color)] data-[state=unchecked]:bg-muted-foreground/30"
-                        aria-labelledby="confirmations-label"
-                        bind:checked={enableConfirmations}
-                    />
-                </div>
-
-                <div
-                    class="flex items-center justify-between rounded-lg bg-secondary/30 px-4 py-4 transition-colors hover:bg-secondary/50"
-                >
-                    <div class="space-y-0.5 text-start">
-                        <p id="bot-status-label" class="block text-sm font-medium text-foreground">
-                            Bot status
-                        </p>
-                        <p class="text-xs text-muted-foreground">
-                            {enabled ? 'Enabled' : 'Disabled'}
-                        </p>
-                    </div>
-                    <Switch
-                        id="bot-status-toggle"
-                        class="ms-4 data-[state=checked]:bg-[var(--tg-theme-button-color)] data-[state=unchecked]:bg-muted-foreground/30"
-                        aria-labelledby="bot-status-label"
-                        bind:checked={enabled}
-                    />
-                </div>
-
-                <Separator class="my-4" />
-
-                <div class="flex flex-col gap-3 sm:flex-row">
-                    <Button
-                        class="h-11 flex-1 text-base font-medium"
-                        disabled={!bot || !isFormValid || disableSubmit || !hasChanges}
-                        onclick={handleUpdateBot}
-                    >
-                        {#if disableSubmit}
-                            <Loader class="size-4 animate-spin" />
-                        {:else}
-                            Save
-                        {/if}
-                    </Button>
-                    <Button
-                        class="h-11 flex-1 text-base font-medium"
-                        disabled={disableDelete}
-                        onclick={handleDeleteBot}
-                        variant="destructive"
-                    >
-                        {#if disableDelete}
-                            <Loader class="size-4 animate-spin" />
-                        {:else}
-                            <Trash2 class="size-4" />
-                            Delete bot
-                        {/if}
-                    </Button>
-                </div>
+                    @{bot?.username}
+                </a>
             </div>
-        </Card.Root>
-    </div>
+        {/snippet}
+        <div class="space-y-6">
+            <section class="space-y-3">
+                <h3 class="text-start text-sm font-semibold text-foreground">Bot information</h3>
+                <div class="space-y-3 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-muted-foreground">Telegram ID</span>
+                        <span class="font-medium text-foreground">
+                            {bot?.telegram_id ? bot?.telegram_id.toLocaleString() : '—'}
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <span class="text-muted-foreground">Owner</span>
+                        {#if bot?.owner_telegram_id}
+                            <a
+                                class="font-medium text-[var(--tg-theme-button-color)] underline"
+                                href={resolve(`/user/${bot?.owner_telegram_id}`)}
+                            >
+                                {bot?.owner_username
+                                    ? `@${bot.owner_username}`
+                                    : bot.owner_telegram_id.toLocaleString()}
+                            </a>
+                        {:else}
+                            <span class="font-medium text-foreground">
+                                {bot?.owner_username ? `@${bot?.owner_username}` : '—'}
+                            </span>
+                        {/if}
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-muted-foreground">Created</span>
+                        <span class="font-medium text-foreground">
+                            {formatTimestamp(bot?.created_at)}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-muted-foreground">Updated</span>
+                        <span class="font-medium text-foreground">
+                            {formatTimestamp(bot?.updated_at)}
+                        </span>
+                    </div>
+                </div>
+            </section>
+            <Separator class="my-4" />
+
+            <section class="space-y-2">
+                <label
+                    class="mb-2 block text-start text-sm font-medium text-foreground"
+                    for="start-message"
+                >
+                    Start message
+                </label>
+                <Textarea
+                    id="start-message"
+                    class="min-h-[80px] w-full resize-none"
+                    maxlength="4096"
+                    required
+                    bind:value={startMessage}
+                />
+                <p class="text-end text-xs text-muted-foreground">
+                    {formatCharacterCount(startMessage.length)}
+                </p>
+            </section>
+
+            <section class="space-y-2">
+                <label
+                    class="mb-2 block text-start text-sm font-medium text-foreground"
+                    for="feedback-message"
+                >
+                    Feedback received message
+                </label>
+                <Textarea
+                    id="feedback-message"
+                    class="min-h-[80px] w-full resize-none"
+                    maxlength="4096"
+                    required
+                    bind:value={feedbackReceivedMessage}
+                />
+                <p class="text-end text-xs text-muted-foreground">
+                    {formatCharacterCount(feedbackReceivedMessage.length)}
+                </p>
+            </section>
+
+            <Separator class="my-4" />
+
+            <SwitchRow
+                id="enable-confirmations-toggle"
+                label="Message received confirmations"
+                bind:checked={enableConfirmations}
+            />
+
+            <SwitchRow
+                id="bot-status-toggle"
+                description={enabled ? 'Enabled' : 'Disabled'}
+                label="Bot status"
+                bind:checked={enabled}
+            />
+
+            <Separator class="my-4" />
+
+            <div class="flex flex-col gap-3 sm:flex-row">
+                <Button
+                    class="h-11 flex-1 text-base font-medium"
+                    disabled={!bot || !isFormValid || disableSubmit || !hasChanges}
+                    onclick={handleUpdateBot}
+                >
+                    {#if disableSubmit}
+                        <Loader class="size-4 animate-spin" />
+                    {:else}
+                        Save
+                    {/if}
+                </Button>
+                <Button
+                    class="h-11 flex-1 text-base font-medium"
+                    disabled={disableDelete}
+                    onclick={handleDeleteBot}
+                    variant="destructive"
+                >
+                    {#if disableDelete}
+                        <Loader class="size-4 animate-spin" />
+                    {:else}
+                        <Trash2 class="size-4" />
+                        Delete bot
+                    {/if}
+                </Button>
+            </div>
+        </div>
+    </SettingsPage>
 {:else}
     <div class="flex min-h-screen items-center justify-center">
         <p class="text-sm text-muted-foreground">{loadError ?? 'Bot not found'}</p>
