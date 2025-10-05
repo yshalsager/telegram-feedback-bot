@@ -18,7 +18,7 @@ class ORJSONRenderer(BaseRenderer):
         return cast(bytes, orjson.dumps(data))
 
 
-api = NinjaAPI(renderer=ORJSONRenderer(), csrf=True)
+api = NinjaAPI(renderer=ORJSONRenderer())
 
 
 @api.exception_handler(HttpError)
