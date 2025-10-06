@@ -61,6 +61,7 @@ async function handleSaveUser() {
         ])
         telegramId = ''
         username = ''
+        languageCode = $locale
         isWhitelisted = true
         isAdmin = false
     } else {
