@@ -1,30 +1,25 @@
-"""Tests for whitelist handlers using PTB primitives."""
+"""Integration tests for whitelist handlers using PTB Application.process_update."""
 
 import datetime as dt
-from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
-import regex as re
 from feedback_bot.telegram.builder.modules import whitelist as whitelist_module
-from tests.feedback_bot.telegram.factories import (
-    attach_send_message_mock,
-    build_message,
-    build_update,
-    build_user,
+from tests.feedback_bot.telegram.factories import build_message, build_update, build_user
+
+from telegram import MessageEntity, MessageOriginHiddenUser, MessageOriginUser, Update
+
+pytestmark = [pytest.mark.ptb, pytest.mark.asyncio]
+
+parametrize_whitelist = pytest.mark.parametrize(
+    'app_with_handlers', ['feedback_bot.telegram.builder.modules.whitelist'], indirect=True
 )
 
-from telegram import MessageOriginHiddenUser, MessageOriginUser
 
-
-@pytest.fixture(autouse=True)
-def stub_translation(monkeypatch):
-    monkeypatch.setattr(whitelist_module, '_', lambda key: key)
-
-
-@pytest.mark.ptb
-@pytest.mark.asyncio
-async def test_whitelist_user_from_reply_adds_visible_user(monkeypatch):
+@parametrize_whitelist
+async def test_whitelist_user_from_reply_adds_visible_user(
+    monkeypatch, app_with_handlers, ptb_send, ptb_errors
+):
     forwarder = build_message(
         444,
         forward_origin=MessageOriginUser(
@@ -32,27 +27,32 @@ async def test_whitelist_user_from_reply_adds_visible_user(monkeypatch):
             sender_user=build_user(222, first_name='Origin'),
         ),
     )
-    message = build_message(111, reply_to=forwarder)
-    send_mock = attach_send_message_mock(message)
+    # Admin replies with '/whitelist' to the forwarded message
+    reply = build_message(
+        111,
+        text='/whitelist',
+        reply_to=forwarder,
+        entities=[MessageEntity(type='bot_command', offset=0, length=len('/whitelist'))],
+    )
 
     create_user_mock = AsyncMock()
     monkeypatch.setattr(whitelist_module, 'create_user', create_user_mock)
 
-    update = build_update(message)
-
-    await whitelist_module.whitelist_user_from_reply(update, SimpleNamespace())
+    update = Update.de_json(build_update(reply).to_dict(), app_with_handlers.bot)
+    await app_with_handlers.process_update(update)
 
     create_user_mock.assert_awaited_once()
     payload = create_user_mock.await_args.args[0]
     assert payload == forwarder.forward_origin.sender_user.to_dict()
 
-    send_mock.assert_awaited_once()
-    assert send_mock.await_args.kwargs['text'] == 'user_whitelisted'
+    ptb_send.assert_awaited_once()
+    assert ptb_send.await_args.kwargs['text'] == 'user_whitelisted'
 
 
-@pytest.mark.ptb
-@pytest.mark.asyncio
-async def test_whitelist_user_from_reply_rejects_hidden_user(monkeypatch):
+@parametrize_whitelist
+async def test_whitelist_user_from_reply_rejects_hidden_user(
+    monkeypatch, app_with_handlers, ptb_send, ptb_errors
+):
     forwarder = build_message(
         444,
         forward_origin=MessageOriginHiddenUser(
@@ -60,36 +60,44 @@ async def test_whitelist_user_from_reply_rejects_hidden_user(monkeypatch):
             sender_user_name='Anonymous',
         ),
     )
-    message = build_message(111, reply_to=forwarder)
-    send_mock = attach_send_message_mock(message)
+    reply = build_message(
+        111,
+        text='/whitelist',
+        reply_to=forwarder,
+        entities=[MessageEntity(type='bot_command', offset=0, length=len('/whitelist'))],
+    )
 
     create_user_mock = AsyncMock()
     monkeypatch.setattr(whitelist_module, 'create_user', create_user_mock)
 
-    update = build_update(message)
-
-    await whitelist_module.whitelist_user_from_reply(update, SimpleNamespace())
+    update = Update.de_json(build_update(reply).to_dict(), app_with_handlers.bot)
+    await app_with_handlers.process_update(update)
 
     assert create_user_mock.await_count == 0
-    send_mock.assert_awaited_once()
-    assert send_mock.await_args.kwargs['text'] == 'cant_whitelist_hidden_user'
+    ptb_send.assert_awaited_once()
+    assert ptb_send.await_args.kwargs['text'] == 'cant_whitelist_hidden_user'
 
 
-@pytest.mark.ptb
-@pytest.mark.asyncio
-async def test_whitelist_user_from_id_uses_context_match(monkeypatch):
-    message = build_message(111)
-    send_mock = attach_send_message_mock(message)
-
+@parametrize_whitelist
+async def test_whitelist_user_from_id_uses_context_match(
+    monkeypatch, app_with_handlers, ptb_send, ptb_errors
+):
     create_user_mock = AsyncMock()
     monkeypatch.setattr(whitelist_module, 'create_user', create_user_mock)
 
-    update = build_update(message)
-    match = re.match(r'^/whitelist\s+(\d+)$', '/whitelist 321')
-    context = SimpleNamespace(matches=[match])
+    update = Update.de_json(
+        build_update(
+            build_message(
+                111,
+                text='/whitelist 321',
+                entities=[MessageEntity(type='bot_command', offset=0, length=len('/whitelist'))],
+            )
+        ).to_dict(),
+        app_with_handlers.bot,
+    )
 
-    await whitelist_module.whitelist_user_from_id(update, context)
+    await app_with_handlers.process_update(update)
 
     create_user_mock.assert_awaited_once_with({'id': 321})
-    send_mock.assert_awaited_once()
-    assert send_mock.await_args.kwargs['text'] == 'user_whitelisted'
+    ptb_send.assert_awaited_once()
+    assert ptb_send.await_args.kwargs['text'] == 'user_whitelisted'

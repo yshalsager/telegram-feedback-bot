@@ -1,82 +1,65 @@
-"""Tests for the /start handler using PTB objects."""
+"""Integration-style test driving PTB Application.process_update for /start."""
 
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock
 
-import feedback_bot.telegram.builder.filters as filters_mod
 import pytest
 from feedback_bot.telegram.builder.modules import start as start_module
-from tests.feedback_bot.telegram.factories import (
-    attach_send_message_mock,
-    build_message,
-    build_update,
+
+from telegram.ext import Application
+
+# Apply common marks to all tests in this module
+pytestmark = [pytest.mark.ptb, pytest.mark.asyncio]
+
+parametrize_start = pytest.mark.parametrize(
+    'app_with_handlers', ['feedback_bot.telegram.builder.modules.start'], indirect=True
 )
 
-from telegram.ext import CallbackContext
 
-
-@pytest.fixture(autouse=True)
-def builder_settings(settings):
-    settings.TELEGRAM_BUILDER_BOT_ADMINS = {111}
-    settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL = 'https://builder.test'
-    return settings
-
-
-@pytest.fixture(autouse=True)
-def stub_translation(monkeypatch):
-    monkeypatch.setattr(start_module, '_', lambda key: key)
-
-
-@pytest.mark.ptb
-@pytest.mark.asyncio
-async def test_start_sends_main_menu(monkeypatch):
-    message = build_message(111)
-    send_mock = attach_send_message_mock(message)
-
+@parametrize_start
+async def test_start_integration_process_update(
+    monkeypatch, app_with_handlers: Application, ptb_send, make_command_update, ptb_errors
+):
+    monkeypatch.setattr(
+        'feedback_bot.telegram.builder.filters.is_whitelisted_user', AsyncMock(return_value=True)
+    )
     create_user_mock = AsyncMock()
     monkeypatch.setattr(start_module, 'create_user', create_user_mock)
-    monkeypatch.setattr(filters_mod, 'is_whitelisted_user', AsyncMock(return_value=True))
 
-    update = build_update(message)
-    context = CallbackContext(application=Mock())
+    update = make_command_update(111, '/start')
+    await app_with_handlers.process_update(update)
 
-    await start_module.start(update, context)
-
+    # Assertions: user creation and reply content
     create_user_mock.assert_awaited_once()
     payload = create_user_mock.await_args.args[0]
-    assert payload == message.from_user.to_dict()
+    assert payload['id'] == 111
 
-    send_mock.assert_awaited_once()
-    called_kwargs = send_mock.await_args.kwargs
-    assert called_kwargs['text'] == 'welcome'
-    assert called_kwargs['chat_id'] == message.chat_id
+    ptb_send.assert_awaited_once()
+    called = ptb_send.await_args.kwargs
+    assert called['chat_id'] == update.effective_message.chat_id
+    assert called['text'] == 'welcome'
+    assert called['reply_markup'] is not None
 
-    markup = called_kwargs['reply_markup']
-    assert markup is not None
+    # Quick sanity check for the keyboard content
+    markup = called['reply_markup']
     assert len(markup.inline_keyboard) == 4
-
-    first_button = markup.inline_keyboard[0][0]
-    assert first_button.callback_data == 'add_bot'
-
-    mini_app_button = markup.inline_keyboard[-1][0]
-    assert mini_app_button.text == 'Open Mini App'
-    assert mini_app_button.web_app.url == 'https://builder.test/'
+    assert markup.inline_keyboard[0][0].callback_data == 'add_bot'
+    assert markup.inline_keyboard[-1][0].web_app.url == 'https://builder.test/'
 
 
-@pytest.mark.ptb
-@pytest.mark.asyncio
-async def test_start_blocks_non_whitelisted_user(monkeypatch):
-    message = build_message(999)
-    send_mock = attach_send_message_mock(message)
-
+@parametrize_start
+async def test_start_integration_blocks_non_whitelisted_user(
+    monkeypatch, app_with_handlers: Application, ptb_send, make_command_update, ptb_errors
+):
+    monkeypatch.setattr(
+        'feedback_bot.telegram.builder.filters.is_whitelisted_user', AsyncMock(return_value=False)
+    )
     create_user_mock = AsyncMock()
     monkeypatch.setattr(start_module, 'create_user', create_user_mock)
-    monkeypatch.setattr(filters_mod, 'is_whitelisted_user', AsyncMock(return_value=False))
 
-    update = build_update(message)
-    context = CallbackContext(application=Mock())
+    # Prepare update that matches the command handler for a non-whitelisted user
+    update = make_command_update(999, '/start')
+    await app_with_handlers.process_update(update)
 
-    result = await start_module.start(update, context)
-
-    assert result is None
+    # Ensure no side-effects occurred
     assert create_user_mock.await_count == 0
-    assert send_mock.await_count == 0
+    assert ptb_send.await_count == 0
