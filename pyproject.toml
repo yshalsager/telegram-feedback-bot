@@ -9,10 +9,10 @@ license = { text = "MIT" }
 requires-python = ">=3.13"
 dependencies = [
     "cryptography>=46.0.1",
-    "django>=5.2.6,<6",
+    "django>=5.2.7,<6",
     "django-asgi-lifespan>=0.5.0",
     "django-ninja>=1.4.3",
-    "granian[reload,uvloop]>=2.5.4",
+    "granian[reload,uvloop]>=2.5.5",
     "orjson>=3.11.3,<4",
     "psycopg[binary]>=3.2.10,<4",
     "python-telegram-bot>=22.5",
@@ -21,10 +21,10 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff>=0.13.2",
+    "ruff>=0.14.0",
     "mypy>=1.18.2",
-    "ipython>=9.5.0",
-    "rich>=14.1.0",
+    "ipython>=9.6.0",
+    "rich>=14.2.0",
     "pytest>=8.4.2",
     "pytest-asyncio>=1.2.0",
     "pytest-django>=4.11.1",
@@ -84,3 +84,4 @@ markers = [
     "api: Django Ninja API tests",
     "ptb: python-telegram-bot handlers/filters",
 ]
+addopts = "--import-mode=importlib"
