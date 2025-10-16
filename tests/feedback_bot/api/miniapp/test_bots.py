@@ -1,6 +1,6 @@
 """API tests for miniapp bot endpoints."""
 
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 from feedback_bot import crud
@@ -160,6 +160,66 @@ async def test_list_and_update_bot(miniapp_client, monkeypatch):
     updated = await crud.get_bot(UUID(uuid_str), auth_state['user']['id'])
     assert updated is not None
     assert updated.start_message == 'updated text'
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_unlink_bot_forward_chat(miniapp_client, monkeypatch):
+    client, auth_state, headers = miniapp_client
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'owner',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    async def fake_validate(_: str) -> dict[str, str | int]:
+        return {
+            'name': 'Linkable Bot',
+            'telegram_id': 222333444,
+            'username': 'linkable_bot',
+        }
+
+    monkeypatch.setattr(
+        'feedback_bot.api.miniapp.bots.validate_bot_token',
+        fake_validate,
+        raising=False,
+    )
+
+    create_response = await client.post(
+        '/bot/',
+        headers=headers,
+        json={
+            'bot_token': BOT_TOKEN,
+            'enable_confirmations': True,
+            'start_message': 'start',
+            'feedback_received_message': 'received',
+        },
+    )
+    assert create_response.status_code == 200
+
+    stored_bot = (await crud.get_bots(auth_state['user']['id']))[0]
+    await crud.update_bot_settings(
+        stored_bot.uuid, auth_state['user']['id'], {'forward_chat_id': -100001}
+    )
+
+    unlink_response = await client.delete(f'/bot/{stored_bot.uuid}/forward_chat/', headers=headers)
+
+    assert unlink_response.status_code == 200
+    payload = unlink_response.json()
+    assert payload['status'] == 'success'
+    assert 'bot' not in payload
+
+    refreshed = await crud.get_bot(stored_bot.uuid, auth_state['user']['id'])
+    assert refreshed is not None
+    assert refreshed.forward_chat_id is None
+
+    missing = await client.delete(f'/bot/{uuid4()}/forward_chat/', headers=headers)
+    assert missing.status_code == 404
 
 
 @pytest.mark.api

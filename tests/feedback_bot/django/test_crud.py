@@ -144,3 +144,29 @@ async def test_bot_exists_checks_presence():
 
     assert await crud.bot_exists(222222) is True
     assert await crud.bot_exists(333333) is False
+
+
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_update_bot_forward_chat_by_telegram_id_updates_destination():
+    owner, _ = await crud.upsert_user({'id': 999})
+    bot = await crud.create_bot(
+        telegram_id=333444,
+        bot_token='FW_TOKEN',  # noqa: S106
+        username='link_bot',
+        name='Link Bot',
+        owner=owner.telegram_id,
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    updated = await crud.update_bot_forward_chat_by_telegram_id(bot.telegram_id, -100123)
+
+    assert updated is True
+    stored = await Bot.objects.aget(pk=bot.pk)
+    assert stored.forward_chat_id == -100123
+
+    missing = await crud.update_bot_forward_chat_by_telegram_id(555666, -100999)
+    assert missing is False

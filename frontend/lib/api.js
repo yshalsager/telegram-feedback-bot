@@ -154,6 +154,19 @@ export async function update_bot(uuid, payload) {
 }
 
 /**
+ * Unlink a bot from its forwarding chat
+ * @param {string} uuid - The UUID of the bot
+ * @returns {Promise<object>} - The response data
+ */
+export async function unlink_bot_forward_chat(uuid) {
+    const response = await fetch(`/api/bot/${uuid}/forward_chat/`, {
+        method: 'DELETE',
+        headers: get_authorization_headers()
+    })
+    return response.json()
+}
+
+/**
  * Delete a bot
  * @param {string} uuid - The UUID of the bot
  * @returns {Promise<object>} - The response data

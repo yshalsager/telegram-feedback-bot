@@ -8,7 +8,7 @@ import {on} from '@telegram-apps/sdk-svelte'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
-import {delete_bot, update_bot} from '$lib/api.js'
+import {delete_bot, unlink_bot_forward_chat, update_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
 import {Separator} from '$lib/components/ui/separator/index.js'
 import {Textarea} from '$lib/components/ui/textarea'
@@ -46,6 +46,7 @@ const hasChanges = $derived(
 
 let disableSubmit = $state(false)
 let disableDelete = $state(false)
+let unlink_in_progress = $state(false)
 
 const onBotDeleted = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
     if (payload.button_id === 'bot_deleted_success_close') goto(resolve('/'))
@@ -127,6 +128,23 @@ async function handleDeleteBot() {
         showNotification('', `❗ ${message}`)
     }
     disableDelete = false
+}
+
+async function unlink_group() {
+    if (!bot || bot.forward_chat_id === null) return
+    unlink_in_progress = true
+    const response = await unlink_bot_forward_chat(botUuid)
+    if (response && 'status' in response && response.status === 'success') {
+        bot = {...bot, forward_chat_id: null}
+        showNotification('', '✅ Bot unlinked from group')
+    } else {
+        const message =
+            response && 'message' in response && response.message
+                ? String(response.message)
+                : 'Failed to unlink bot from group'
+        showNotification('', `❗ ${message}`)
+    }
+    unlink_in_progress = false
 }
 </script>
 
@@ -246,6 +264,31 @@ async function handleDeleteBot() {
                 label="Bot status"
                 bind:checked={enabled}
             />
+
+            <section class="space-y-3 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
+                <div class="space-y-1 text-start">
+                    <h3 class="text-sm font-semibold text-foreground">Forwarding destination</h3>
+                    <p class="text-sm text-muted-foreground">
+                        {bot?.forward_chat_id !== null && bot?.forward_chat_id !== undefined
+                            ? `Feedback is forwarded to chat ID ${bot.forward_chat_id.toLocaleString()}.`
+                            : 'Add this bot to a group to link it automatically, otherwise it sends messages to bot owner.'}
+                    </p>
+                </div>
+                {#if bot?.forward_chat_id !== null && bot?.forward_chat_id !== undefined}
+                    <Button
+                        class="h-10 w-full text-base font-medium"
+                        disabled={unlink_in_progress}
+                        onclick={unlink_group}
+                        variant="secondary"
+                    >
+                        {#if unlink_in_progress}
+                            <Loader class="size-4 animate-spin" />
+                        {:else}
+                            Unlink group
+                        {/if}
+                    </Button>
+                {/if}
+            </section>
 
             <Separator class="my-4" />
 

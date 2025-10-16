@@ -208,6 +208,24 @@ async def update_bot(
 
 
 @router.delete(
+    '/bot/{bot_uuid}/forward_chat/',
+    response={200: dict[str, str], 404: ErrorResponse},
+    url_name='unlink_bot_forward_chat',
+)
+@with_locale
+async def unlink_bot_forward_chat(
+    request: HttpRequest, bot_uuid: UUID
+) -> tuple[int, dict[str, str]] | tuple[int, dict[str, Any]]:
+    user_data = request.auth
+
+    bot = await update_bot_settings(bot_uuid, user_data['id'], {'forward_chat_id': None})
+    if not bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    return 200, {'status': 'success', 'message': 'Bot unlinked from group.'}
+
+
+@router.delete(
     '/bot/{bot_uuid}/',
     response={200: dict[str, str], 404: ErrorResponse},
     url_name='delete_bot',

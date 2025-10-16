@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-01 21:09+0000\n"
+"POT-Creation-Date: 2025-10-16 20:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,7 +35,7 @@ msgid "bot_already_exists"
 msgstr "البوت مضاف سابقا"
 
 #: feedback_bot/api/miniapp/bots.py:183 feedback_bot/api/miniapp/bots.py:205
-#: feedback_bot/api/miniapp/bots.py:223
+#: feedback_bot/api/miniapp/bots.py:223 feedback_bot/api/miniapp/bots.py:241
 msgid "bot_not_found"
 msgstr "البوت غير موجود."
 
@@ -43,7 +43,7 @@ msgstr "البوت غير موجود."
 msgid "no_fields_to_update"
 msgstr "لا توجد بيانات لتحديثها."
 
-#: feedback_bot/api/miniapp/bots.py:225
+#: feedback_bot/api/miniapp/bots.py:243
 msgid "bot_deleted"
 msgstr "حذف البوت بنجاح."
 
@@ -102,6 +102,16 @@ msgstr ""
 #: feedback_bot/telegram/builder/modules/whitelist.py:31
 msgid "user_whitelisted"
 msgstr "أضيف المستخدم بنجاح."
+
+#: feedback_bot/telegram/feedback_bot/modules/groups.py:33
+#, python-format
+msgid "%(bot_name)s will forward feedback to %(chat_name)s."
+msgstr "سيرسل %(bot_name)s التغذية الراجعة إلى %(chat_name)s."
+
+#: feedback_bot/telegram/feedback_bot/modules/groups.py:68
+#, python-format
+msgid "%(bot_name)s has been unlinked from %(chat_title)s."
+msgstr "تم فك ارتباط %(bot_name)s من %(chat_title)s."
 
 #: feedback_bot/telegram/utils/restart.py:13
 msgid "restarted_successfully"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-04T20:16:03.473Z\n"
+"PO-Revision-Date: 2025-10-16T20:59:59.072Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -57,6 +57,7 @@ msgstr "User ID"
 msgid "N/A"
 msgstr "N/A"
 
+#: frontend/components/management/UserAccessForm.svelte
 #: frontend/routes/settings/+page.svelte
 #: frontend/routes/settings/+page.svelte
 msgid "Language"
@@ -87,8 +88,8 @@ msgstr "Failed to add user"
 msgid "Adding User interface"
 msgstr "Adding User interface"
 
-#: frontend/routes/add_user/+page.svelte
 #: frontend/routes/+page.svelte
+#: frontend/routes/add_user/+page.svelte
 msgid "Add new user"
 msgstr "Add new user"
 
@@ -100,6 +101,7 @@ msgstr "Enter a valid numeric Telegram user ID."
 msgid "Optional. Enter the Telegram username without the @ symbol."
 msgstr "Optional. Enter the Telegram username without the @ symbol."
 
+#: frontend/components/management/UserAccessForm.svelte
 #: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
 msgid "Save"
@@ -118,8 +120,8 @@ msgstr "Failed to add bot"
 msgid "Adding Bot interface"
 msgstr "Adding Bot interface"
 
-#: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/+page.svelte
+#: frontend/routes/add_bot/+page.svelte
 msgid "Add new bot"
 msgstr "Add new bot"
 
@@ -299,3 +301,44 @@ msgstr "Updated"
 #: frontend/routes/add_bot/+page.svelte
 msgid "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
 msgstr "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Failed to unlink bot from group"
+msgstr "Failed to unlink bot from group"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Forwarding destination"
+msgstr "Forwarding destination"
+
+#. placeholder {0}: bot.forward_chat_id.toLocaleString()
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Feedback is forwarded to chat ID {0}."
+msgstr "Feedback is forwarded to chat ID {0}."
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Unlink group"
+msgstr "Unlink group"
+
+#: frontend/components/management/UserAccessForm.svelte
+msgid "Username"
+msgstr "Username"
+
+#: frontend/components/management/UserAccessForm.svelte
+msgid "Whitelist access"
+msgstr "Whitelist access"
+
+#: frontend/components/management/UserAccessForm.svelte
+msgid "Allows the user to open the builder mini app."
+msgstr "Allows the user to open the builder mini app."
+
+#: frontend/components/management/UserAccessForm.svelte
+msgid "Admin access"
+msgstr "Admin access"
+
+#: frontend/components/management/UserAccessForm.svelte
+msgid "Grants builder admin permissions to this user."
+msgstr "Grants builder admin permissions to this user."
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."
+msgstr "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."

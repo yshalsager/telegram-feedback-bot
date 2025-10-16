@@ -201,6 +201,17 @@ async def update_bot_settings(bot_uuid: UUID | str, owner: int, data: dict[str, 
     return await get_bot(bot_uuid, owner)
 
 
+async def update_bot_forward_chat_by_telegram_id(
+    telegram_id: int, forward_chat_id: int | None
+) -> bool:
+    """Update the forward chat linked to a bot via its Telegram ID."""
+
+    updated = await Bot.objects.filter(telegram_id=telegram_id).aupdate(
+        forward_chat_id=forward_chat_id
+    )
+    return bool(updated)
+
+
 async def delete_bot(bot_uuid: UUID | str, owner: int) -> bool:
     deleted, _ = await Bot.objects.filter(_bot_owner_filter(bot_uuid, owner)).adelete()
     return bool(deleted)
