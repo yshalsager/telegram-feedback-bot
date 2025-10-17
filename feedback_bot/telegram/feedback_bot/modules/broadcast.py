@@ -31,9 +31,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ):
         return
 
-    bot_config = context.bot_data.get('bot_config')
-    if bot_config is None:
-        return
+    bot_config = context.bot_data['bot_config']
 
     owner_id = getattr(bot_config, 'owner_id', None)
     if owner_id is None or update.effective_user.id != owner_id:

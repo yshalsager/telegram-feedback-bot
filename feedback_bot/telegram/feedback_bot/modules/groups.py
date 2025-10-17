@@ -9,6 +9,7 @@ from feedback_bot.crud import update_bot_forward_chat_by_telegram_id
 
 async def link_bot_to_group(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Set the chat as the feedback destination when the bot joins a group."""
+    bot_config = context.bot_data['bot_config']
     if (
         update.effective_message is None
         or not update.effective_message.new_chat_members
@@ -18,8 +19,7 @@ async def link_bot_to_group(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         or not any(
             member.id == context.bot.id for member in update.effective_message.new_chat_members
         )
-        or getattr(context.bot_data.get('bot_config', None), 'forward_chat_id', None)
-        == update.effective_chat.id
+        or bot_config.forward_chat_id == update.effective_chat.id
     ):
         return
 
@@ -55,7 +55,7 @@ async def unlink_bot_from_group(update: Update, context: ContextTypes.DEFAULT_TY
     ):
         return
 
-    bot_config = context.bot_data.get('bot_config')
+    bot_config = context.bot_data['bot_config']
     if getattr(bot_config, 'forward_chat_id', None) != update.effective_chat.id:
         return
 
