@@ -78,7 +78,7 @@ class BotOut(Schema):
         from_attributes = True
 
 
-async def validate_bot_token(bot_token: str) -> bool:
+async def validate_bot_token(bot_token: str) -> dict[str, Any]:
     """
     Validate a Telegram bot token using python-telegram-bot.
 
@@ -86,7 +86,7 @@ async def validate_bot_token(bot_token: str) -> bool:
         bot_token: The bot token to validate
 
     Returns:
-        dict: Bot information if valid
+        dict[str, Any]: Bot information if valid
 
     Raises:
         ValidationError: If the bot token is invalid

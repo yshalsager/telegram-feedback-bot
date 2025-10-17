@@ -38,6 +38,7 @@ class TelegramMiniAppAuth(HttpBearer):
             and (user_data := orjson.loads(parsed_data.get('user', '{}')))
             and (user_data.get('id') in admins or user_data.get('id') == 1)
         ):
+            user_data['is_admin'] = True
             return cast(dict[str, Any], user_data)
 
         is_valid, user_data = validate_mini_app_init_data(
@@ -51,6 +52,8 @@ class TelegramMiniAppAuth(HttpBearer):
             raise AuthenticationError('User is not whitelisted')
 
         user_data['language_code'] = user.language_code
+        user_data['is_whitelisted'] = user.is_whitelisted
+        user_data['is_admin'] = bool(user.is_admin or (int(user_data.get('id')) in admins))
 
         logger.info(f'Successfully authenticated user: {user_data.get("username")}')
         return user_data

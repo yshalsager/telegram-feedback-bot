@@ -25,6 +25,7 @@ async def test_validate_user_returns_authenticated_payload(miniapp_client):
     body = response.json()
     assert body['status'] == 'success'
     assert body['user']['id'] == auth_state['user']['id']
+    assert body['user']['is_admin'] is True
 
 
 @pytest.mark.api
@@ -188,6 +189,25 @@ async def test_retrieve_user_requires_admin(miniapp_client):
     auth_state['user'] = {'id': 2, 'username': 'viewer', 'language_code': 'en'}
 
     response = await client.get('/user/700/', headers=headers)
+
+    assert response.status_code == 403
+    body = response.json()
+    assert body['error'] is True
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_list_users_requires_admin(miniapp_client):
+    client, auth_state, headers = miniapp_client
+
+    auth_state['user'] = {'id': 99, 'username': 'viewer', 'language_code': 'en', 'is_admin': False}
+    await crud.upsert_user(
+        {'id': 99, 'username': 'viewer', 'is_whitelisted': True, 'is_admin': False}
+    )
+
+    response = await client.get('/user/', headers=headers)
 
     assert response.status_code == 403
     body = response.json()

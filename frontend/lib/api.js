@@ -39,15 +39,21 @@ function get_authorization_headers() {
 
 /**
  * Validate the user session
- * @returns {Promise<boolean>} - True if the user is valid, false otherwise
+ * @returns {Promise<{ok: boolean, data: Record<string, unknown> | null}>}
  */
 export async function validate_user() {
     const response = await fetch('/api/validate_user/', {
         method: 'POST',
         headers: get_authorization_headers()
     })
-    const data = await response.json()
-    return Boolean(data.status === 'success' && data.user)
+
+    try {
+        const data = await response.json()
+        return {ok: response.ok, data}
+    } catch (error) {
+        console.warn('Failed to parse validate_user response:', error)
+        return {ok: response.ok, data: null}
+    }
 }
 
 /**

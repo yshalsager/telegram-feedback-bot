@@ -11,6 +11,7 @@ from feedback_bot.api.miniapp.decorators import DEFAULT_LANGUAGE_CODE, with_loca
 from feedback_bot.crud import (
     get_user,
     get_users,
+    is_admin_user,
     update_user_details,
     upsert_user,
 )
@@ -19,14 +20,19 @@ from feedback_bot.models import User as UserModel
 LanguageLiteral = Literal[*settings.TELEGRAM_LANGUAGES] if settings.TELEGRAM_LANGUAGES else str
 
 
-def _ensure_admin(user_data: dict[str, Any]) -> None:
+async def _ensure_admin(user_data: dict[str, Any]) -> None:
     try:
         user_id = int(user_data.get('id'))
     except (TypeError, ValueError):
         raise HttpError(403, {'status': 'error', 'message': str(_('not_authorized'))}) from None
 
-    if user_id not in settings.TELEGRAM_BUILDER_BOT_ADMINS:
-        raise HttpError(403, {'status': 'error', 'message': str(_('not_authorized'))})
+    if user_id in settings.TELEGRAM_BUILDER_BOT_ADMINS:
+        return
+
+    if await is_admin_user(user_id):
+        return
+
+    raise HttpError(403, {'status': 'error', 'message': str(_('not_authorized'))})
 
 
 def _normalize_username(raw_username: str | None) -> str:
@@ -125,6 +131,7 @@ class ErrorResponse(Schema):
     url_name='list_users',
 )
 async def list_users(request: HttpRequest) -> list[UserModel]:
+    await _ensure_admin(request.auth)
     return await get_users()
 
 
@@ -137,7 +144,7 @@ async def list_users(request: HttpRequest) -> list[UserModel]:
 async def retrieve_user(
     request: HttpRequest, telegram_id: int
 ) -> UserModel | tuple[int, dict[str, Any]]:
-    _ensure_admin(request.auth)
+    await _ensure_admin(request.auth)
 
     user = await get_user(telegram_id)
     if not user:
@@ -157,7 +164,7 @@ async def retrieve_user(
 )
 @with_locale
 async def add_user(request: HttpRequest, payload: AddUserIn) -> UserMutationResponse:
-    _ensure_admin(request.auth)
+    await _ensure_admin(request.auth)
 
     username = _normalize_username(payload.username)
 
@@ -194,7 +201,7 @@ async def add_user(request: HttpRequest, payload: AddUserIn) -> UserMutationResp
 async def manage_user(
     request: HttpRequest, telegram_id: int, payload: ManageUserIn
 ) -> tuple[int, dict[str, Any]]:
-    _ensure_admin(request.auth)
+    await _ensure_admin(request.auth)
 
     existing_user = await get_user(telegram_id)
     if not existing_user:

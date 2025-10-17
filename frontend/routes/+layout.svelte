@@ -6,6 +6,16 @@ import {setPageTransition} from '$lib/page_transition.js'
 import {session} from '$lib/stores.svelte.js'
 import {getInitData, initSDK} from '$lib/telegram.js'
 
+type ValidationResponse = {
+    status?: string
+    user?: ValidatedUser
+}
+
+type ValidatedUser = {
+    is_admin?: boolean
+    [key: string]: unknown
+}
+
 let {children} = $props()
 
 async function initialize() {
@@ -19,12 +29,36 @@ async function initialize() {
     }
     const csrfToken = await csrf_token()
     if (!csrfToken) {
-        session.update(state => ({...state, isValid: false}))
+        session.update(state => ({...state, isValid: false, isAdmin: false, user: undefined}))
         return
     }
     session.update(state => ({...state, csrfToken}))
-    const isValidSession = Boolean(data && data.raw && (await validate_user()))
-    session.update(state => ({...state, isValid: isValidSession}))
+    let validationResult: Awaited<ReturnType<typeof validate_user>> | null = null
+    if (data && data.raw) {
+        try {
+            validationResult = await validate_user()
+        } catch (error) {
+            console.warn('User validation failed:', error)
+            validationResult = null
+        }
+    }
+
+    const validationBody = (validationResult?.data ?? null) as ValidationResponse | null
+    const validatedUser = validationBody?.user
+    const isValidSession = Boolean(
+        data &&
+            data.raw &&
+            validationResult?.ok &&
+            validationBody?.status === 'success' &&
+            validatedUser
+    )
+
+    session.update(state => ({
+        ...state,
+        isValid: isValidSession,
+        isAdmin: Boolean(validatedUser?.is_admin),
+        user: validatedUser
+    }))
 }
 
 ;(async () => {

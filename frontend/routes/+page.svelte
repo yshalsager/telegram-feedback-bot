@@ -1,6 +1,7 @@
 <script lang="ts">
 import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
+import {onMount} from 'svelte'
 import {Search} from '@lucide/svelte'
 import AddButton from '~/components/management/AddButton.svelte'
 import ListItem from '~/components/management/ListItem.svelte'
@@ -8,17 +9,68 @@ import ManagementCard from '~/components/management/ManagementCard.svelte'
 import {list_bots, list_users} from '$lib/api.js'
 import {Input} from '$lib/components/ui/input'
 import {Separator} from '$lib/components/ui/separator/index.js'
+import {session} from '$lib/stores.svelte.js'
 import type {Bot, User} from '$lib/types.ts'
 
 let searchQuery = $state('')
 let bots = $state<Bot[]>([])
 let users = $state<User[]>([])
 
-;(async () => {
-    const [botsRaw, usersRaw] = await Promise.all([list_bots(), list_users()])
-    bots = (botsRaw as Bot[]) || []
-    users = (usersRaw as User[]) || []
-})()
+let botsLoaded = false
+let usersLoaded = false
+
+async function loadBots() {
+    try {
+        const botsRaw = await list_bots()
+        bots = (botsRaw as Bot[]) || []
+    } catch (error) {
+        console.error('Failed to load bots:', error)
+        bots = []
+        botsLoaded = false
+    }
+}
+
+async function loadUsers() {
+    try {
+        const usersRaw = await list_users()
+        users = (usersRaw as User[]) || []
+    } catch (error) {
+        console.error('Failed to load users:', error)
+        users = []
+        usersLoaded = false
+    }
+}
+
+onMount(() => {
+    const unsubscribe = session.subscribe(async value => {
+        if (!value.loaded || !value.isValid || !value.csrfToken) {
+            bots = []
+            users = []
+            botsLoaded = false
+            usersLoaded = false
+            return
+        }
+
+        if (!botsLoaded) {
+            botsLoaded = true
+            await loadBots()
+        }
+
+        if (value.isAdmin) {
+            if (!usersLoaded) {
+                usersLoaded = true
+                await loadUsers()
+            }
+        } else {
+            users = []
+            usersLoaded = false
+        }
+    })
+
+    return () => {
+        unsubscribe()
+    }
+})
 
 const filteredBots = $derived(
     bots.filter(
@@ -90,24 +142,31 @@ const handleUserClick: (item: Bot | User) => void = item => {
         {/each}
     </ManagementCard>
 
-    <Separator class="my-8" />
+    {#if $session.isAdmin}
+        <Separator class="my-8" />
 
-    <!-- User Management Section -->
-    <ManagementCard
-        emptyState={{
-            message: "You don't have any users yet.",
-            subMessage: 'Click "Add new user" to get started.'
-        }}
-        items={users}
-        title="User Management"
-    >
-        <!-- Add New User Button -->
-        {#snippet cta()}
-            <AddButton icon="user-plus" label="Add new user" route="/add_user" variant="success" />
-        {/snippet}
+        <!-- User Management Section -->
+        <ManagementCard
+            emptyState={{
+                message: "You don't have any users yet.",
+                subMessage: 'Click "Add new user" to get started.'
+            }}
+            items={users}
+            title="User Management"
+        >
+            <!-- Add New User Button -->
+            {#snippet cta()}
+                <AddButton
+                    icon="user-plus"
+                    label="Add new user"
+                    route="/add_user"
+                    variant="success"
+                />
+            {/snippet}
 
-        {#each users as user (user.telegram_id)}
-            <ListItem item={user} onClick={() => handleUserClick(user)} type="user" />
-        {/each}
-    </ManagementCard>
+            {#each users as user (user.telegram_id)}
+                <ListItem item={user} onClick={() => handleUserClick(user)} type="user" />
+            {/each}
+        </ManagementCard>
+    {/if}
 </div>

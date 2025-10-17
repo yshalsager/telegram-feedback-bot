@@ -8,6 +8,8 @@ import {writable} from 'svelte/store'
  * isValid: boolean | undefined;
  * data: import('./telegram.js').InitData | undefined;
  * csrfToken: string | undefined;
+ * isAdmin: boolean;
+ * user: Record<string, unknown> | undefined;
  * }>}
  */
 
@@ -16,5 +18,7 @@ export const session = writable({
     available: true,
     isValid: undefined,
     data: undefined,
-    csrfToken: undefined
+    csrfToken: undefined,
+    isAdmin: false,
+    user: undefined
 })

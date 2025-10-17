@@ -70,6 +70,12 @@ async def get_user(user_id: int, **kwargs: Any) -> User | None:
     return await User.objects.filter(telegram_id=user_id, **kwargs).afirst()
 
 
+async def is_admin_user(user_id: int) -> bool:
+    return bool(
+        await User.objects.filter(telegram_id=user_id, is_admin=True).only('is_admin').afirst()
+    )
+
+
 async def update_user_details(telegram_id: int, data: dict[str, Any]) -> User | None:
     """Update selected fields on a user and return the updated instance."""
 
