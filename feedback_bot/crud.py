@@ -4,7 +4,14 @@ from uuid import UUID
 from django.conf import settings
 from django.db.models import Q
 
-from feedback_bot.models import Bot, BroadcastMessage, FeedbackChat, User
+from feedback_bot.models import (
+    Bot,
+    BotStats,
+    BroadcastMessage,
+    FeedbackChat,
+    MessageMapping,
+    User,
+)
 from feedback_bot.telegram.utils.cryptography import decrypt_token
 
 BOT_MANAGEMENT_FIELDS = (
@@ -122,6 +129,91 @@ async def get_whitelist_users() -> list[int]:
 
 async def update_user_language(user_id: int, language_code: str) -> None:
     await User.objects.filter(telegram_id=user_id).aupdate(language_code=language_code)
+
+
+async def ensure_feedback_chat(
+    bot: Bot, user_telegram_id: int, username: str | None
+) -> FeedbackChat:
+    defaults = {'username': (username or '').strip()}
+    chat, created = await FeedbackChat.objects.aget_or_create(
+        bot=bot,
+        user_telegram_id=user_telegram_id,
+        defaults=defaults,
+    )
+    if not created and defaults['username'] and chat.username != defaults['username']:
+        chat.username = defaults['username']
+        await chat.asave(update_fields=['username'])
+    return chat
+
+
+async def set_feedback_chat_topic(chat: FeedbackChat, topic_id: int | None) -> FeedbackChat:
+    chat.topic_id = topic_id
+    await chat.asave(update_fields=['topic_id'])
+    return chat
+
+
+async def clear_feedback_chat_mappings(bot: Bot, chat: FeedbackChat) -> None:
+    await MessageMapping.objects.filter(bot=bot, user_chat=chat).adelete()
+
+
+async def get_user_message_mapping(
+    bot: Bot, user_telegram_id: int, user_message_id: int
+) -> MessageMapping | None:
+    return (
+        await MessageMapping.objects.select_related('user_chat')
+        .filter(
+            bot=bot,
+            user_chat__user_telegram_id=user_telegram_id,
+            user_message_id=user_message_id,
+        )
+        .afirst()
+    )
+
+
+async def get_owner_message_mapping(bot: Bot, owner_message_id: int) -> MessageMapping | None:
+    return (
+        await MessageMapping.objects.select_related('user_chat')
+        .filter(bot=bot, owner_message_id=owner_message_id)
+        .afirst()
+    )
+
+
+async def save_incoming_mapping(
+    bot: Bot, chat: FeedbackChat, user_message_id: int, owner_message_id: int
+) -> None:
+    await MessageMapping.objects.aupdate_or_create(
+        bot=bot,
+        user_message_id=user_message_id,
+        defaults={'user_chat': chat, 'owner_message_id': owner_message_id},
+    )
+
+
+async def update_incoming_mapping(bot: Bot, user_message_id: int, owner_message_id: int) -> None:
+    await MessageMapping.objects.filter(bot=bot, user_message_id=user_message_id).aupdate(
+        owner_message_id=owner_message_id
+    )
+
+
+async def save_outgoing_mapping(
+    bot: Bot, chat: FeedbackChat, user_message_id: int, owner_message_id: int
+) -> None:
+    await MessageMapping.objects.aupdate_or_create(
+        bot=bot,
+        user_message_id=user_message_id,
+        defaults={'user_chat': chat, 'owner_message_id': owner_message_id},
+    )
+
+
+async def bump_incoming_messages(bot: Bot) -> None:
+    stats, _ = await BotStats.objects.aget_or_create(bot=bot)
+    stats.incoming_messages += 1
+    await stats.asave(update_fields=['incoming_messages'])
+
+
+async def bump_outgoing_messages(bot: Bot) -> None:
+    stats, _ = await BotStats.objects.aget_or_create(bot=bot)
+    stats.outgoing_messages += 1
+    await stats.asave(update_fields=['outgoing_messages'])
 
 
 async def create_bot(

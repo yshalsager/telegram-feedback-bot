@@ -21,16 +21,19 @@ def build_message(
     message_id: int = 1,
     text: str = 'payload',
     chat_id: int = 555,
+    chat_type: str = 'private',
     reply_to: Message | None = None,
     forward_origin: MessageOrigin | None = None,
     entities: list[MessageEntity] | None = None,
+    is_bot: bool = False,
+    username: str | None = None,
 ) -> Message:
     now = dt.datetime(2025, 1, 1, tzinfo=dt.UTC)
     return Message(
         message_id=message_id,
         date=now,
-        chat=Chat(id=chat_id, type='private'),
-        from_user=build_user(user_id),
+        chat=Chat(id=chat_id, type=chat_type),
+        from_user=build_user(user_id, is_bot=is_bot, username=username),
         reply_to_message=reply_to,
         forward_origin=forward_origin,
         text=text,
