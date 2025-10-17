@@ -4,7 +4,7 @@ from uuid import UUID
 from django.conf import settings
 from django.db.models import Q
 
-from feedback_bot.models import Bot, User
+from feedback_bot.models import Bot, BroadcastMessage, FeedbackChat, User
 from feedback_bot.telegram.utils.cryptography import decrypt_token
 
 BOT_MANAGEMENT_FIELDS = (
@@ -194,6 +194,41 @@ def _bot_owner_filter(bot_uuid: UUID | str, owner: int) -> Q:
     if owner not in settings.TELEGRAM_BUILDER_BOT_ADMINS:
         filters &= Q(owner_id=owner)
     return filters
+
+
+async def get_builder_broadcast_targets() -> list[int]:
+    qs = (
+        Bot.objects.filter(owner__telegram_id__isnull=False)
+        .values_list('owner__telegram_id', flat=True)
+        .distinct()
+    )
+    return [chat_id async for chat_id in qs]
+
+
+async def get_feedback_chat_targets(bot: Bot | int) -> list[int]:
+    if isinstance(bot, Bot):
+        qs = bot.feedback_chats.values_list('user_telegram_id', flat=True).distinct()
+    else:
+        qs = (
+            FeedbackChat.objects.filter(bot_id=bot)
+            .values_list('user_telegram_id', flat=True)
+            .distinct()
+        )
+    return [chat_id async for chat_id in qs]
+
+
+async def record_broadcast_message(
+    *, bot: Bot | int | None, chat_id: int, message_id: int
+) -> BroadcastMessage:
+    payload: dict[str, int | Bot] = {
+        'chat_id': chat_id,
+        'message_id': message_id,
+    }
+    if isinstance(bot, Bot):
+        payload['bot'] = bot
+    elif bot is not None:
+        payload['bot_id'] = bot
+    return await BroadcastMessage.objects.acreate(**payload)
 
 
 async def update_bot_settings(bot_uuid: UUID | str, owner: int, data: dict[str, Any]) -> Bot | None:

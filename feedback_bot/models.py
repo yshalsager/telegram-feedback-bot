@@ -1,4 +1,5 @@
 import uuid
+from typing import ClassVar
 
 from django.conf import settings
 from django.db import models
@@ -146,3 +147,28 @@ class BannedUser(TimestampedModel):
 
     def __str__(self) -> str:
         return f'{self.user_telegram_id} banned from @{self.bot.username}'
+
+
+class BroadcastMessage(models.Model):
+    """Stores outbound broadcast copies per target chat."""
+
+    bot = models.ForeignKey(
+        Bot,
+        on_delete=models.CASCADE,
+        related_name='broadcast_messages',
+        null=True,
+        blank=True,
+    )
+    chat_id = models.BigIntegerField()
+    message_id = models.BigIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering: ClassVar[list[str]] = ['-created_at']
+        indexes: ClassVar[list[models.Index]] = [
+            models.Index(fields=['bot', 'chat_id'], name='broadcast_bot_chat_idx')
+        ]
+
+    def __str__(self) -> str:
+        target = self.bot.username if self.bot else 'builder'
+        return f'broadcast to {target} #{self.chat_id}'

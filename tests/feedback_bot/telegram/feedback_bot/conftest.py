@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import datetime as dt
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 import pytest_asyncio
+from feedback_bot.models import Bot, User
 from feedback_bot.telegram.feedback_bot import bot as feedback_bot_module
 from feedback_bot.telegram.feedback_bot import modules as feedback_modules_pkg
 from feedback_bot.utils.modules_loader import get_modules, load_modules
@@ -27,20 +27,44 @@ def stub_translation_feedback(monkeypatch):
 
 
 @pytest_asyncio.fixture
-async def feedback_app(monkeypatch) -> tuple[Application, SimpleNamespace]:
+async def feedback_app(monkeypatch, db) -> tuple[Application, Bot]:
     """Initialize a PTB Application backed by a lightweight feedback bot config."""
 
-    bot_config = SimpleNamespace(
-        token='0000000000:bbbbbbbbbbbbbbbbbbbb',  # noqa: S106
-        name='FeedbackBot',
-        username='feedback_bot',
-        telegram_id=424242,
-        start_message='Hi',
-        feedback_received_message='Thanks',
-        forward_chat_id=None,
-        confirmations_on=True,
-        owner_id=5150,
+    owner, _ = await User.objects.aget_or_create(
+        telegram_id=5150,
+        defaults={
+            'username': 'owner',
+            'language_code': 'en',
+            'is_whitelisted': True,
+            'is_admin': True,
+        },
     )
+
+    bot_config, created = await Bot.objects.aget_or_create(
+        telegram_id=424242,
+        defaults={
+            'owner': owner,
+            'name': 'FeedbackBot',
+            'username': 'feedback_bot',
+            'start_message': 'Hi',
+            'feedback_received_message': 'Thanks',
+            'confirmations_on': True,
+        },
+    )
+    if created:
+        bot_config.token = '0000000000:bbbbbbbbbbbbbbbbbbbb'  # noqa: S105
+        await bot_config.asave()
+    else:
+        updates = {}
+        if not bot_config.confirmations_on:
+            updates['confirmations_on'] = True
+        if bot_config.feedback_received_message != 'Thanks':
+            updates['feedback_received_message'] = 'Thanks'
+        if bot_config.start_message != 'Hi':
+            updates['start_message'] = 'Hi'
+        if updates:
+            await Bot.objects.filter(pk=bot_config.pk).aupdate(**updates)
+            await bot_config.arefresh_from_db()
 
     async def fake_initialize(self):  # type: ignore[no-redef]
         self._initialized = True
