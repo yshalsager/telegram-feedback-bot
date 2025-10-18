@@ -6,7 +6,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
-from feedback_bot.models import BotStats, FeedbackChat, MessageMapping
+from feedback_bot.models import BannedUser, BotStats, FeedbackChat, MessageMapping
 from feedback_bot.telegram.feedback_bot.modules import messages as messages_module
 from tests.feedback_bot.telegram.factories import build_message
 
@@ -69,6 +69,28 @@ async def test_forward_feedback_creates_mapping(monkeypatch, feedback_app):
     assert intro_payload['chat_id'] == bot_config.owner_id
     assert intro_payload['parse_mode'] == 'HTML'
     assert intro_payload['text'].startswith('Tester')
+
+
+async def test_forward_feedback_blocks_banned_user(monkeypatch, feedback_app):
+    _, bot_config = feedback_app
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+    await BannedUser.objects.aget_or_create(bot=bot_config, user_telegram_id=999)
+
+    user_message = build_message(999, message_id=11, text='hi there')
+
+    forward_mock = AsyncMock()
+    reply_mock = AsyncMock()
+    _patch_message_method(monkeypatch, 'forward', forward_mock)
+    _patch_message_method(monkeypatch, 'reply_text', reply_mock)
+
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id)
+    update = SimpleNamespace(effective_message=user_message)
+
+    await messages_module.forward_feedback(update, context)
+
+    assert forward_mock.await_count == 0
+    reply_mock.assert_not_awaited()
 
 
 async def test_edit_forwarded_feedback_updates_owner_message(monkeypatch, feedback_app):

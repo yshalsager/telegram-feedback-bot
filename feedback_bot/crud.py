@@ -5,6 +5,7 @@ from django.conf import settings
 from django.db.models import Q
 
 from feedback_bot.models import (
+    BannedUser,
     Bot,
     BotStats,
     BroadcastMessage,
@@ -355,5 +356,33 @@ async def get_bot(bot_uuid: UUID | str, owner: int) -> Bot | None:
         await Bot.objects.select_related('owner')
         .only(*BOT_MANAGEMENT_FIELDS)
         .filter(_bot_owner_filter(bot_uuid, owner))
+        .afirst()
+    )
+
+
+async def ensure_user_ban(bot_id: int, user_telegram_id: int) -> tuple[BannedUser, bool]:
+    return await BannedUser.objects.aget_or_create(
+        bot_id=bot_id,
+        user_telegram_id=user_telegram_id,
+    )
+
+
+async def lift_user_ban(bot_id: int, user_telegram_id: int) -> bool:
+    deleted, _ = await BannedUser.objects.filter(
+        bot_id=bot_id,
+        user_telegram_id=user_telegram_id,
+    ).adelete()
+    return bool(deleted)
+
+
+async def list_banned_users(bot_id: int) -> list[BannedUser]:
+    qs = BannedUser.objects.filter(bot_id=bot_id).order_by('user_telegram_id')
+    return [banned async for banned in qs]
+
+
+async def is_user_banned(bot_id: int, user_telegram_id: int) -> bool:
+    return bool(
+        await BannedUser.objects.filter(bot_id=bot_id, user_telegram_id=user_telegram_id)
+        .values_list('pk', flat=True)
         .afirst()
     )

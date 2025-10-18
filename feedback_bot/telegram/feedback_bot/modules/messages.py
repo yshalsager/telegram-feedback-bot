@@ -25,6 +25,7 @@ from feedback_bot.crud import (
     ensure_feedback_chat,
     get_owner_message_mapping,
     get_user_message_mapping,
+    is_user_banned,
     save_incoming_mapping,
     save_outgoing_mapping,
     set_feedback_chat_topic,
@@ -216,6 +217,9 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     bot_config: Bot = context.bot_data['bot_config']
 
+    if await is_user_banned(bot_config.id, message.from_user.id):
+        return
+
     destination_chat_id = bot_config.forward_chat_id or bot_config.owner_id
     if destination_chat_id is None:
         return
@@ -253,6 +257,9 @@ async def edit_forwarded_feedback(update: Update, context: ContextTypes.DEFAULT_
         return
 
     bot_config: Bot = context.bot_data['bot_config']
+
+    if await is_user_banned(bot_config.id, message.from_user.id):
+        return
 
     mapping = await get_user_message_mapping(bot_config, message.from_user.id, message.message_id)
     if mapping is None:

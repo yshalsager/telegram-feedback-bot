@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 from feedback_bot import crud
-from feedback_bot.models import Bot, BotStats, BroadcastMessage, FeedbackChat, User
+from feedback_bot.models import BannedUser, Bot, BotStats, BroadcastMessage, FeedbackChat, User
 
 
 @pytest.fixture(autouse=True)
@@ -560,3 +560,37 @@ async def test_clear_feedback_chat_mappings_and_bump_stats():
 
     assert await crud.get_user_message_mapping(bot, 400, 1) is None
     assert await crud.get_owner_message_mapping(bot, 4) is None
+
+
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_ban_helpers_manage_banned_users():
+    owner, _ = await crud.upsert_user({'id': 19000})
+    bot = await crud.create_bot(
+        telegram_id=999800,
+        bot_token='BAN_TOKEN',  # noqa: S106
+        username='ban_bot',
+        name='Ban Bot',
+        owner=owner.telegram_id,
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    banned, created = await crud.ensure_user_ban(bot.id, 5000)
+    assert created is True
+    assert banned.user_telegram_id == 5000
+
+    banned, created = await crud.ensure_user_ban(bot.id, 5000)
+    assert created is False
+
+    assert await crud.is_user_banned(bot.id, 5000) is True
+
+    entries = await crud.list_banned_users(bot.id)
+    assert [entry.user_telegram_id for entry in entries] == [5000]
+
+    removed = await crud.lift_user_ban(bot.id, 5000)
+    assert removed is True
+    assert await crud.is_user_banned(bot.id, 5000) is False
+    assert await BannedUser.objects.filter(bot=bot).aexists() is False
