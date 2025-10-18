@@ -41,8 +41,7 @@ async def test_start_integration_process_update(
 
     # Quick sanity check for the keyboard content
     markup = called['reply_markup']
-    assert len(markup.inline_keyboard) == 4
-    assert markup.inline_keyboard[0][0].callback_data == 'add_bot'
+    assert len(markup.inline_keyboard) == 1
     assert markup.inline_keyboard[-1][0].web_app.url == 'https://builder.test/'
 
 
