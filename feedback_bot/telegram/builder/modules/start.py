@@ -15,12 +15,9 @@ async def start(update: Update, context: CallbackContext) -> None:
     message = _('welcome')
     keyboard = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton(f'{_("add_bot")}', callback_data='add_bot')],
-            [InlineKeyboardButton(f'{_("manage_bots")}', callback_data='manage_bots')],
-            [InlineKeyboardButton(f'{_("manage_settings")}', callback_data='manage_settings')],
             [
                 InlineKeyboardButton(
-                    'Open Mini App',
+                    _('open_mini_app'),
                     web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/'),
                 )
             ],
