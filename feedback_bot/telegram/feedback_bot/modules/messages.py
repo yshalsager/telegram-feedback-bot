@@ -118,7 +118,15 @@ def _should_process_reply(bot_config: Bot, message: Message, bot_user_id: int) -
     if is_private_chat and message.from_user.id != bot_config.owner_id:
         return False
     replied = message.reply_to_message
-    return bool(replied and replied.from_user and replied.from_user.id == bot_user_id)
+    if not replied:
+        return False
+    if (
+        replied.forward_origin
+        or getattr(replied, 'forward_from', None)
+        or getattr(replied, 'forward_sender_name', None)
+    ):
+        return True
+    return bool(replied.from_user and replied.from_user.id == bot_user_id)
 
 
 async def _apply_edit(
@@ -177,6 +185,30 @@ def _build_input_media(message: Message):
     return None
 
 
+async def _send_intro_message(
+    context: ContextTypes.DEFAULT_TYPE, destination_chat_id: int, message: Message
+) -> None:
+    intro_lines = [
+        escape(
+            message.chat.full_name
+            or message.chat.title
+            or message.chat.username
+            or message.from_user.full_name
+            or message.from_user.username
+            or str(message.from_user.id)
+        )
+    ]
+    if message.from_user.username:
+        intro_lines.append(f'@{escape(message.from_user.username)}')
+    intro_lines.append(f'<a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>')
+
+    await context.bot.send_message(
+        chat_id=destination_chat_id,
+        text='\n'.join(intro_lines),
+        parse_mode=ParseMode.HTML,
+    )
+
+
 async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
     if not message or not message.from_user:
@@ -191,9 +223,11 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if message.chat_id == destination_chat_id and message.from_user.id == bot_config.owner_id:
         return
 
-    feedback_chat = await ensure_feedback_chat(
+    feedback_chat, created = await ensure_feedback_chat(
         bot_config, message.from_user.id, message.from_user.username
     )
+    if created and not bot_config.forward_chat_id:
+        await _send_intro_message(context, destination_chat_id, message)
     topic_id = await _ensure_topic(context, bot_config, message, feedback_chat)
 
     forwarded, topic_id = await _forward_with_topic_fallback(
@@ -242,14 +276,21 @@ async def edit_forwarded_feedback(update: Update, context: ContextTypes.DEFAULT_
 
     await update_incoming_mapping(bot_config, message.message_id, forwarded.message_id)
 
-    if bot_config.confirmations_on and forwarded.link:
-        await context.bot.send_message(
-            chat_id=destination_chat_id,
-            text=_('User updated their message. New copy: {link}').format(link=forwarded.link),
-            message_thread_id=topic_id,
-            reply_to_message_id=forwarded.message_id,
-            disable_web_page_preview=True,
-        )
+    if bot_config.confirmations_on:
+        message_kwargs: dict[str, object] = {
+            'chat_id': destination_chat_id,
+            'reply_to_message_id': forwarded.message_id,
+        }
+        if topic_id:
+            message_kwargs['message_thread_id'] = topic_id
+
+        if forwarded.link:
+            message_kwargs['disable_web_page_preview'] = True
+            text = _('User updated their message. New copy: {link}').format(link=forwarded.link)
+        else:
+            text = _('User updated their message.')
+
+        await context.bot.send_message(text=text, **message_kwargs)
 
 
 async def reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -303,23 +344,26 @@ async def edit_reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_T
 
 
 HANDLERS = [
-    MessageHandler(
-        filters.ChatType.PRIVATE & ~filters.COMMAND,
-        forward_feedback,
+    (
+        MessageHandler(
+            (filters.ChatType.PRIVATE | filters.ChatType.GROUPS) & filters.REPLY & ~filters.COMMAND,
+            reply_to_feedback,
+        ),
+        -1,
     ),
+    (
+        MessageHandler(
+            filters.UpdateType.EDITED_MESSAGE
+            & (filters.ChatType.PRIVATE | filters.ChatType.GROUPS)
+            & filters.REPLY
+            & ~filters.COMMAND,
+            edit_reply_to_feedback,
+        ),
+        -1,
+    ),
+    MessageHandler(filters.ChatType.PRIVATE & ~filters.COMMAND, forward_feedback),
     MessageHandler(
         filters.UpdateType.EDITED_MESSAGE & filters.ChatType.PRIVATE & ~filters.COMMAND,
         edit_forwarded_feedback,
-    ),
-    MessageHandler(
-        (filters.ChatType.PRIVATE | filters.ChatType.GROUPS) & filters.REPLY & ~filters.COMMAND,
-        reply_to_feedback,
-    ),
-    MessageHandler(
-        filters.UpdateType.EDITED_MESSAGE
-        & (filters.ChatType.PRIVATE | filters.ChatType.GROUPS)
-        & filters.REPLY
-        & ~filters.COMMAND,
-        edit_reply_to_feedback,
     ),
 ]

@@ -133,7 +133,7 @@ async def update_user_language(user_id: int, language_code: str) -> None:
 
 async def ensure_feedback_chat(
     bot: Bot, user_telegram_id: int, username: str | None
-) -> FeedbackChat:
+) -> tuple[FeedbackChat, bool]:
     defaults = {'username': (username or '').strip()}
     chat, created = await FeedbackChat.objects.aget_or_create(
         bot=bot,
@@ -143,7 +143,7 @@ async def ensure_feedback_chat(
     if not created and defaults['username'] and chat.username != defaults['username']:
         chat.username = defaults['username']
         await chat.asave(update_fields=['username'])
-    return chat
+    return chat, created
 
 
 async def set_feedback_chat_topic(chat: FeedbackChat, topic_id: int | None) -> FeedbackChat:

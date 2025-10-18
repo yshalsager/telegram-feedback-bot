@@ -47,7 +47,8 @@ async def test_forward_feedback_creates_mapping(monkeypatch, feedback_app):
     _patch_message_method(monkeypatch, 'forward', forward_mock)
     _patch_message_method(monkeypatch, 'reply_text', reply_mock)
 
-    context = _build_context(bot_config, bot_id=bot_config.telegram_id)
+    send_mock = AsyncMock()
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id, send_message=send_mock)
     update = SimpleNamespace(effective_message=user_message)
 
     await messages_module.forward_feedback(update, context)
@@ -63,6 +64,11 @@ async def test_forward_feedback_creates_mapping(monkeypatch, feedback_app):
 
     forward_mock.assert_awaited_once()
     reply_mock.assert_awaited_once_with(user_message, 'Thanks', reply_to_message_id=11)
+    send_mock.assert_awaited_once()
+    intro_payload = send_mock.await_args.kwargs
+    assert intro_payload['chat_id'] == bot_config.owner_id
+    assert intro_payload['parse_mode'] == 'HTML'
+    assert intro_payload['text'].startswith('Tester')
 
 
 async def test_edit_forwarded_feedback_updates_owner_message(monkeypatch, feedback_app):
@@ -135,6 +141,7 @@ async def test_reply_to_feedback_copies_message(monkeypatch, feedback_app):
         chat_id=-100222333,
         chat_type='supergroup',
         is_bot=True,
+        forward_origin=SimpleNamespace(),
     )
 
     owner_reply = build_message(
@@ -225,3 +232,108 @@ async def test_edit_reply_to_feedback_updates_user_message(monkeypatch, feedback
     reply_mock.assert_awaited_once_with(
         edited_owner, 'Sent message updated', reply_to_message_id=31
     )
+
+
+async def test_reply_to_feedback_allows_forward_origin_in_private(monkeypatch, feedback_app):
+    app, bot_config = feedback_app
+    bot_config.confirmations_on = True
+    bot_config.forward_chat_id = None
+
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+
+    forwarded_holder: dict[str, object] = {}
+
+    async def fake_forward(self, chat_id, message_thread_id=None, **kwargs):  # type: ignore[override]
+        forwarded = build_message(
+            bot_config.telegram_id,
+            message_id=222,
+            text=self.text,
+            chat_id=chat_id,
+            chat_type='private',
+            is_bot=True,
+            forward_origin=SimpleNamespace(),
+        )
+        forwarded.set_bot(app.bot)
+        forwarded_holder['message'] = forwarded
+        return forwarded
+
+    monkeypatch.setattr('telegram._message.Message.forward', fake_forward)
+    monkeypatch.setattr('telegram._message.Message.reply_text', AsyncMock())
+
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id)
+
+    user_message = build_message(999, message_id=11, text='hello')
+    await messages_module.forward_feedback(SimpleNamespace(effective_message=user_message), context)
+
+    assert 'message' in forwarded_holder
+
+    copy_mock = AsyncMock(return_value=MessageId(66))
+    reaction_mock = AsyncMock()
+    _patch_message_method(monkeypatch, 'copy', copy_mock)
+    _patch_message_method(monkeypatch, 'set_reaction', reaction_mock)
+
+    reply_target = forwarded_holder['message']
+    owner_reply = build_message(
+        bot_config.owner_id,
+        message_id=31,
+        text='response',
+        chat_id=bot_config.owner_id,
+        chat_type='private',
+        reply_to=reply_target,
+    )
+
+    await messages_module.reply_to_feedback(SimpleNamespace(effective_message=owner_reply), context)
+
+    copy_mock.assert_awaited_once_with(
+        owner_reply,
+        chat_id=999,
+        reply_to_message_id=11,
+        allow_sending_without_reply=True,
+    )
+    reaction_mock.assert_awaited_once_with(owner_reply, '👍')
+
+
+async def test_edit_forwarded_feedback_notifies_without_link(monkeypatch, feedback_app):
+    _, bot_config = feedback_app
+    bot_config.confirmations_on = True
+    bot_config.forward_chat_id = None
+
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+
+    send_mock = AsyncMock()
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id, send_message=send_mock)
+
+    forwards: list = []
+
+    async def fake_forward(self, chat_id, message_thread_id=None, **kwargs):  # type: ignore[override]
+        forwarded = build_message(
+            bot_config.telegram_id,
+            message_id=200 + len(forwards),
+            text=self.text,
+            chat_id=chat_id,
+            chat_type='private',
+            is_bot=True,
+        )
+        forwarded.set_bot(context.bot)
+        forwards.append(forwarded)
+        return forwarded
+
+    monkeypatch.setattr('telegram._message.Message.forward', fake_forward)
+    monkeypatch.setattr('telegram._message.Message.reply_text', AsyncMock())
+
+    user_message = build_message(999, message_id=11, text='hello')
+    await messages_module.forward_feedback(SimpleNamespace(effective_message=user_message), context)
+
+    assert send_mock.await_count == 1
+
+    edit_message = build_message(999, message_id=11, text='updated hello')
+    await messages_module.edit_forwarded_feedback(
+        SimpleNamespace(effective_message=edit_message), context
+    )
+
+    assert send_mock.await_count == 2
+    edit_payload = send_mock.await_args_list[-1].kwargs
+    assert edit_payload['chat_id'] == bot_config.owner_id
+    assert edit_payload['text'] == 'User updated their message.'

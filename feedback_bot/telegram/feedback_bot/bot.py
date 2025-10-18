@@ -31,8 +31,16 @@ def build_feedback_bot_application(bot_config: BotConfig) -> Application:
     application.bot_data['bot_config'] = bot_config
 
     for module in load_modules(get_modules(Path(__file__).parent / 'modules')):
-        if hasattr(module, 'HANDLERS'):
-            application.add_handlers(module.HANDLERS)
+        if not hasattr(module, 'HANDLERS'):
+            continue
+
+        for handler_spec in module.HANDLERS:
+            if isinstance(handler_spec, tuple):
+                handler, group = handler_spec
+                application.add_handler(handler, group)
+                continue
+
+            application.add_handler(handler_spec)
 
     return application
 

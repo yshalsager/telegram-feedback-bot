@@ -486,10 +486,12 @@ async def test_ensure_feedback_chat_updates_username():
         feedback_received_message='received',
     )
 
-    chat = await crud.ensure_feedback_chat(bot, 200, 'first')
+    chat, created = await crud.ensure_feedback_chat(bot, 200, 'first')
+    assert created is True
     assert chat.username == 'first'
 
-    chat = await crud.ensure_feedback_chat(bot, 200, 'second')
+    chat, created = await crud.ensure_feedback_chat(bot, 200, 'second')
+    assert created is False
     assert chat.username == 'second'
 
 
@@ -508,7 +510,8 @@ async def test_mapping_helpers_create_and_fetch_records():
         start_message='start',
         feedback_received_message='received',
     )
-    chat = await crud.ensure_feedback_chat(bot, 300, 'mapuser')
+    chat, created = await crud.ensure_feedback_chat(bot, 300, 'mapuser')
+    assert created is True
 
     await crud.save_incoming_mapping(bot, chat, user_message_id=11, owner_message_id=22)
     mapping = await crud.get_user_message_mapping(bot, 300, 11)
@@ -540,7 +543,8 @@ async def test_clear_feedback_chat_mappings_and_bump_stats():
         start_message='start',
         feedback_received_message='received',
     )
-    chat = await crud.ensure_feedback_chat(bot, 400, 'statuser')
+    chat, created = await crud.ensure_feedback_chat(bot, 400, 'statuser')
+    assert created is True
 
     await crud.save_incoming_mapping(bot, chat, user_message_id=1, owner_message_id=2)
     await crud.save_outgoing_mapping(bot, chat, user_message_id=3, owner_message_id=4)
