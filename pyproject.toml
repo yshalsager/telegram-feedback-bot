@@ -2,16 +2,14 @@
 name = "feedback-telegram-bot"
 version = "0.1.0"
 description = "A bot that builds feedback Telegram bots like Livegram but with topics support."
-authors = [
-    { name = "yshalsager", email = "contact@yshalsager.com" },
-]
+authors = [{ name = "yshalsager", email = "contact@yshalsager.com" }]
 license = { text = "MIT" }
 requires-python = ">=3.13"
 dependencies = [
-    "cryptography>=46.0.1",
+    "cryptography>=46.0.3",
     "django>=5.2.7,<6",
     "django-asgi-lifespan>=0.5.0",
-    "django-ninja>=1.4.3",
+    "django-ninja>=1.4.4",
     "granian[reload,uvloop]>=2.5.5",
     "orjson>=3.11.3,<4",
     "psycopg[binary]>=3.2.10,<4",
@@ -21,7 +19,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff>=0.14.0",
+    "ruff>=0.14.1",
     "mypy>=1.18.2",
     "ipython>=9.6.0",
     "rich>=14.2.0",
@@ -44,28 +42,73 @@ disallow_incomplete_defs = true
 disallow_untyped_decorators = false
 plugins = []
 
-[tool.ruff]  # https://github.com/charliermarsh/ruff
+[tool.ruff] # https://github.com/charliermarsh/ruff
 fix = true
 src = ["src"]
 target-version = "py313"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["A", "B", "BLE", "C4", "C90", "DTZ", "E", "ERA", "F", "G", "I", "INP", "ISC", "N", "NPY", "PGH", "PIE", "PLC", "PLE", "PLR", "PLW", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "S", "SIM", "T10", "T20", "TID", "UP", "W", "YTT"]
+select = [
+    "A",
+    "B",
+    "BLE",
+    "C4",
+    "C90",
+    "DTZ",
+    "E",
+    "ERA",
+    "F",
+    "G",
+    "I",
+    "INP",
+    "ISC",
+    "N",
+    "NPY",
+    "PGH",
+    "PIE",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "PT",
+    "PTH",
+    "PYI",
+    "RET",
+    "RSE",
+    "RUF",
+    "S",
+    "SIM",
+    "T10",
+    "T20",
+    "TID",
+    "UP",
+    "W",
+    "YTT",
+]
 ignore = [
-    "E501", "S307", "RET504", "S101", "D211", "D213",
-    "ERA001", # Found commented-out code
-    "G004", # Logging statement uses f-string
+    "E501",
+    "S307",
+    "RET504",
+    "S101",
+    "D211",
+    "D213",
+    "ERA001",  # Found commented-out code
+    "G004",    # Logging statement uses f-string
     "PLR2004", # Magic value used in comparison, consider replacing 3 with a constant variable
     "PLR0913", # Too many arguments to function call (6 > 5)
     "E712",
     "RUF001",  # ambiguous-unicode-character-string	String contains ambiguous {}. Did you mean {}?
-    "ISC001"  # formatter complains about it
+    "ISC001",  # formatter complains about it
 ]
 unfixable = [
-    "ERA001", "F401", "F841", "T201", "T203",
-    "E711", # none-comparison. SQLAlchemy does not support is None apparently.
-    "E712", # true-false-comparison. SQLAlchemy does not support it apparently.
+    "ERA001",
+    "F401",
+    "F841",
+    "T201",
+    "T203",
+    "E711",   # none-comparison. SQLAlchemy does not support is None apparently.
+    "E712",   # true-false-comparison. SQLAlchemy does not support it apparently.
 ]
 
 [tool.ruff.lint.extend-per-file-ignores]
