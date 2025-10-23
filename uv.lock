@@ -251,12 +251,12 @@ requires-dist = [
     { name = "cryptography", specifier = ">=46.0.3" },
     { name = "django", specifier = ">=5.2.7,<6" },
     { name = "django-asgi-lifespan", specifier = ">=0.5.0" },
-    { name = "django-ninja", specifier = ">=1.4.4" },
+    { name = "django-ninja", specifier = ">=1.4.5" },
     { name = "granian", extras = ["reload", "uvloop"], specifier = ">=2.5.5" },
     { name = "orjson", specifier = ">=3.11.3,<4" },
-    { name = "psycopg", extras = ["binary"], specifier = ">=3.2.10,<4" },
+    { name = "psycopg", extras = ["binary"], specifier = ">=3.2.11,<4" },
     { name = "python-telegram-bot", specifier = ">=22.5" },
-    { name = "regex", specifier = ">=2025.9.18" },
+    { name = "regex", specifier = ">=2025.10.23" },
 ]
 
 [package.metadata.requires-dev]
