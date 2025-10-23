@@ -621,17 +621,20 @@ async def test_ban_helpers_manage_banned_users():
         feedback_received_message='received',
     )
 
-    banned, created = await crud.ensure_user_ban(bot.id, 5000)
+    banned, created = await crud.ensure_user_ban(bot.id, 5000, reason='first reason')
     assert created is True
     assert banned.user_telegram_id == 5000
+    assert banned.reason == 'first reason'
 
-    banned, created = await crud.ensure_user_ban(bot.id, 5000)
+    banned, created = await crud.ensure_user_ban(bot.id, 5000, reason='updated reason')
     assert created is False
+    assert banned.reason == 'updated reason'
 
     assert await crud.is_user_banned(bot.id, 5000) is True
 
     entries = await crud.list_banned_users(bot.id)
     assert [entry.user_telegram_id for entry in entries] == [5000]
+    assert entries[0].reason == 'updated reason'
 
     removed = await crud.lift_user_ban(bot.id, 5000)
     assert removed is True

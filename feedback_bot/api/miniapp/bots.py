@@ -16,12 +16,16 @@ from feedback_bot.crud import (
     bot_exists,
     create_bot,
     delete_bot,
+    ensure_user_ban,
     get_bot,
     get_bot_stats,
     get_bot_token,
     get_bots,
+    lift_user_ban,
+    list_banned_users,
     update_bot_settings,
 )
+from feedback_bot.models import BannedUser, BotStats
 from feedback_bot.models import Bot as BotModel
 from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 
@@ -56,14 +60,56 @@ class UpdateBotIn(Schema):
     enabled: bool | None = Field(default=None)
 
 
-class ErrorResponse(Schema):
+class StatusMessage(Schema):
     status: str
     message: str
+
+
+class BotInfoOut(Schema):
+    telegram_id: int
+    username: str
+    name: str
+
+
+class AddBotOut(Schema):
+    status: str
+    bot: BotInfoOut
+
+
+class BanUserIn(Schema):
+    user_telegram_id: int = Field(..., ge=1, description='Telegram user ID to ban')
+    reason: str | None = Field(
+        default=None, description='Optional reason for banning', max_length=512
+    )
+
+
+class BanMutationResponse(Schema):
+    status: str
+    message: str
+    user_telegram_id: int
+    created: bool
+    reason: str | None = Field(default=None)
+
+
+class UnbanMutationResponse(Schema):
+    status: str
+    message: str
+    user_telegram_id: int
+    removed: bool
 
 
 class BotStatsOut(Schema):
     incoming_messages: int
     outgoing_messages: int
+
+    class Meta:
+        from_attributes = True
+
+
+class BannedUserOut(Schema):
+    user_telegram_id: int
+    created_at: str = Field(..., alias='created_at.isoformat')
+    reason: str | None = Field(default=None)
 
     class Meta:
         from_attributes = True
@@ -117,7 +163,7 @@ async def validate_bot_token(bot_token: str) -> dict[str, Any]:
 
 @router.post(
     '/bot/',
-    response={200: dict[str, Any], 400: dict[str, str]},
+    response={200: AddBotOut, 400: StatusMessage},
     url_name='add_bot',
 )
 @with_locale
@@ -128,6 +174,8 @@ async def add_bot(  # noqa: PLR0911
     user_data = request.auth
     try:
         bot_info = await validate_bot_token(payload.bot_token)
+    except ValidationError as err:
+        return 400, {'status': 'error', 'message': str(err)}
     except Exception as err:  # noqa: BLE001
         return 400, {'status': 'error', 'message': str(err)}
 
@@ -179,31 +227,31 @@ async def list_bots(request: HttpRequest) -> list[BotModel]:
 
 @router.get(
     '/bot/{bot_uuid}/',
-    response={200: BotOut, 404: ErrorResponse},
+    response={200: BotOut, 404: StatusMessage},
     url_name='get_bot',
 )
 @with_locale
 async def retrieve_bot(
     request: HttpRequest, bot_uuid: UUID
-) -> BotModel | tuple[int, dict[str, Any]]:
+) -> tuple[int, BotModel | dict[str, str]]:
     user_data = request.auth
 
     bot = await get_bot(bot_uuid, user_data['id'])
     if not bot:
         return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
 
-    return bot
+    return 200, bot
 
 
 @router.put(
     '/bot/{bot_uuid}/',
-    response={200: BotOut, 400: ErrorResponse, 404: ErrorResponse},
+    response={200: BotOut, 400: StatusMessage, 404: StatusMessage},
     url_name='update_bot',
 )
 @with_locale
 async def update_bot(
     request: HttpRequest, bot_uuid: UUID, payload: UpdateBotIn
-) -> tuple[int, BotModel | dict[str, Any]]:
+) -> tuple[int, BotModel | dict[str, str]]:
     user_data = request.auth
     update_data = payload.dict(exclude_unset=True)
 
@@ -245,13 +293,13 @@ async def update_bot(
 
 @router.delete(
     '/bot/{bot_uuid}/forward_chat/',
-    response={200: dict[str, str], 404: ErrorResponse},
+    response={200: StatusMessage, 404: StatusMessage},
     url_name='unlink_bot_forward_chat',
 )
 @with_locale
 async def unlink_bot_forward_chat(
     request: HttpRequest, bot_uuid: UUID
-) -> tuple[int, dict[str, str]] | tuple[int, dict[str, Any]]:
+) -> tuple[int, dict[str, str]]:
     user_data = request.auth
 
     bot = await update_bot_settings(bot_uuid, user_data['id'], {'forward_chat_id': None})
@@ -263,35 +311,118 @@ async def unlink_bot_forward_chat(
 
 @router.delete(
     '/bot/{bot_uuid}/',
-    response={200: dict[str, str], 404: ErrorResponse},
+    response={200: StatusMessage, 404: StatusMessage},
     url_name='delete_bot',
 )
 @with_locale
-async def remove_bot(
-    request: HttpRequest, bot_uuid: UUID
-) -> dict[str, str] | tuple[int, dict[str, Any]]:
+async def remove_bot(request: HttpRequest, bot_uuid: UUID) -> tuple[int, dict[str, str]]:
     user_data = request.auth
 
     deleted = await delete_bot(bot_uuid, user_data['id'])
     if not deleted:
         return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
 
-    return {'status': 'success', 'message': str(_('bot_deleted'))}
+    return 200, {'status': 'success', 'message': str(_('bot_deleted'))}
 
 
 @router.get(
     '/bot/{bot_uuid}/stats/',
-    response={200: BotStatsOut, 404: ErrorResponse},
+    response={200: BotStatsOut, 404: StatusMessage},
     url_name='bot_stats',
 )
 @with_locale
 async def retrieve_bot_stats(
     request: HttpRequest, bot_uuid: UUID
-) -> BotStatsOut | tuple[int, dict[str, Any]]:
+) -> tuple[int, BotStats | dict[str, str]]:
     user_data = request.auth
 
     stats = await get_bot_stats(bot_uuid, user_data['id'])
     if not stats:
         return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
 
-    return stats
+    return 200, stats
+
+
+@router.get(
+    '/bot/{bot_uuid}/banned_users/',
+    response={200: list[BannedUserOut], 404: StatusMessage},
+    url_name='list_banned_users',
+)
+@with_locale
+async def retrieve_banned_users(
+    request: HttpRequest, bot_uuid: UUID
+) -> tuple[int, list[BannedUser] | dict[str, str]]:
+    user_id = request.auth['id']
+
+    bot = await get_bot(bot_uuid, user_id)
+    if not bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    return 200, await list_banned_users(bot.id)
+
+
+@router.post(
+    '/bot/{bot_uuid}/banned_users/',
+    response={200: BanMutationResponse, 404: StatusMessage},
+    url_name='ban_user',
+)
+@with_locale
+async def ban_user(
+    request: HttpRequest, bot_uuid: UUID, payload: BanUserIn
+) -> BanMutationResponse | tuple[int, dict[str, str]]:
+    user_id = request.auth['id']
+
+    bot = await get_bot(bot_uuid, user_id)
+    if not bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    reason = payload.reason.strip() if isinstance(payload.reason, str) else ''
+
+    banned_user, created = await ensure_user_ban(
+        bot.id,
+        payload.user_telegram_id,
+        reason=reason,
+    )
+    message = (
+        str(_('User %(user_id)d banned.'))
+        if created
+        else str(_('User %(user_id)d was already banned.'))
+    ) % {'user_id': banned_user.user_telegram_id}
+
+    return 200, {
+        'status': 'success',
+        'message': message,
+        'user_telegram_id': banned_user.user_telegram_id,
+        'created': created,
+        'reason': banned_user.reason,
+    }
+
+
+@router.delete(
+    '/bot/{bot_uuid}/banned_users/{user_telegram_id}/',
+    response={200: UnbanMutationResponse, 404: StatusMessage},
+    url_name='unban_user',
+)
+@with_locale
+async def unban_user(
+    request: HttpRequest, bot_uuid: UUID, user_telegram_id: int
+) -> tuple[int, dict[str, Any]]:
+    user_id = request.auth['id']
+
+    bot = await get_bot(bot_uuid, user_id)
+    if not bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    removed = await lift_user_ban(bot.id, user_telegram_id)
+    message = (
+        str(_('User %(user_id)d unbanned.'))
+        if removed
+        else str(_('User %(user_id)d was not banned.'))
+    ) % {'user_id': user_telegram_id}
+
+    return 200, {
+        'status': 'success',
+        'message': message,
+        'user_telegram_id': user_telegram_id,
+        'removed': removed,
+    }

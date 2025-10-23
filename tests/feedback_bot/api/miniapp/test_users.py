@@ -122,8 +122,8 @@ async def test_add_user_rejects_invalid_username_characters(miniapp_client):
 
     assert response.status_code == 400
     body = response.json()
-    assert body['error'] is True
-    assert 'username' in body['message']['message'].lower()
+    assert body['status'] == 'error'
+    assert 'username' in body['message'].lower()
 
 
 @pytest.mark.api
@@ -261,7 +261,7 @@ async def test_retrieve_user_requires_admin(miniapp_client):
 
     assert response.status_code == 403
     body = response.json()
-    assert body['error'] is True
+    assert body['status'] == 'error'
 
 
 @pytest.mark.api
@@ -280,7 +280,7 @@ async def test_list_users_requires_admin(miniapp_client):
 
     assert response.status_code == 403
     body = response.json()
-    assert body['error'] is True
+    assert body['status'] == 'error'
 
 
 @pytest.mark.api

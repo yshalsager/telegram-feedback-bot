@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-23T12:40:49.084Z\n"
+"PO-Revision-Date: 2025-10-23T20:07:32.812Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -27,14 +27,6 @@ msgstr "واجهة إدارة البوتات"
 #: frontend/routes/+page.svelte
 msgid "Bot Logo"
 msgstr "شعار البوت"
-
-#: frontend/routes/+page.svelte
-msgid "Search bots by name or username..."
-msgstr "ابحث عن البوتات بالاسم أو اسم المستخدم..."
-
-#: frontend/routes/+page.svelte
-msgid "Search bots"
-msgstr "بحث عن البوتات"
 
 #: frontend/routes/+page.svelte
 msgid "My bots"
@@ -217,6 +209,7 @@ msgid "<0/> Delete bot"
 msgstr "<0/> حذف البوت"
 
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
 msgid "Bot not found"
 msgstr "البوت غير موجود"
 
@@ -250,11 +243,6 @@ msgstr "إدارة المستخدم {0}"
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Manage user"
 msgstr "إدارة المستخدم"
-
-#. placeholder {0}: user?.telegram_id.toLocaleString()
-#: frontend/routes/user/[telegram_id]/+page.svelte
-msgid "Telegram ID: {0}"
-msgstr "معرف تليجرام: {0}"
 
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Save changes"
@@ -368,3 +356,130 @@ msgstr "تعذر حذف المستخدم"
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "<0/> Delete user"
 msgstr "<0/> حذف المستخدم"
+
+#: frontend/routes/+page.svelte
+msgid "Search bots or users"
+msgstr "ابحث عن بوتات أو مستخدمين"
+
+#: frontend/routes/+page.svelte
+msgid "Search bots or users..."
+msgstr "ابحث عن بوتات أو مستخدمين..."
+
+#. placeholder {0}: searchQuery
+#: frontend/routes/+page.svelte
+msgid "No users found matching \"{0}\""
+msgstr "لا يوجد مستخدمون يطابقون \"{0}\""
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Banned users"
+msgstr "المستخدمون المحظورون"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Block or unblock people from sending feedback to this bot."
+msgstr "احظر أو أزل الحظر عن الأشخاص لمنعهم من إرسال الملاحظات إلى هذا البوت."
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Manage banned users"
+msgstr "إدارة المستخدمين المحظورين"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Unable to load banned users"
+msgstr "تعذر تحميل المستخدمين المحظورين"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "User banned"
+msgstr "حظر المستخدم"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Failed to ban user"
+msgstr "تعذر حظر المستخدم"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "User updated"
+msgstr "حدث المستخدم"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "ℹ️"
+msgstr "ℹ️"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Failed to unban user"
+msgstr "تعذر إلغاء حظر المستخدم"
+
+#. placeholder {0}: bot.name
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Managing banned users for {0}"
+msgstr "إدارة المستخدمين المحظورين للبوت {0}"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Back to bot management"
+msgstr "العودة إلى إدارة البوت"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Ban a user"
+msgstr "حظر مستخدم"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Enter a Telegram user ID to prevent them from sending feedback through this bot."
+msgstr "أدخل معرف مستخدم تيليجرام لمنعه من إرسال الملاحظات عبر هذا البوت."
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Telegram user ID"
+msgstr "معرف مستخدم تيليجرام"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Ban user"
+msgstr "حظر المستخدم"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Enter a valid numeric user ID."
+msgstr "أدخل معرف مستخدم رقميًا صالحًا."
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Currently banned"
+msgstr "المحظورون حاليًا"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Try reloading this page or banning a user to refresh the list."
+msgstr "جرّب إعادة تحميل هذه الصفحة أو حظر مستخدم لتحديث القائمة."
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "No banned users yet."
+msgstr "لا يوجد مستخدمون محظورون بعد."
+
+#. placeholder {0}: formatTimestamp(entry.created_at)
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Banned {0}"
+msgstr "حظر {0}"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Unban"
+msgstr "إلغاء الحظر"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Return to bot settings"
+msgstr "العودة إلى إعدادات البوت"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Ban reason"
+msgstr "سبب الحظر"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Reason (optional)"
+msgstr "السبب (اختياري)"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Not provided"
+msgstr "غير متوفر"
+
+#. placeholder {0}: entry.reason && entry.reason.trim() !== '' ? entry.reason : 'Not provided'
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Reason: {0}"
+msgstr "السبب: {0}"
+
+#. placeholder {0}: user.telegram_id.toLocaleString()
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "ID: {0}"
+msgstr "المعرف: {0}"

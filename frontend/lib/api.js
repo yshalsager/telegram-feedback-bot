@@ -198,6 +198,51 @@ export async function delete_bot(uuid) {
 }
 
 /**
+ * List banned users for a bot
+ * @param {string} uuid - The UUID of the bot
+ * @returns {Promise<object>} - The response data
+ */
+export async function list_banned_users(uuid) {
+    const response = await fetch(`/api/bot/${uuid}/banned_users/`, {
+        headers: get_authorization_headers()
+    })
+    return response.json()
+}
+
+/**
+ * Ban a user from a bot
+ * @param {string} uuid - The UUID of the bot
+ * @param {number} user_telegram_id - The Telegram user ID to ban
+ * @returns {Promise<object>} - The response data
+ */
+export async function ban_user(uuid, user_telegram_id, reason) {
+    const payload = {user_telegram_id}
+    if (typeof reason === 'string' && reason.trim() !== '') {
+        payload.reason = reason.trim()
+    }
+    const response = await fetch(`/api/bot/${uuid}/banned_users/`, {
+        method: 'POST',
+        headers: get_authorization_headers(),
+        body: JSON.stringify(payload)
+    })
+    return response.json()
+}
+
+/**
+ * Unban a user from a bot
+ * @param {string} uuid - The UUID of the bot
+ * @param {number} user_telegram_id - The Telegram user ID to unban
+ * @returns {Promise<object>} - The response data
+ */
+export async function unban_user(uuid, user_telegram_id) {
+    const response = await fetch(`/api/bot/${uuid}/banned_users/${user_telegram_id}/`, {
+        method: 'DELETE',
+        headers: get_authorization_headers()
+    })
+    return response.json()
+}
+
+/**
  * List all users
  * @returns {Promise<object>} - The response data
  */

@@ -53,7 +53,19 @@ async def ban_user(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.effective_message.reply_text(MISSING_TARGET_MESSAGE)
         return
 
-    banned_user, created = await ensure_user_ban(context.bot_data['bot_config'].id, target_user_id)
+    message = update.effective_message
+    reason_words: list[str]
+    if message and message.reply_to_message:
+        reason_words = context.args
+    else:
+        reason_words = context.args[1:] if len(context.args) > 1 else []
+    reason_text = ' '.join(reason_words).strip()
+
+    banned_user, created = await ensure_user_ban(
+        context.bot_data['bot_config'].id,
+        target_user_id,
+        reason=reason_text if reason_text else None,
+    )
     text = (
         _('User %(user_id)d banned.') if created else _('User %(user_id)d was already banned.')
     ) % {'user_id': banned_user.user_telegram_id}
@@ -85,7 +97,12 @@ async def list_bans(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.effective_message.reply_text(_('No banned users.'))
         return
 
-    entries = '\n'.join(str(user.user_telegram_id) for user in banned_users)
+    def format_entry(entry) -> str:
+        if entry.reason:
+            return f'{entry.user_telegram_id} - {entry.reason}'
+        return str(entry.user_telegram_id)
+
+    entries = '\n'.join(format_entry(user) for user in banned_users)
     await update.effective_message.reply_text(
         _('Banned users:\n%(entries)s') % {'entries': entries}
     )

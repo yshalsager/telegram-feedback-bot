@@ -66,7 +66,7 @@ async def test_ban_user_from_reply(monkeypatch, feedback_app):
 
     reply_mock = _patch_reply_text(monkeypatch)
 
-    context = _build_context(bot_config)
+    context = _build_context(bot_config, args=['spammer'])
     await ban_module.ban_user(update, context)
 
     banned = (
@@ -75,6 +75,12 @@ async def test_ban_user_from_reply(monkeypatch, feedback_app):
         .afirst()
     )
     assert banned == 999
+    stored_reason = (
+        await BannedUser.objects.filter(bot=bot_config, user_telegram_id=999)
+        .values_list('reason', flat=True)
+        .afirst()
+    )
+    assert stored_reason == 'spammer'
 
     assert reply_mock.await_count == 1
     args = reply_mock.await_args.args
@@ -99,7 +105,7 @@ async def test_ban_user_from_args(monkeypatch, feedback_app):
 
     reply_mock = _patch_reply_text(monkeypatch)
 
-    context = _build_context(bot_config, args=['4242'])
+    context = _build_context(bot_config, args=['4242', 'spam', 'links'])
     await ban_module.ban_user(update, context)
 
     banned = (
@@ -108,6 +114,12 @@ async def test_ban_user_from_args(monkeypatch, feedback_app):
         .afirst()
     )
     assert banned == 4242
+    stored_reason = (
+        await BannedUser.objects.filter(bot=bot_config, user_telegram_id=4242)
+        .values_list('reason', flat=True)
+        .afirst()
+    )
+    assert stored_reason == 'spam links'
 
     assert reply_mock.await_count == 1
     args = reply_mock.await_args.args
@@ -177,8 +189,16 @@ async def test_unban_user(monkeypatch, feedback_app):
 
 async def test_list_bans(monkeypatch, feedback_app):
     _, bot_config = feedback_app
-    await BannedUser.objects.aget_or_create(bot=bot_config, user_telegram_id=111)
-    await BannedUser.objects.aget_or_create(bot=bot_config, user_telegram_id=222)
+    await BannedUser.objects.aget_or_create(
+        bot=bot_config,
+        user_telegram_id=111,
+        defaults={'reason': 'spam'},
+    )
+    await BannedUser.objects.aget_or_create(
+        bot=bot_config,
+        user_telegram_id=222,
+        defaults={'reason': ''},
+    )
 
     command_message = build_message(
         bot_config.owner_id,
@@ -199,7 +219,7 @@ async def test_list_bans(monkeypatch, feedback_app):
 
     assert reply_mock.await_count == 1
     payload = reply_mock.await_args.args[1]
-    assert '111' in payload
+    assert '111 - spam' in payload
     assert '222' in payload
 
 

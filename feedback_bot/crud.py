@@ -384,11 +384,25 @@ async def get_bot_stats(bot_uuid: UUID | str, owner: int) -> BotStats | None:
     return stats
 
 
-async def ensure_user_ban(bot_id: int, user_telegram_id: int) -> tuple[BannedUser, bool]:
-    return await BannedUser.objects.aget_or_create(
+async def ensure_user_ban(
+    bot_id: int, user_telegram_id: int, *, reason: str | None = None
+) -> tuple[BannedUser, bool]:
+    defaults: dict[str, str] = {}
+    normalized_reason = (reason or '').strip()
+    if normalized_reason:
+        defaults['reason'] = normalized_reason
+
+    banned_user, created = await BannedUser.objects.aget_or_create(
         bot_id=bot_id,
         user_telegram_id=user_telegram_id,
+        defaults=defaults,
     )
+
+    if not created and normalized_reason and banned_user.reason != normalized_reason:
+        await BannedUser.objects.filter(pk=banned_user.pk).aupdate(reason=normalized_reason)
+        banned_user.reason = normalized_reason
+
+    return banned_user, created
 
 
 async def lift_user_ban(bot_id: int, user_telegram_id: int) -> bool:

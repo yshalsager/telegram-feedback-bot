@@ -31,6 +31,12 @@ export type BotStats = {
     outgoing_messages: number
 }
 
+export type BannedUser = {
+    user_telegram_id: number
+    created_at: string
+    reason: string | null
+}
+
 export type LanguageOption = {
     locale: string
     name: string

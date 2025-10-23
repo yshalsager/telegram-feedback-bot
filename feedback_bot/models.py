@@ -141,6 +141,7 @@ class BannedUser(TimestampedModel):
 
     bot = models.ForeignKey(Bot, on_delete=models.CASCADE, related_name='banned_users')
     user_telegram_id = models.BigIntegerField()
+    reason = models.TextField(blank=True, default='')
 
     class Meta:
         unique_together = ('bot', 'user_telegram_id')

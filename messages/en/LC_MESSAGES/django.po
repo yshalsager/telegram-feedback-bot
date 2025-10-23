@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 12:40+0000\n"
+"POT-Creation-Date: 2025-10-23 20:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,72 +17,97 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: feedback_bot/api/miniapp/bots.py:113
+#: feedback_bot/api/miniapp/bots.py:159
 msgid "invalid_bot_token"
 msgstr "Invalid bot token. Please check your token and try again."
 
-#: feedback_bot/api/miniapp/bots.py:115
+#: feedback_bot/api/miniapp/bots.py:161
 msgid "unable_to_validate_bot_token"
 msgstr ""
 "Unable to validate bot token. Please check your token format and try again."
 
-#: feedback_bot/api/miniapp/bots.py:135
+#: feedback_bot/api/miniapp/bots.py:183
 msgid "cannot_add_builder_bot"
 msgstr "You cannot add the builder bot as a bot"
 
-#: feedback_bot/api/miniapp/bots.py:139
+#: feedback_bot/api/miniapp/bots.py:187
 msgid "bot_already_exists"
 msgstr "Bot already exists"
 
-#: feedback_bot/api/miniapp/bots.py:193 feedback_bot/api/miniapp/bots.py:218
-#: feedback_bot/api/miniapp/bots.py:222 feedback_bot/api/miniapp/bots.py:227
-#: feedback_bot/api/miniapp/bots.py:259 feedback_bot/api/miniapp/bots.py:277
-#: feedback_bot/api/miniapp/bots.py:295
+#: feedback_bot/api/miniapp/bots.py:241 feedback_bot/api/miniapp/bots.py:266
+#: feedback_bot/api/miniapp/bots.py:270 feedback_bot/api/miniapp/bots.py:275
+#: feedback_bot/api/miniapp/bots.py:307 feedback_bot/api/miniapp/bots.py:323
+#: feedback_bot/api/miniapp/bots.py:341 feedback_bot/api/miniapp/bots.py:359
+#: feedback_bot/api/miniapp/bots.py:377 feedback_bot/api/miniapp/bots.py:414
 msgid "bot_not_found"
 msgstr "Bot not found"
 
-#: feedback_bot/api/miniapp/bots.py:214
+#: feedback_bot/api/miniapp/bots.py:262
 msgid "no_fields_to_update"
 msgstr "No fields to update"
 
-#: feedback_bot/api/miniapp/bots.py:279
+#: feedback_bot/api/miniapp/bots.py:325
 msgid "bot_deleted"
 msgstr "Bot deleted"
 
-#: feedback_bot/api/miniapp/users.py:28 feedback_bot/api/miniapp/users.py:36
+#: feedback_bot/api/miniapp/bots.py:387
+#: feedback_bot/telegram/feedback_bot/modules/ban.py:70
+#, python-format
+msgid "User %(user_id)d banned."
+msgstr "User %(user_id)d banned."
+
+#: feedback_bot/api/miniapp/bots.py:389
+#: feedback_bot/telegram/feedback_bot/modules/ban.py:70
+#, python-format
+msgid "User %(user_id)d was already banned."
+msgstr "User %(user_id)d was already banned."
+
+#: feedback_bot/api/miniapp/bots.py:418
+#: feedback_bot/telegram/feedback_bot/modules/ban.py:86
+#, python-format
+msgid "User %(user_id)d unbanned."
+msgstr "User %(user_id)d unbanned."
+
+#: feedback_bot/api/miniapp/bots.py:420
+#: feedback_bot/telegram/feedback_bot/modules/ban.py:86
+#, python-format
+msgid "User %(user_id)d was not banned."
+msgstr "User %(user_id)d was not banned."
+
+#: feedback_bot/api/miniapp/users.py:27 feedback_bot/api/miniapp/users.py:35
 msgid "not_authorized"
 msgstr "You are not authorized to perform this action."
 
-#: feedback_bot/api/miniapp/users.py:45
+#: feedback_bot/api/miniapp/users.py:44
 msgid "username_too_long"
 msgstr "Username is too long"
 
-#: feedback_bot/api/miniapp/users.py:48
+#: feedback_bot/api/miniapp/users.py:47
 msgid "username_invalid_characters"
 msgstr "Username contains invalid characters"
 
-#: feedback_bot/api/miniapp/users.py:152 feedback_bot/api/miniapp/users.py:209
-#: feedback_bot/api/miniapp/users.py:227 feedback_bot/api/miniapp/users.py:256
+#: feedback_bot/api/miniapp/users.py:155 feedback_bot/api/miniapp/users.py:222
+#: feedback_bot/api/miniapp/users.py:243 feedback_bot/api/miniapp/users.py:272
 msgid "user_not_found"
 msgstr "User not found"
 
-#: feedback_bot/api/miniapp/users.py:185
+#: feedback_bot/api/miniapp/users.py:195
 msgid "user_added_successfully"
 msgstr "User added successfully."
 
-#: feedback_bot/api/miniapp/users.py:185 feedback_bot/api/miniapp/users.py:231
+#: feedback_bot/api/miniapp/users.py:197 feedback_bot/api/miniapp/users.py:247
 msgid "user_updated_successfully"
 msgstr "User updated successfully."
 
-#: feedback_bot/api/miniapp/users.py:223
+#: feedback_bot/api/miniapp/users.py:239
 msgid "user_no_changes"
 msgstr "No changes to update."
 
-#: feedback_bot/api/miniapp/users.py:252
+#: feedback_bot/api/miniapp/users.py:268
 msgid "cannot_delete_builder_admin"
 msgstr "Cannot delete a core builder admin."
 
-#: feedback_bot/api/miniapp/users.py:258
+#: feedback_bot/api/miniapp/users.py:274
 msgid "user_deleted_successfully"
 msgstr "User deleted successfully."
 
@@ -123,31 +148,11 @@ msgstr "User whitelisted successfully."
 msgid "Reply to a forwarded message or pass a numeric user ID."
 msgstr "Reply to a forwarded message or pass a numeric user ID."
 
-#: feedback_bot/telegram/feedback_bot/modules/ban.py:58
-#, python-format
-msgid "User %(user_id)d banned."
-msgstr "User %(user_id)d banned."
-
-#: feedback_bot/telegram/feedback_bot/modules/ban.py:58
-#, python-format
-msgid "User %(user_id)d was already banned."
-msgstr "User %(user_id)d was already banned."
-
-#: feedback_bot/telegram/feedback_bot/modules/ban.py:74
-#, python-format
-msgid "User %(user_id)d unbanned."
-msgstr "User %(user_id)d unbanned."
-
-#: feedback_bot/telegram/feedback_bot/modules/ban.py:74
-#, python-format
-msgid "User %(user_id)d was not banned."
-msgstr "User %(user_id)d was not banned."
-
-#: feedback_bot/telegram/feedback_bot/modules/ban.py:85
+#: feedback_bot/telegram/feedback_bot/modules/ban.py:97
 msgid "No banned users."
 msgstr "No banned users."
 
-#: feedback_bot/telegram/feedback_bot/modules/ban.py:90
+#: feedback_bot/telegram/feedback_bot/modules/ban.py:107
 #, python-format
 msgid ""
 "Banned users:\n"

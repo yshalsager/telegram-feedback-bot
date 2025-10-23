@@ -599,6 +599,109 @@ async def test_bot_stats_endpoint_returns_counts(miniapp_client, monkeypatch):
 @pytest.mark.django
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.asyncio
+async def test_banned_users_management(miniapp_client, monkeypatch):
+    client, auth_state, headers = miniapp_client
+
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'owner',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    async def fake_validate(_: str) -> dict[str, str | int]:
+        return {
+            'name': 'Ban-able Bot',
+            'telegram_id': 515151,
+            'username': 'ban_bot',
+        }
+
+    monkeypatch.setattr(
+        'feedback_bot.api.miniapp.bots.validate_bot_token',
+        fake_validate,
+        raising=False,
+    )
+
+    create_response = await client.post(
+        '/bot/',
+        headers=headers,
+        json={
+            'bot_token': BOT_TOKEN,
+            'enable_confirmations': True,
+            'start_message': 'start',
+            'feedback_received_message': 'received',
+        },
+    )
+    assert create_response.status_code == 200
+
+    stored_bot = (await crud.get_bots(auth_state['user']['id']))[0]
+
+    ban_response = await client.post(
+        f'/bot/{stored_bot.uuid}/banned_users/',
+        headers=headers,
+        json={'user_telegram_id': 4242, 'reason': 'spam reports'},
+    )
+    assert ban_response.status_code == 200
+    ban_payload = ban_response.json()
+    assert ban_payload['status'] == 'success'
+    assert ban_payload['user_telegram_id'] == 4242
+    assert ban_payload['created'] is True
+    assert ban_payload['reason'] == 'spam reports'
+
+    duplicate_ban = await client.post(
+        f'/bot/{stored_bot.uuid}/banned_users/',
+        headers=headers,
+        json={'user_telegram_id': 4242, 'reason': 'multiple spam submissions'},
+    )
+    assert duplicate_ban.status_code == 200
+    duplicate_payload = duplicate_ban.json()
+    assert duplicate_payload['created'] is False
+    assert duplicate_payload['reason'] == 'multiple spam submissions'
+
+    list_response = await client.get(
+        f'/bot/{stored_bot.uuid}/banned_users/',
+        headers=headers,
+    )
+    assert list_response.status_code == 200
+    bans_payload = list_response.json()
+    assert len(bans_payload) == 1
+    entry = bans_payload[0]
+    assert entry['user_telegram_id'] == 4242
+    assert 'created_at' in entry
+    assert entry.get('reason') == 'multiple spam submissions'
+
+    unban_response = await client.delete(
+        f'/bot/{stored_bot.uuid}/banned_users/4242/',
+        headers=headers,
+    )
+    assert unban_response.status_code == 200
+    unban_payload = unban_response.json()
+    assert unban_payload['removed'] is True
+
+    empty_list = await client.get(
+        f'/bot/{stored_bot.uuid}/banned_users/',
+        headers=headers,
+    )
+    assert empty_list.status_code == 200
+    assert empty_list.json() == []
+
+    second_unban = await client.delete(
+        f'/bot/{stored_bot.uuid}/banned_users/4242/',
+        headers=headers,
+    )
+    assert second_unban.status_code == 200
+    assert second_unban.json()['removed'] is False
+
+    missing_bot = await client.get(f'/bot/{uuid4()}/banned_users/', headers=headers)
+    assert missing_bot.status_code == 404
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
 async def test_delete_bot_removes_record(miniapp_client, monkeypatch):
     client, auth_state, headers = miniapp_client
     await crud.upsert_user(

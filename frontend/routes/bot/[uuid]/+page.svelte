@@ -320,6 +320,22 @@ async function unlink_group() {
                 {/if}
             </section>
 
+            <section class="space-y-3 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
+                <div class="space-y-1 text-start">
+                    <h3 class="text-sm font-semibold text-foreground">Banned users</h3>
+                    <p class="text-sm text-muted-foreground">
+                        Block or unblock people from sending feedback to this bot.
+                    </p>
+                </div>
+                <Button
+                    class="h-10 w-full text-base font-medium"
+                    onclick={() => goto(resolve(`/bot/${botUuid}/banned`))}
+                    variant="secondary"
+                >
+                    Manage banned users
+                </Button>
+            </section>
+
             <Separator class="my-4" />
 
             <div class="flex flex-col gap-3 sm:flex-row">

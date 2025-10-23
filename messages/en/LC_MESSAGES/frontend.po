@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-23T12:40:49.081Z\n"
+"PO-Revision-Date: 2025-10-23T20:07:32.809Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -185,6 +185,7 @@ msgid "<0/> Delete bot"
 msgstr "<0/> Delete bot"
 
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
 msgid "Bot not found"
 msgstr "Bot not found"
 
@@ -195,14 +196,6 @@ msgstr "Bot management interface"
 #: frontend/routes/+page.svelte
 msgid "Bot Logo"
 msgstr "Bot Logo"
-
-#: frontend/routes/+page.svelte
-msgid "Search bots by name or username..."
-msgstr "Search bots by name or username..."
-
-#: frontend/routes/+page.svelte
-msgid "Search bots"
-msgstr "Search bots"
 
 #: frontend/routes/+page.svelte
 msgid "My bots"
@@ -250,11 +243,6 @@ msgstr "Managing user {0}"
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Manage user"
 msgstr "Manage user"
-
-#. placeholder {0}: user?.telegram_id.toLocaleString()
-#: frontend/routes/user/[telegram_id]/+page.svelte
-msgid "Telegram ID: {0}"
-msgstr "Telegram ID: {0}"
 
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Save changes"
@@ -368,3 +356,130 @@ msgstr "Failed to delete user"
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "<0/> Delete user"
 msgstr "<0/> Delete user"
+
+#: frontend/routes/+page.svelte
+msgid "Search bots or users"
+msgstr "Search bots or users"
+
+#: frontend/routes/+page.svelte
+msgid "Search bots or users..."
+msgstr "Search bots or users..."
+
+#. placeholder {0}: searchQuery
+#: frontend/routes/+page.svelte
+msgid "No users found matching \"{0}\""
+msgstr "No users found matching \"{0}\""
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Banned users"
+msgstr "Banned users"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Block or unblock people from sending feedback to this bot."
+msgstr "Block or unblock people from sending feedback to this bot."
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Manage banned users"
+msgstr "Manage banned users"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Unable to load banned users"
+msgstr "Unable to load banned users"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "User banned"
+msgstr "User banned"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Failed to ban user"
+msgstr "Failed to ban user"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "User updated"
+msgstr "User updated"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "ℹ️"
+msgstr "ℹ️"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Failed to unban user"
+msgstr "Failed to unban user"
+
+#. placeholder {0}: bot.name
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Managing banned users for {0}"
+msgstr "Managing banned users for {0}"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Back to bot management"
+msgstr "Back to bot management"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Ban a user"
+msgstr "Ban a user"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Enter a Telegram user ID to prevent them from sending feedback through this bot."
+msgstr "Enter a Telegram user ID to prevent them from sending feedback through this bot."
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Telegram user ID"
+msgstr "Telegram user ID"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Ban user"
+msgstr "Ban user"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Enter a valid numeric user ID."
+msgstr "Enter a valid numeric user ID."
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Currently banned"
+msgstr "Currently banned"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Try reloading this page or banning a user to refresh the list."
+msgstr "Try reloading this page or banning a user to refresh the list."
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "No banned users yet."
+msgstr "No banned users yet."
+
+#. placeholder {0}: formatTimestamp(entry.created_at)
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Banned {0}"
+msgstr "Banned {0}"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Unban"
+msgstr "Unban"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Return to bot settings"
+msgstr "Return to bot settings"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Ban reason"
+msgstr "Ban reason"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Reason (optional)"
+msgstr "Reason (optional)"
+
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Not provided"
+msgstr "Not provided"
+
+#. placeholder {0}: entry.reason && entry.reason.trim() !== '' ? entry.reason : 'Not provided'
+#: frontend/routes/bot/[uuid]/banned/+page.svelte
+msgid "Reason: {0}"
+msgstr "Reason: {0}"
+
+#. placeholder {0}: user.telegram_id.toLocaleString()
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "ID: {0}"
+msgstr "ID: {0}"
