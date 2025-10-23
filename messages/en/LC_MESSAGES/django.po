@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 20:47+0000\n"
+"POT-Creation-Date: 2025-10-23 21:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,71 +17,71 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: feedback_bot/api/miniapp/bots.py:162
+#: feedback_bot/api/miniapp/bots.py:168
 msgid "invalid_bot_token"
 msgstr "Invalid bot token. Please check your token and try again."
 
-#: feedback_bot/api/miniapp/bots.py:164
+#: feedback_bot/api/miniapp/bots.py:170
 msgid "unable_to_validate_bot_token"
 msgstr ""
 "Unable to validate bot token. Please check your token format and try again."
 
-#: feedback_bot/api/miniapp/bots.py:186
+#: feedback_bot/api/miniapp/bots.py:192
 msgid "cannot_add_builder_bot"
 msgstr "You cannot add the builder bot as a bot"
 
-#: feedback_bot/api/miniapp/bots.py:190
+#: feedback_bot/api/miniapp/bots.py:196
 msgid "bot_already_exists"
 msgstr "Bot already exists"
 
-#: feedback_bot/api/miniapp/bots.py:244 feedback_bot/api/miniapp/bots.py:266
-#: feedback_bot/api/miniapp/bots.py:281 feedback_bot/api/miniapp/bots.py:321
-#: feedback_bot/api/miniapp/bots.py:348 feedback_bot/api/miniapp/bots.py:380
-#: feedback_bot/api/miniapp/bots.py:396 feedback_bot/api/miniapp/bots.py:414
-#: feedback_bot/api/miniapp/bots.py:432 feedback_bot/api/miniapp/bots.py:450
-#: feedback_bot/api/miniapp/bots.py:487
+#: feedback_bot/api/miniapp/bots.py:250 feedback_bot/api/miniapp/bots.py:288
+#: feedback_bot/api/miniapp/bots.py:380 feedback_bot/api/miniapp/bots.py:415
+#: feedback_bot/api/miniapp/bots.py:432 feedback_bot/api/miniapp/bots.py:462
+#: feedback_bot/api/miniapp/bots.py:478 feedback_bot/api/miniapp/bots.py:496
+#: feedback_bot/api/miniapp/bots.py:514 feedback_bot/api/miniapp/bots.py:532
+#: feedback_bot/api/miniapp/bots.py:569
 msgid "bot_not_found"
 msgstr "Bot not found"
 
-#: feedback_bot/api/miniapp/bots.py:277
+#: feedback_bot/api/miniapp/bots.py:281
 msgid "cannot_use_builder_bot_token"
 msgstr "You cannot use the builder bot token."
 
-#: feedback_bot/api/miniapp/bots.py:296
+#: feedback_bot/api/miniapp/bots.py:307
 msgid "token_does_not_match_bot"
 msgstr "Token belongs to a different bot."
 
-#: feedback_bot/api/miniapp/bots.py:305
+#: feedback_bot/api/miniapp/bots.py:329
+msgid "Admin approval required before enabling this bot"
+msgstr "Admin approval required before enabling this bot"
+
+#: feedback_bot/api/miniapp/bots.py:424
 msgid "no_fields_to_update"
 msgstr "No fields to update"
 
-#: feedback_bot/api/miniapp/bots.py:316
-msgid "Admin approval required before enabling this bot"
-msgstr ""
-
-#: feedback_bot/api/miniapp/bots.py:398
+#: feedback_bot/api/miniapp/bots.py:480
 msgid "bot_deleted"
 msgstr "Bot deleted"
 
-#: feedback_bot/api/miniapp/bots.py:460
+#: feedback_bot/api/miniapp/bots.py:542
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:70
 #, python-format
 msgid "User %(user_id)d banned."
 msgstr "User %(user_id)d banned."
 
-#: feedback_bot/api/miniapp/bots.py:462
+#: feedback_bot/api/miniapp/bots.py:544
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:70
 #, python-format
 msgid "User %(user_id)d was already banned."
 msgstr "User %(user_id)d was already banned."
 
-#: feedback_bot/api/miniapp/bots.py:491
+#: feedback_bot/api/miniapp/bots.py:573
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:86
 #, python-format
 msgid "User %(user_id)d unbanned."
 msgstr "User %(user_id)d unbanned."
 
-#: feedback_bot/api/miniapp/bots.py:493
+#: feedback_bot/api/miniapp/bots.py:575
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:86
 #, python-format
 msgid "User %(user_id)d was not banned."
@@ -205,7 +205,7 @@ msgstr "User updated their message."
 msgid "Sent message updated"
 msgstr "Sent message updated"
 
-#: feedback_bot/telegram/feedback_bot/modules/stats.py:29
+#: feedback_bot/telegram/feedback_bot/modules/stats.py:24
 #, python-format
 msgid ""
 "📈 <b>Bot statistics</b>\n"
