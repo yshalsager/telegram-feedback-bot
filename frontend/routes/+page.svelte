@@ -16,6 +16,9 @@ let searchQuery = $state('')
 let bots = $state<Bot[]>([])
 let users = $state<User[]>([])
 
+const trimmedQuery = $derived(searchQuery.trim())
+const normalizedQuery = $derived(trimmedQuery.toLowerCase())
+
 let botsLoaded = false
 let usersLoaded = false
 
@@ -73,10 +76,20 @@ onMount(() => {
 })
 
 const filteredBots = $derived(
-    bots.filter(
-        bot =>
-            bot.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            bot.username.toLowerCase().includes(searchQuery.toLowerCase())
+    bots.filter(bot =>
+        !trimmedQuery
+            ? true
+            : bot.name.toLowerCase().includes(normalizedQuery) ||
+              bot.username.toLowerCase().includes(normalizedQuery)
+    )
+)
+
+const filteredUsers = $derived(
+    users.filter(user =>
+        !trimmedQuery
+            ? true
+            : user.username.toLowerCase().includes(normalizedQuery) ||
+              String(user.telegram_id).includes(trimmedQuery)
     )
 )
 
@@ -99,7 +112,7 @@ const handleUserClick: (item: Bot | User) => void = item => {
             <img
                 class="h-20 w-20 transition-all duration-300 hover:scale-110 hover:rotate-3 sm:h-24 sm:w-24 md:h-28 md:w-28 lg:h-32 lg:w-32 xl:h-36 xl:w-36"
                 alt="Bot Logo"
-                src="/favicon.svg"
+                src="/app/favicon.svg"
             />
             <h1 class="text-xl font-bold sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
                 Feedback Bot Builder
@@ -113,9 +126,9 @@ const handleUserClick: (item: Bot | User) => void = item => {
         <Input
             id="search-input"
             class="border border-primary ps-4"
-            aria-label="Search bots"
+            aria-label="Search bots or users"
             autocomplete="off"
-            placeholder="Search bots by name or username..."
+            placeholder="Search bots or users..."
             type="text"
             bind:value={searchQuery}
         />
@@ -148,10 +161,12 @@ const handleUserClick: (item: Bot | User) => void = item => {
         <!-- User Management Section -->
         <ManagementCard
             emptyState={{
-                message: "You don't have any users yet.",
-                subMessage: 'Click "Add new user" to get started.'
+                message: trimmedQuery
+                    ? `No users found matching "${searchQuery}"`
+                    : "You don't have any users yet.",
+                subMessage: trimmedQuery ? '' : 'Click "Add new user" to get started.'
             }}
-            items={users}
+            items={filteredUsers}
             title="User Management"
         >
             <!-- Add New User Button -->
@@ -164,7 +179,7 @@ const handleUserClick: (item: Bot | User) => void = item => {
                 />
             {/snippet}
 
-            {#each users as user (user.telegram_id)}
+            {#each filteredUsers as user (user.telegram_id)}
                 <ListItem item={user} onClick={() => handleUserClick(user)} type="user" />
             {/each}
         </ManagementCard>
