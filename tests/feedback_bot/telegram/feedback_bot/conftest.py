@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 import pytest_asyncio
-from feedback_bot.models import BannedUser, Bot, User
+from feedback_bot.models import BannedUser, Bot, BotStats, FeedbackChat, User
 from feedback_bot.telegram.feedback_bot import bot as feedback_bot_module
 from feedback_bot.telegram.feedback_bot import modules as feedback_modules_pkg
 from feedback_bot.utils.modules_loader import get_modules, load_modules
@@ -67,6 +67,8 @@ async def feedback_app(monkeypatch, db) -> tuple[Application, Bot]:
             await bot_config.arefresh_from_db()
 
     await BannedUser.objects.filter(bot=bot_config).adelete()
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await BotStats.objects.filter(bot=bot_config).adelete()
 
     async def fake_initialize(self):  # type: ignore[no-redef]
         self._initialized = True
