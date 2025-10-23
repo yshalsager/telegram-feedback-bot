@@ -10,6 +10,35 @@ interface Props {
 
 let {item, type, onClick}: Props = $props()
 
+const avatarPalette = [
+    'bg-gradient-to-br from-blue-500 to-purple-600',
+    'bg-gradient-to-br from-emerald-500 to-teal-600',
+    'bg-gradient-to-br from-amber-500 to-orange-600',
+    'bg-gradient-to-br from-rose-500 to-pink-600',
+    'bg-gradient-to-br from-indigo-500 to-sky-600',
+    'bg-gradient-to-br from-slate-500 to-slate-700',
+    'bg-gradient-to-br from-lime-500 to-green-600',
+    'bg-gradient-to-br from-cyan-500 to-sky-500',
+    'bg-gradient-to-br from-fuchsia-500 to-purple-700',
+    'bg-gradient-to-br from-red-500 to-orange-700',
+    'bg-gradient-to-br from-violet-500 to-indigo-700',
+    'bg-gradient-to-br from-stone-500 to-stone-700'
+]
+
+function hashColorKey(value: string): number {
+    let hash = 5381
+    for (let i = 0; i < value.length; i += 1) {
+        hash = ((hash << 5) + hash) ^ value.charCodeAt(i)
+    }
+    return Math.abs(hash)
+}
+
+function pickAvatarClass(value: string): string {
+    if (!value) return avatarPalette[0]
+    const hashed = hashColorKey(value)
+    return avatarPalette[hashed % avatarPalette.length]
+}
+
 // Type guard to check if item is a Bot
 function isBot(item: Bot | User): item is Bot {
     return type === 'bot'
@@ -17,11 +46,15 @@ function isBot(item: Bot | User): item is Bot {
 
 // Generate avatar content based on type
 const avatarContent = $derived(
-    isBot(item) ? item.name.charAt(0).toUpperCase() : item.username.charAt(0).toUpperCase()
+    isBot(item) ? item.name.charAt(0).toUpperCase() : (item.username?.charAt(0).toUpperCase() ?? '')
 )
 
 // Generate avatar color class based on type
-const avatarClass = $derived('bg-gradient-to-br from-blue-500 to-purple-600')
+const avatarClass = $derived(
+    pickAvatarClass(
+        isBot(item) ? (item.uuid ?? String(item.telegram_id)) : String(item.telegram_id)
+    )
+)
 
 // Generate secondary text based on type
 const secondaryText = $derived(
