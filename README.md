@@ -131,6 +131,18 @@ mise x pnpm -- pnpm run lint
 mise x pnpm -- pnpm run check
 ```
 
+## Migrating from the legacy Pyrogram version
+
+1. **Create backups** of your existing `feedback_bot.db` builder database and the per-bot files inside `data/` (or whichever paths you configured).
+2. **Populate environment variables** used by the legacy stack. Export the old `ENCRYPTION_KEY` (the XOR key from the Pyrogram build) alongside the new `.env` variables.
+3. **Install and migrate** the Django project as described above, then run:
+   ```bash
+   mise x uv -- uv run manage.py migrate_legacy_data --builder-db feedback_bot.db --data-dir data
+   ```
+   Adjust the paths if your legacy assets live elsewhere. The command can be re-run safely; it upserts records.
+4. **Review migrated bots** in the mini app. Re-enable each bot once you are satisfied (admin approval still applies when `TELEGRAM_NEW_BOT_ADMIN_APPROVAL=true`).
+5. **Reset webhooks** by redeploying the app or restarting `granian` so the builder and managed bots pick up their new webhook endpoints.
+
 ## Project Layout
 
 - `config/` – Django project configuration and ASGI entrypoint.
