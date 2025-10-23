@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-16T20:47:18.912Z\n"
+"PO-Revision-Date: 2025-10-23T12:40:49.084Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -158,6 +158,7 @@ msgstr "اختياري. أدخل اسم مستخدم تيليجرام بدون �
 #: frontend/components/management/UserAccessForm.svelte
 #: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Save"
 msgstr "حفظ"
 
@@ -342,3 +343,28 @@ msgstr "يمنح هذا المستخدم صلاحيات مشرف الباني."
 #: frontend/routes/bot/[uuid]/+page.svelte
 msgid "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."
 msgstr "أضف هذا البوت إلى مجموعة لربطه تلقائيًا، وإلا فسترسل الرسائل إلى مالك البوت."
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Bot stats"
+msgstr "إحصائيات البوت"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Incoming messages"
+msgstr "الرسائل الواردة"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Outgoing messages"
+msgstr "الرسائل الصادرة"
+
+#. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Delete {0}?"
+msgstr "حذف {0}؟"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Failed to delete user"
+msgstr "تعذر حذف المستخدم"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "<0/> Delete user"
+msgstr "<0/> حذف المستخدم"

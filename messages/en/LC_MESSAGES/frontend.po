@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-16T20:59:59.072Z\n"
+"PO-Revision-Date: 2025-10-23T12:40:49.081Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -104,6 +104,7 @@ msgstr "Optional. Enter the Telegram username without the @ symbol."
 #: frontend/components/management/UserAccessForm.svelte
 #: frontend/routes/add_bot/+page.svelte
 #: frontend/routes/bot/[uuid]/+page.svelte
+#: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "Save"
 msgstr "Save"
 
@@ -342,3 +343,28 @@ msgstr "Grants builder admin permissions to this user."
 #: frontend/routes/bot/[uuid]/+page.svelte
 msgid "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."
 msgstr "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Bot stats"
+msgstr "Bot stats"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Incoming messages"
+msgstr "Incoming messages"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Outgoing messages"
+msgstr "Outgoing messages"
+
+#. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Delete {0}?"
+msgstr "Delete {0}?"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "Failed to delete user"
+msgstr "Failed to delete user"
+
+#: frontend/routes/user/[telegram_id]/+page.svelte
+msgid "<0/> Delete user"
+msgstr "<0/> Delete user"

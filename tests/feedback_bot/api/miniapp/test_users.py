@@ -182,6 +182,75 @@ async def test_manage_user_without_changes_returns_error(miniapp_client):
 @pytest.mark.django
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.asyncio
+async def test_delete_user_removes_user_and_bots(miniapp_client):
+    client, auth_state, headers = miniapp_client
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': auth_state['user']['username'],
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    target_id = 800
+    await crud.upsert_user(
+        {
+            'id': target_id,
+            'username': 'target_user',
+            'language_code': 'en',
+            'is_whitelisted': True,
+            'is_admin': False,
+        }
+    )
+
+    bot = await crud.create_bot(
+        telegram_id=555666777,
+        bot_token='87654321:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE1234567890',  # noqa: S106
+        username='target_bot',
+        name='Target Bot',
+        owner=target_id,
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    response = await client.delete(f'/user/{target_id}/', headers=headers)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body['status'] == 'success'
+    assert await crud.get_user(target_id) is None
+    assert await crud.bot_exists(bot.telegram_id) is False
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_delete_user_rejects_builder_admin(miniapp_client):
+    client, auth_state, headers = miniapp_client
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': auth_state['user']['username'],
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    response = await client.delete(f'/user/{auth_state["user"]["id"]}/', headers=headers)
+
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload['status'] == 'error'
+    assert 'admin' in payload['message'].lower()
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
 async def test_retrieve_user_requires_admin(miniapp_client):
     client, auth_state, headers = miniapp_client
     await crud.upsert_user({'id': 700, 'username': 'target'})

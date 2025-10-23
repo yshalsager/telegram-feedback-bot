@@ -284,6 +284,49 @@ async def test_get_bots_tokens_returns_decrypted_tokens():
 @pytest.mark.django
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.asyncio
+async def test_get_bot_token_returns_decrypted_secret():
+    owner, _ = await crud.upsert_user({'id': 6061})
+    bot = await crud.create_bot(
+        telegram_id=444010,
+        bot_token='TOKEN_DEC',  # noqa: S106
+        username='token_dec',
+        name='Token Dec',
+        owner=owner.telegram_id,
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    token = await crud.get_bot_token(bot.uuid, owner.telegram_id)
+
+    assert token == 'TOKEN_DEC'  # noqa: S105
+
+
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_get_bot_token_allows_admin_access():
+    admin, _ = await crud.upsert_user({'id': 111})
+    owner, _ = await crud.upsert_user({'id': 6062})
+    bot = await crud.create_bot(
+        telegram_id=444020,
+        bot_token='TOKEN_ADMIN',  # noqa: S106
+        username='token_admin',
+        name='Token Admin',
+        owner=owner.telegram_id,
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    token = await crud.get_bot_token(bot.uuid, admin.telegram_id)
+
+    assert token == 'TOKEN_ADMIN'  # noqa: S105
+
+
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
 async def test_get_bot_config_returns_enabled_bot():
     owner, _ = await crud.upsert_user({'id': 7070})
     bot = await crud.create_bot(

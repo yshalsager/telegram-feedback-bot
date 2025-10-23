@@ -22,6 +22,7 @@ type Props = {
     adminLabel?: string
     adminDescription?: string
     onsubmit?: () => void
+    showSubmitButton?: boolean
 }
 
 let {
@@ -39,7 +40,8 @@ let {
     adminLabel = 'Admin access',
     adminDescription = 'Grants builder admin permissions to this user.',
     onsubmit,
-    before
+    before,
+    showSubmitButton = true
 }: Props & {
     before?: Snippet
 } = $props()
@@ -107,19 +109,21 @@ function handleSubmit() {
         bind:checked={isAdmin}
     />
 
-    <Separator class="my-6" />
+    {#if showSubmitButton}
+        <Separator class="my-6" />
 
-    <div class="pt-4">
-        <Button
-            class="h-11 w-full text-base font-medium disabled:opacity-50"
-            disabled={submitDisabled}
-            onclick={handleSubmit}
-        >
-            {#if isSubmitting}
-                <Loader class="size-4 animate-spin" />
-            {:else}
-                {submitLabel}
-            {/if}
-        </Button>
-    </div>
+        <div class="pt-4">
+            <Button
+                class="h-11 w-full text-base font-medium disabled:opacity-50"
+                disabled={submitDisabled}
+                onclick={handleSubmit}
+            >
+                {#if isSubmitting}
+                    <Loader class="size-4 animate-spin" />
+                {:else}
+                    {submitLabel}
+                {/if}
+            </Button>
+        </div>
+    {/if}
 </div>

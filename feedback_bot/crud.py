@@ -98,6 +98,8 @@ async def update_user_details(telegram_id: int, data: dict[str, Any]) -> User | 
 
 
 async def delete_user(telegram_id: int) -> bool:
+    if telegram_id in settings.TELEGRAM_BUILDER_BOT_ADMINS:
+        return False
     deleted, _ = await User.objects.filter(telegram_id=telegram_id).adelete()
     return bool(deleted)
 
@@ -358,6 +360,28 @@ async def get_bot(bot_uuid: UUID | str, owner: int) -> Bot | None:
         .filter(_bot_owner_filter(bot_uuid, owner))
         .afirst()
     )
+
+
+async def get_bot_token(bot_uuid: UUID | str, owner: int) -> str | None:
+    encrypted_token = (
+        await Bot.objects.filter(_bot_owner_filter(bot_uuid, owner))
+        .values_list('_token', flat=True)
+        .afirst()
+    )
+    if encrypted_token is None:
+        return None
+    return decrypt_token(encrypted_token)
+
+
+async def get_bot_stats(bot_uuid: UUID | str, owner: int) -> BotStats | None:
+    bot_id = await (
+        Bot.objects.filter(_bot_owner_filter(bot_uuid, owner)).values_list('id', flat=True).afirst()
+    )
+    if bot_id is None:
+        return None
+
+    stats, _ = await BotStats.objects.aget_or_create(bot_id=bot_id)
+    return stats
 
 
 async def ensure_user_ban(bot_id: int, user_telegram_id: int) -> tuple[BannedUser, bool]:

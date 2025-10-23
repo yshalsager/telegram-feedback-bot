@@ -26,6 +26,11 @@ export type User = {
 
 export type ListItem = Bot | User
 
+export type BotStats = {
+    incoming_messages: number
+    outgoing_messages: number
+}
+
 export type LanguageOption = {
     locale: string
     name: string

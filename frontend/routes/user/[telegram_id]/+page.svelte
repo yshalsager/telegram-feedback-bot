@@ -1,10 +1,14 @@
 <script lang="ts">
+import {goto} from '$app/navigation'
+import {resolve} from '$app/paths'
 import {page} from '$app/state'
-import {Loader} from '@lucide/svelte'
+import {Loader, Trash2} from '@lucide/svelte'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import UserAccessForm from '~/components/management/UserAccessForm.svelte'
 import {showNotification} from '~/lib/telegram.js'
-import {update_user_detail} from '$lib/api.js'
+import {delete_user, update_user_detail} from '$lib/api.js'
+import {Button} from '$lib/components/ui/button'
+import {Separator} from '$lib/components/ui/separator/index.js'
 import {locale, locales} from '$lib/i18n'
 import {mapUserResponse} from '$lib/mappers/user'
 import type {User} from '$lib/types.ts'
@@ -13,6 +17,11 @@ import type {PageData} from './$types'
 type UpdateUserResponse = {
     status?: string
     user?: unknown
+    message?: unknown
+}
+
+type DeleteUserResponse = {
+    status?: string
     message?: unknown
 }
 
@@ -26,6 +35,7 @@ let languageCode = $state($locale)
 let isWhitelisted = $state(true)
 let isAdmin = $state(false)
 let loadError = $state<string | null>(pageData?.errorMessage ?? null)
+let disableDelete = $state(false)
 
 function normalizeUsername(value: string) {
     const trimmed = value.trim()
@@ -101,6 +111,31 @@ async function handleUpdateUser() {
     }
     disableSubmit = false
 }
+
+async function handleDeleteUser() {
+    if (!user) return
+
+    if (typeof window !== 'undefined') {
+        const confirmed = window.confirm(
+            `Delete ${user.username ? `@${user.username}` : user.telegram_id}?`
+        )
+        if (!confirmed) return
+    }
+
+    disableDelete = true
+    const response = (await delete_user(telegramId)) as DeleteUserResponse
+
+    if (response?.status === 'success') {
+        showNotification('', '✅ User deleted successfully')
+        disableDelete = false
+        await goto(resolve('/'))
+        return
+    }
+
+    const message = response?.message ? String(response.message) : 'Failed to delete user'
+    showNotification('', `❗ ${message}`)
+    disableDelete = false
+}
 </script>
 
 {#if !data}
@@ -134,6 +169,7 @@ async function handleUpdateUser() {
         <UserAccessForm
             isSubmitting={disableSubmit}
             onsubmit={handleUpdateUser}
+            showSubmitButton={false}
             submitDisabled={!hasChanges || disableSubmit}
             submitLabel="Save changes"
             bind:username
@@ -141,6 +177,35 @@ async function handleUpdateUser() {
             bind:isWhitelisted
             bind:isAdmin
         />
+
+        <Separator class="my-4" />
+
+        <div class="flex flex-col gap-3 sm:flex-row">
+            <Button
+                class="h-11 flex-1 text-base font-medium"
+                disabled={!user || !hasChanges || disableSubmit}
+                onclick={handleUpdateUser}
+            >
+                {#if disableSubmit}
+                    <Loader class="size-4 animate-spin" />
+                {:else}
+                    Save
+                {/if}
+            </Button>
+            <Button
+                class="h-11 flex-1 text-base font-medium"
+                disabled={disableDelete}
+                onclick={handleDeleteUser}
+                variant="destructive"
+            >
+                {#if disableDelete}
+                    <Loader class="size-4 animate-spin" />
+                {:else}
+                    <Trash2 class="size-4" />
+                    Delete user
+                {/if}
+            </Button>
+        </div>
     </SettingsPage>
 {:else}
     <div class="flex min-h-screen items-center justify-center">

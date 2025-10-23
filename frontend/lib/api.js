@@ -145,6 +145,18 @@ export async function get_bot(uuid) {
 }
 
 /**
+ * Get stats for a bot
+ * @param {string} uuid - The UUID of the bot
+ * @returns {Promise<object>} - The response data
+ */
+export async function get_bot_stats(uuid) {
+    const response = await fetch(`/api/bot/${uuid}/stats/`, {
+        headers: get_authorization_headers()
+    })
+    return response.json()
+}
+
+/**
  * Update a bot
  * @param {string} uuid - The UUID of the bot
  * @param {object} payload - The payload to update the bot with
@@ -220,6 +232,19 @@ export async function update_user_detail(telegram_id, payload) {
         method: 'PUT',
         headers: get_authorization_headers(),
         body: JSON.stringify(payload)
+    })
+    return response.json()
+}
+
+/**
+ * Delete a user
+ * @param {number} telegram_id - The Telegram user ID
+ * @returns {Promise<object>} - The response data
+ */
+export async function delete_user(telegram_id) {
+    const response = await fetch(`/api/user/${telegram_id}/`, {
+        method: 'DELETE',
+        headers: get_authorization_headers()
     })
     return response.json()
 }

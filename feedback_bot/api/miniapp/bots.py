@@ -17,6 +17,8 @@ from feedback_bot.crud import (
     create_bot,
     delete_bot,
     get_bot,
+    get_bot_stats,
+    get_bot_token,
     get_bots,
     update_bot_settings,
 )
@@ -57,6 +59,14 @@ class UpdateBotIn(Schema):
 class ErrorResponse(Schema):
     status: str
     message: str
+
+
+class BotStatsOut(Schema):
+    incoming_messages: int
+    outgoing_messages: int
+
+    class Meta:
+        from_attributes = True
 
 
 class BotOut(Schema):
@@ -197,12 +207,38 @@ async def update_bot(
     user_data = request.auth
     update_data = payload.dict(exclude_unset=True)
 
+    if 'enable_confirmations' in update_data:
+        update_data['confirmations_on'] = update_data.pop('enable_confirmations')
+
     if not update_data:
         return 400, {'status': 'error', 'message': str(_('no_fields_to_update'))}
+
+    existing_bot = await get_bot(bot_uuid, user_data['id'])
+    if not existing_bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
 
     bot = await update_bot_settings(bot_uuid, user_data['id'], update_data)
     if not bot:
         return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    if 'enabled' in update_data and update_data['enabled'] != existing_bot.enabled:
+        bot_token = await get_bot_token(bot_uuid, user_data['id'])
+        if not bot_token:
+            return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+        ptb_bot = Bot(token=bot_token)
+        webhook_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/'
+        try:
+            if bot.enabled:
+                await ptb_bot.set_webhook(
+                    webhook_url,
+                    secret_token=generate_bot_webhook_secret(str(bot.uuid)),
+                    allowed_updates=Update.ALL_TYPES,
+                )
+            else:
+                await ptb_bot.delete_webhook()
+        except Exception as err:  # noqa: BLE001
+            await update_bot_settings(bot_uuid, user_data['id'], {'enabled': existing_bot.enabled})
+            return 400, {'status': 'error', 'message': f'Failed to update webhook: {err}'}
 
     return 200, bot
 
@@ -241,3 +277,21 @@ async def remove_bot(
         return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
 
     return {'status': 'success', 'message': str(_('bot_deleted'))}
+
+
+@router.get(
+    '/bot/{bot_uuid}/stats/',
+    response={200: BotStatsOut, 404: ErrorResponse},
+    url_name='bot_stats',
+)
+@with_locale
+async def retrieve_bot_stats(
+    request: HttpRequest, bot_uuid: UUID
+) -> BotStatsOut | tuple[int, dict[str, Any]]:
+    user_data = request.auth
+
+    stats = await get_bot_stats(bot_uuid, user_data['id'])
+    if not stats:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    return stats

@@ -9,6 +9,7 @@ from ninja.errors import HttpError
 from feedback_bot.api.miniapp import router
 from feedback_bot.api.miniapp.decorators import DEFAULT_LANGUAGE_CODE, with_locale
 from feedback_bot.crud import (
+    delete_user,
     get_user,
     get_users,
     is_admin_user,
@@ -230,3 +231,28 @@ async def manage_user(
         'message': str(_('user_updated_successfully')),
         'user': updated_user,
     }
+
+
+@router.delete(
+    '/user/{telegram_id}/',
+    response={
+        200: MutationMessage,
+        403: ErrorResponse,
+        404: ErrorResponse,
+    },
+    url_name='delete_user',
+)
+@with_locale
+async def delete_user_entry(
+    request: HttpRequest, telegram_id: int
+) -> tuple[int, dict[str, Any]] | MutationMessage:
+    await _ensure_admin(request.auth)
+
+    if telegram_id in settings.TELEGRAM_BUILDER_BOT_ADMINS:
+        return 403, {'status': 'error', 'message': str(_('cannot_delete_builder_admin'))}
+
+    deleted = await delete_user(telegram_id)
+    if not deleted:
+        return 404, {'status': 'error', 'message': str(_('user_not_found'))}
+
+    return MutationMessage(status='success', message=str(_('user_deleted_successfully')))

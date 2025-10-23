@@ -14,7 +14,7 @@ import {Separator} from '$lib/components/ui/separator/index.js'
 import {Textarea} from '$lib/components/ui/textarea'
 import {formatCharacterCount} from '$lib/i18n'
 import {mapBotResponse} from '$lib/mappers/bot'
-import type {Bot} from '$lib/types.ts'
+import type {Bot, BotStats} from '$lib/types.ts'
 import type {PageData} from './$types'
 
 type UpdateBotResponse = {
@@ -32,6 +32,8 @@ let enabled = $state(true)
 let startMessage = $state('')
 let feedbackReceivedMessage = $state('')
 let loadError = $state<string | null>(null)
+let stats = $state<BotStats | null>(null)
+let statsError = $state<string | null>(null)
 
 const isFormValid = $derived(startMessage.trim() !== '' && feedbackReceivedMessage.trim() !== '')
 const hasChanges = $derived(
@@ -61,6 +63,9 @@ function formatTimestamp(value: string | null | undefined) {
     return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString()
 }
 
+const formatCount = (value: number | null | undefined) =>
+    typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString() : '0'
+
 if (data) {
     const initialError = data.errorMessage ?? null
     loadError = initialError
@@ -81,6 +86,9 @@ if (data) {
         startMessage = ''
         feedbackReceivedMessage = ''
     }
+
+    stats = data.stats ?? null
+    statsError = data.statsError ?? null
 }
 
 async function handleUpdateBot() {
@@ -206,6 +214,28 @@ async function unlink_group() {
                         <span class="text-muted-foreground">Updated</span>
                         <span class="font-medium text-foreground">
                             {formatTimestamp(bot?.updated_at)}
+                        </span>
+                    </div>
+                </div>
+            </section>
+            <section class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-foreground">Bot stats</h3>
+                    {#if statsError}
+                        <span class="text-xs font-medium text-destructive">{statsError}</span>
+                    {/if}
+                </div>
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div class="space-y-1 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
+                        <span class="text-muted-foreground">Incoming messages</span>
+                        <span class="block text-2xl font-semibold text-foreground">
+                            {formatCount(stats?.incoming_messages)}
+                        </span>
+                    </div>
+                    <div class="space-y-1 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
+                        <span class="text-muted-foreground">Outgoing messages</span>
+                        <span class="block text-2xl font-semibold text-foreground">
+                            {formatCount(stats?.outgoing_messages)}
                         </span>
                     </div>
                 </div>

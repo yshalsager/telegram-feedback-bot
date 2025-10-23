@@ -1,11 +1,14 @@
 """API tests for miniapp bot endpoints."""
 
+import os
 from uuid import UUID, uuid4
 
 import pytest
 from feedback_bot import crud
+from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 
 BOT_TOKEN = '12345678:abcdefghijklmnopqrstuvwxyzABCD12345'  # noqa: S105
+os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = 'true'
 
 
 @pytest.mark.api
@@ -47,7 +50,7 @@ async def test_add_bot_creates_record(miniapp_client, monkeypatch):
 
     response = await client.post('/bot/', headers=headers, json=payload)
 
-    assert response.status_code == 200
+    assert response.status_code == 200, response.json()
     body = response.json()
     assert body['status'] == 'success'
     assert body['bot']['username'] == 'sample_bot'
@@ -160,6 +163,176 @@ async def test_list_and_update_bot(miniapp_client, monkeypatch):
     updated = await crud.get_bot(UUID(uuid_str), auth_state['user']['id'])
     assert updated is not None
     assert updated.start_message == 'updated text'
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_update_bot_disabling_removes_webhook(miniapp_client, monkeypatch, settings):
+    client, auth_state, headers = miniapp_client
+    settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL = False
+    settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL = 'https://example.com'
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'owner',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    operations: list[tuple[str, object, object, object]] = []
+
+    async def fake_delete_webhook(self, *args, **kwargs):
+        assert self.token == BOT_TOKEN
+        operations.append(('delete', None, None, None))
+
+    monkeypatch.setattr('telegram.Bot.delete_webhook', fake_delete_webhook)
+
+    await crud.create_bot(
+        telegram_id=123456789,
+        bot_token=BOT_TOKEN,
+        username='toggle_bot',
+        name='Toggle Bot',
+        owner=auth_state['user']['id'],
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    stored_bot = (await crud.get_bots(auth_state['user']['id']))[0]
+
+    disable_response = await client.put(
+        f'/bot/{stored_bot.uuid}/',
+        headers=headers,
+        json={'enabled': False},
+    )
+
+    assert disable_response.status_code == 200, disable_response.json()
+    assert operations == [('delete', None, None, None)]
+    disabled = await crud.get_bot(stored_bot.uuid, auth_state['user']['id'])
+    assert disabled is not None
+    assert disabled.enabled is False
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_update_bot_enabling_sets_webhook(miniapp_client, monkeypatch, settings):
+    client, auth_state, headers = miniapp_client
+    settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL = False
+    settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL = 'https://example.com'
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'owner',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    operations: list[tuple[str, object, object, object]] = []
+
+    async def fake_set_webhook(
+        self, webhook_url, *_, secret_token=None, allowed_updates=None, **__
+    ):
+        assert self.token == BOT_TOKEN
+        operations.append(('set', webhook_url, secret_token, allowed_updates))
+
+    async def fake_delete_webhook(self, *args, **kwargs):
+        assert self.token == BOT_TOKEN
+        operations.append(('delete', None, None, None))
+
+    monkeypatch.setattr('telegram.Bot.set_webhook', fake_set_webhook)
+    monkeypatch.setattr('telegram.Bot.delete_webhook', fake_delete_webhook)
+
+    await crud.create_bot(
+        telegram_id=333222111,
+        bot_token=BOT_TOKEN,
+        username='toggle_bot',
+        name='Toggle Bot',
+        owner=auth_state['user']['id'],
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    stored_bot = (await crud.get_bots(auth_state['user']['id']))[0]
+    await crud.update_bot_settings(stored_bot.uuid, auth_state['user']['id'], {'enabled': False})
+    operations.clear()
+
+    enable_response = await client.put(
+        f'/bot/{stored_bot.uuid}/',
+        headers=headers,
+        json={'enabled': True},
+    )
+
+    assert enable_response.status_code == 200, enable_response.json()
+    assert operations
+    action, url, secret, allowed = operations[0]
+    assert action == 'set'
+    expected_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{stored_bot.uuid}/'
+    assert url == expected_url
+    assert secret == generate_bot_webhook_secret(str(stored_bot.uuid))
+    assert allowed is not None
+    enabled = await crud.get_bot(stored_bot.uuid, auth_state['user']['id'])
+    assert enabled is not None
+    assert enabled.enabled is True
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_update_bot_enabling_rolls_back_on_webhook_failure(
+    miniapp_client, monkeypatch, settings
+):
+    client, auth_state, headers = miniapp_client
+    settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL = False
+    settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL = 'https://example.com'
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'admin_user',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    async def fake_set_webhook(self, *args, **kwargs):
+        assert self.token == BOT_TOKEN
+        raise RuntimeError('webhook failed')
+
+    monkeypatch.setattr('telegram.Bot.set_webhook', fake_set_webhook)
+
+    bot = await crud.create_bot(
+        telegram_id=555444333,
+        bot_token=BOT_TOKEN,
+        username='failing_bot',
+        name='Failing Bot',
+        owner=auth_state['user']['id'],
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+    await crud.update_bot_settings(bot.uuid, auth_state['user']['id'], {'enabled': False})
+
+    response = await client.put(
+        f'/bot/{bot.uuid}/',
+        headers=headers,
+        json={'enabled': True},
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload['status'] == 'error'
+    assert 'webhook' in payload['message']
+
+    stored = await crud.get_bot(bot.uuid, auth_state['user']['id'])
+    assert stored is not None
+    assert stored.enabled is False
 
 
 @pytest.mark.api
@@ -302,6 +475,124 @@ async def test_add_bot_invalid_token_surfaces_error(miniapp_client, monkeypatch)
     body = response.json()
     assert body['status'] == 'error'
     assert 'broken token' in body['message']
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_admin_can_toggle_foreign_bot(miniapp_client, monkeypatch, settings):
+    client, auth_state, headers = miniapp_client
+    settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL = False
+    settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL = 'https://example.com'
+    owner_id = 2000
+    await crud.upsert_user(
+        {
+            'id': owner_id,
+            'username': 'owner_user',
+            'is_whitelisted': True,
+            'is_admin': False,
+        }
+    )
+
+    operations: list[tuple[str, object, object, object]] = []
+
+    async def fake_set_webhook(
+        self, webhook_url, *_, secret_token=None, allowed_updates=None, **__
+    ):
+        assert self.token == BOT_TOKEN
+        operations.append(('set', webhook_url, secret_token, allowed_updates))
+
+    monkeypatch.setattr('telegram.Bot.set_webhook', fake_set_webhook)
+
+    bot = await crud.create_bot(
+        telegram_id=777666555,
+        bot_token=BOT_TOKEN,
+        username='foreign_bot',
+        name='Foreign Bot',
+        owner=owner_id,
+        enable_confirmations=True,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    await crud.update_bot_settings(bot.uuid, owner_id, {'enabled': False})
+    operations.clear()
+
+    response = await client.put(
+        f'/bot/{bot.uuid}/',
+        headers=headers,
+        json={'enabled': True},
+    )
+
+    assert response.status_code == 200
+    assert operations
+    action, url, secret, allowed = operations[0]
+    assert action == 'set'
+    expected_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/'
+    assert url == expected_url
+    assert secret == generate_bot_webhook_secret(str(bot.uuid))
+    assert allowed is not None
+    updated = await crud.get_bot(bot.uuid, auth_state['user']['id'])
+    assert updated is not None
+    assert updated.enabled is True
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_bot_stats_endpoint_returns_counts(miniapp_client, monkeypatch):
+    client, auth_state, headers = miniapp_client
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'owner',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    async def fake_validate(_: str) -> dict[str, str | int]:
+        return {
+            'name': 'Stats Bot',
+            'telegram_id': 313233334,
+            'username': 'stats_bot',
+        }
+
+    monkeypatch.setattr(
+        'feedback_bot.api.miniapp.bots.validate_bot_token',
+        fake_validate,
+        raising=False,
+    )
+
+    await client.post(
+        '/bot/',
+        headers=headers,
+        json={
+            'bot_token': BOT_TOKEN,
+            'enable_confirmations': True,
+            'start_message': 'start',
+            'feedback_received_message': 'received',
+        },
+    )
+
+    bots_response = await client.get('/bot/', headers=headers)
+    assert bots_response.status_code == 200
+    bots_payload = bots_response.json()
+    uuid_str = next(bot['uuid'] for bot in bots_payload if bot['username'] == 'stats_bot')
+
+    bot = await crud.get_bot(UUID(uuid_str), auth_state['user']['id'])
+    assert bot is not None
+    await crud.bump_incoming_messages(bot)
+    await crud.bump_incoming_messages(bot)
+    await crud.bump_outgoing_messages(bot)
+
+    stats_response = await client.get(f'/bot/{uuid_str}/stats/', headers=headers)
+    assert stats_response.status_code == 200
+    stats_payload = stats_response.json()
+    assert stats_payload['incoming_messages'] == 2
+    assert stats_payload['outgoing_messages'] == 1
 
 
 @pytest.mark.api
