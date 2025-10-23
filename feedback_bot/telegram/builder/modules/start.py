@@ -13,15 +13,11 @@ async def start(update: Update, context: CallbackContext) -> None:
     assert update.message.from_user is not None
     await create_user(update.message.from_user.to_dict())
     message = _('welcome')
-    keyboard = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton(
-                    _('open_mini_app'),
-                    web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/'),
-                )
-            ],
-        ]
+    keyboard = InlineKeyboardMarkup.from_button(
+        InlineKeyboardButton(
+            str(_('open_mini_app')),
+            web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/'),
+        )
     )
 
     await update.message.reply_text(str(message), reply_markup=keyboard)
