@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, NamedTuple
 from uuid import UUID
 
 from django.conf import settings
@@ -29,10 +29,18 @@ from feedback_bot.models import BannedUser, BotStats
 from feedback_bot.models import Bot as BotModel
 from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 
+BOT_TOKEN_PATTERN = r'^[0-9]{8,10}:[a-zA-Z0-9_-]{30,64}$'  # noqa: S105
+
+
+class TokenUpdate(NamedTuple):
+    changed: bool
+    new_token: str | None
+    previous_token: str | None
+
 
 class AddBotIn(Schema):
     bot_token: str = Field(
-        ..., description='The token of the bot to add', pattern=r'^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$'
+        ..., description='The token of the bot to add', pattern=BOT_TOKEN_PATTERN
     )
     enable_confirmations: bool = Field(default=True, description='Whether to enable confirmations')
     start_message: str = Field(
@@ -46,6 +54,7 @@ class AddBotIn(Schema):
 
 
 class UpdateBotIn(Schema):
+    bot_token: str | None = Field(default=None, pattern=BOT_TOKEN_PATTERN)
     enable_confirmations: bool | None = Field(alias='confirmations_on', default=None)
     start_message: str | None = Field(
         default=None,
@@ -243,50 +252,196 @@ async def retrieve_bot(
     return 200, bot
 
 
+def _build_update_payload(payload: UpdateBotIn) -> dict[str, Any]:
+    update_data = payload.dict(exclude_unset=True)
+    if 'enable_confirmations' in update_data:
+        update_data['confirmations_on'] = update_data.pop('enable_confirmations')
+    return update_data
+
+
+async def _prepare_token_update(  # noqa: PLR0911
+    bot_uuid: UUID,
+    owner_id: int,
+    existing_bot: BotModel,
+    update_data: dict[str, Any],
+) -> tuple[TokenUpdate, tuple[int, dict[str, str]] | None]:
+    new_token = update_data.get('bot_token')
+    if new_token is None:
+        update_data.pop('bot_token', None)
+        return TokenUpdate(False, None, None), None
+
+    new_token = new_token.strip()
+    if not new_token:
+        update_data.pop('bot_token', None)
+        return TokenUpdate(False, None, None), None
+
+    if new_token == settings.TELEGRAM_BUILDER_BOT_TOKEN:
+        return TokenUpdate(False, None, None), (
+            400,
+            {'status': 'error', 'message': str(_('cannot_use_builder_bot_token'))},
+        )
+
+    previous_token = await get_bot_token(bot_uuid, owner_id)
+    if not previous_token:
+        return TokenUpdate(False, None, None), (
+            404,
+            {'status': 'error', 'message': str(_('bot_not_found'))},
+        )
+
+    if new_token == previous_token:
+        update_data.pop('bot_token', None)
+        return TokenUpdate(False, None, None), None
+
+    try:
+        bot_info = await validate_bot_token(new_token)
+    except ValidationError as err:
+        return TokenUpdate(False, None, None), (400, {'status': 'error', 'message': str(err)})
+    except Exception as err:  # noqa: BLE001
+        return TokenUpdate(False, None, None), (400, {'status': 'error', 'message': str(err)})
+
+    if bot_info['telegram_id'] != existing_bot.telegram_id:
+        return TokenUpdate(False, None, None), (
+            400,
+            {
+                'status': 'error',
+                'message': str(_('token_does_not_match_bot')),
+            },
+        )
+
+    update_data['bot_token'] = new_token
+    update_data['name'] = bot_info['name']
+    update_data['username'] = bot_info['username']
+
+    return TokenUpdate(True, new_token, previous_token), None
+
+
+def _admin_approval_error(
+    existing_bot: BotModel, update_data: dict[str, Any], user_data: dict[str, Any]
+) -> tuple[int, dict[str, str]] | None:
+    if (
+        settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL
+        and update_data.get('enabled')
+        and not existing_bot.enabled
+        and not user_data.get('is_admin')
+    ):
+        return 403, {
+            'status': 'error',
+            'message': str(_('Admin approval required before enabling this bot')),
+        }
+    return None
+
+
+async def _sync_webhook_for_token_change(
+    bot_uuid: UUID,
+    owner_id: int,
+    existing_bot: BotModel,
+    bot: BotModel,
+    token_update: TokenUpdate,
+) -> tuple[int, dict[str, str]] | None:
+    if not token_update.changed or not bot.enabled or not token_update.new_token:
+        return None
+
+    ptb_bot = Bot(token=token_update.new_token)
+    webhook_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/'
+    try:
+        await ptb_bot.set_webhook(
+            webhook_url,
+            secret_token=generate_bot_webhook_secret(str(bot.uuid)),
+            allowed_updates=Update.ALL_TYPES,
+        )
+    except Exception as err:  # noqa: BLE001
+        if token_update.previous_token is not None:
+            await update_bot_settings(
+                bot_uuid,
+                owner_id,
+                {
+                    'bot_token': token_update.previous_token,
+                    'name': existing_bot.name,
+                    'username': existing_bot.username,
+                },
+            )
+        return 400, {'status': 'error', 'message': f'Failed to update webhook: {err}'}
+
+    return None
+
+
+async def _sync_webhook_for_enabled_change(
+    bot_uuid: UUID,
+    owner_id: int,
+    bot: BotModel,
+    existing_bot: BotModel,
+    update_data: dict[str, Any],
+) -> tuple[int, dict[str, str]] | None:
+    if 'enabled' not in update_data or update_data['enabled'] == existing_bot.enabled:
+        return None
+
+    bot_token = await get_bot_token(bot_uuid, owner_id)
+    if not bot_token:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    ptb_bot = Bot(token=bot_token)
+    webhook_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/'
+    try:
+        if bot.enabled:
+            await ptb_bot.set_webhook(
+                webhook_url,
+                secret_token=generate_bot_webhook_secret(str(bot.uuid)),
+                allowed_updates=Update.ALL_TYPES,
+            )
+        else:
+            await ptb_bot.delete_webhook()
+    except Exception as err:  # noqa: BLE001
+        await update_bot_settings(bot_uuid, owner_id, {'enabled': existing_bot.enabled})
+        return 400, {'status': 'error', 'message': f'Failed to update webhook: {err}'}
+
+    return None
+
+
 @router.put(
     '/bot/{bot_uuid}/',
-    response={200: BotOut, 400: StatusMessage, 404: StatusMessage},
+    response={200: BotOut, 400: StatusMessage, 403: StatusMessage, 404: StatusMessage},
     url_name='update_bot',
 )
 @with_locale
-async def update_bot(
+async def update_bot(  # noqa: PLR0911
     request: HttpRequest, bot_uuid: UUID, payload: UpdateBotIn
 ) -> tuple[int, BotModel | dict[str, str]]:
     user_data = request.auth
-    update_data = payload.dict(exclude_unset=True)
+    owner_id = user_data['id']
+    update_data = _build_update_payload(payload)
 
-    if 'enable_confirmations' in update_data:
-        update_data['confirmations_on'] = update_data.pop('enable_confirmations')
+    existing_bot = await get_bot(bot_uuid, owner_id)
+    if not existing_bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    token_update, token_error = await _prepare_token_update(
+        bot_uuid, owner_id, existing_bot, update_data
+    )
+    if token_error:
+        return token_error
 
     if not update_data:
         return 400, {'status': 'error', 'message': str(_('no_fields_to_update'))}
 
-    existing_bot = await get_bot(bot_uuid, user_data['id'])
-    if not existing_bot:
-        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+    approval_error = _admin_approval_error(existing_bot, update_data, user_data)
+    if approval_error:
+        return approval_error
 
-    bot = await update_bot_settings(bot_uuid, user_data['id'], update_data)
+    bot = await update_bot_settings(bot_uuid, owner_id, update_data)
     if not bot:
         return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
 
-    if 'enabled' in update_data and update_data['enabled'] != existing_bot.enabled:
-        bot_token = await get_bot_token(bot_uuid, user_data['id'])
-        if not bot_token:
-            return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
-        ptb_bot = Bot(token=bot_token)
-        webhook_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot.uuid}/'
-        try:
-            if bot.enabled:
-                await ptb_bot.set_webhook(
-                    webhook_url,
-                    secret_token=generate_bot_webhook_secret(str(bot.uuid)),
-                    allowed_updates=Update.ALL_TYPES,
-                )
-            else:
-                await ptb_bot.delete_webhook()
-        except Exception as err:  # noqa: BLE001
-            await update_bot_settings(bot_uuid, user_data['id'], {'enabled': existing_bot.enabled})
-            return 400, {'status': 'error', 'message': f'Failed to update webhook: {err}'}
+    token_sync_error = await _sync_webhook_for_token_change(
+        bot_uuid, owner_id, existing_bot, bot, token_update
+    )
+    if token_sync_error:
+        return token_sync_error
+
+    enabled_sync_error = await _sync_webhook_for_enabled_change(
+        bot_uuid, owner_id, bot, existing_bot, update_data
+    )
+    if enabled_sync_error:
+        return enabled_sync_error
 
     return 200, bot
 

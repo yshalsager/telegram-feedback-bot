@@ -10,6 +10,7 @@ import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
 import {delete_bot, unlink_bot_forward_chat, update_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
+import {Input} from '$lib/components/ui/input'
 import {Separator} from '$lib/components/ui/separator/index.js'
 import {Textarea} from '$lib/components/ui/textarea'
 import {formatCharacterCount} from '$lib/i18n'
@@ -31,10 +32,12 @@ let enableConfirmations = $state(true)
 let enabled = $state(true)
 let startMessage = $state('')
 let feedbackReceivedMessage = $state('')
+let pendingToken = $state('')
 let loadError = $state<string | null>(null)
 let stats = $state<BotStats | null>(null)
 let statsError = $state<string | null>(null)
 
+const trimmedPendingToken = $derived(pendingToken.trim())
 const isFormValid = $derived(startMessage.trim() !== '' && feedbackReceivedMessage.trim() !== '')
 const hasChanges = $derived(
     Boolean(
@@ -42,7 +45,8 @@ const hasChanges = $derived(
             (startMessage !== bot.start_message ||
                 feedbackReceivedMessage !== bot.feedback_received_message ||
                 enableConfirmations !== bot.confirmations_on ||
-                enabled !== bot.enabled)
+                enabled !== bot.enabled ||
+                trimmedPendingToken !== '')
     )
 )
 
@@ -79,12 +83,14 @@ if (data) {
         enabled = data.bot.enabled
         startMessage = data.bot.start_message
         feedbackReceivedMessage = data.bot.feedback_received_message
+        pendingToken = ''
     } else {
         bot = null
         enableConfirmations = true
         enabled = true
         startMessage = ''
         feedbackReceivedMessage = ''
+        pendingToken = ''
     }
 
     stats = data.stats ?? null
@@ -98,7 +104,8 @@ async function handleUpdateBot() {
         enable_confirmations: enableConfirmations,
         start_message: startMessage,
         feedback_received_message: feedbackReceivedMessage,
-        enabled
+        enabled,
+        ...(trimmedPendingToken !== '' ? {bot_token: trimmedPendingToken} : {})
     })) as UpdateBotResponse
     if (response?.uuid === botUuid) {
         const updated = mapBotResponse(response as Record<string, unknown>, botUuid)
@@ -107,6 +114,7 @@ async function handleUpdateBot() {
         enabled = updated.enabled
         startMessage = updated.start_message
         feedbackReceivedMessage = updated.feedback_received_message
+        pendingToken = ''
         showNotification('', '✅ Bot updated successfully')
     } else {
         const message =
@@ -277,6 +285,28 @@ async function unlink_group() {
                 />
                 <p class="text-end text-xs text-muted-foreground">
                     {formatCharacterCount(feedbackReceivedMessage.length)}
+                </p>
+            </section>
+
+            <section class="space-y-2">
+                <label
+                    class="mb-2 block text-start text-sm font-medium text-foreground"
+                    for="bot-token"
+                >
+                    Bot token
+                </label>
+                <Input
+                    id="bot-token"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    placeholder="Enter a new token to rotate"
+                    spellcheck={false}
+                    type="password"
+                    bind:value={pendingToken}
+                />
+                <p class="text-xs text-muted-foreground">
+                    Leave empty to keep the current token. Updating rotates it immediately.
                 </p>
             </section>
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-23T20:07:32.809Z\n"
+"PO-Revision-Date: 2025-10-23T21:09:59.333Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -127,6 +127,7 @@ msgid "Add new bot"
 msgstr "Add new bot"
 
 #: frontend/routes/add_bot/+page.svelte
+#: frontend/routes/bot/[uuid]/+page.svelte
 msgid "Bot token"
 msgstr "Bot token"
 
@@ -483,3 +484,11 @@ msgstr "Reason: {0}"
 #: frontend/routes/user/[telegram_id]/+page.svelte
 msgid "ID: {0}"
 msgstr "ID: {0}"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Enter a new token to rotate"
+msgstr "Enter a new token to rotate"
+
+#: frontend/routes/bot/[uuid]/+page.svelte
+msgid "Leave empty to keep the current token. Updating rotates it immediately."
+msgstr "Leave empty to keep the current token. Updating rotates it immediately."
