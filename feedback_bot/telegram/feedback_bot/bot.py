@@ -56,11 +56,14 @@ async def setup_bots_webhooks() -> None:
     for bot_uuid, bot_token in bots_keys:
         ptb_bot = Bot(token=bot_token)
         webhook_url = f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{bot_uuid}/'
-        await ptb_bot.set_webhook(
-            webhook_url,
-            secret_token=generate_bot_webhook_secret(str(bot_uuid)),
-            allowed_updates=Update.ALL_TYPES,
-        )
+        try:
+            await ptb_bot.set_webhook(
+                webhook_url,
+                secret_token=generate_bot_webhook_secret(str(bot_uuid)),
+                allowed_updates=Update.ALL_TYPES,
+            )
+        except Exception as err:  # noqa: BLE001
+            logger.error(f'Failed to set webhook for bot {bot_uuid}: {err}')
     logger.info(f'Bots webhooks setup done for {len(bots_keys)} bots.')
 
 
@@ -71,5 +74,8 @@ async def remove_bots_webhooks() -> None:
     bots_tokens = await get_bots_tokens()
     for bot_token in bots_tokens:
         ptb_bot = Bot(token=bot_token)
-        await ptb_bot.delete_webhook()
+        try:
+            await ptb_bot.delete_webhook()
+        except Exception as err:  # noqa: BLE001
+            logger.error(f'Failed to remove webhook for bot {bot_token}: {err}')
     logger.info(f'Bots webhooks removed for {len(bots_tokens)} bots.')
