@@ -76,7 +76,6 @@ DJANGO_USE_SQLITE = false
 
 # Telegram
 TELEGRAM_BUILDER_BOT_WEBHOOK_PATH = 'telegram'
-TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET = 'changeme'
 TELEGRAM_BUILDER_BOT_WEBHOOK_URL = ''
 # Token from https://telegram.me/BotFather
 TELEGRAM_BUILDER_BOT_TOKEN = '0000000000:aaaaaaaaaaaaaaaaaaaa'

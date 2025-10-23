@@ -6,6 +6,7 @@ from django_asgi_lifespan.types import LifespanManager
 from telegram import BotCommandScopeAllPrivateChats, Update
 
 from feedback_bot.telegram.builder.bot import load_builder_modules, ptb_application
+from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 from feedback_bot.telegram.utils.restart import handle_restart
 
 logger = logging.getLogger(__name__)
@@ -22,7 +23,9 @@ async def ptb_lifespan_manager() -> LifespanManager:
             await ptb_application.start()
             await ptb_application.bot.set_webhook(
                 url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/api/webhook/{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_PATH}',
-                secret_token=settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET,
+                secret_token=generate_bot_webhook_secret(
+                    settings.TELEGRAM_BUILDER_BOT_WEBHOOK_PATH
+                ),
                 allowed_updates=Update.ALL_TYPES,
             )
             logger.info('ASGI Lifespan: Main bot webhook is set.')

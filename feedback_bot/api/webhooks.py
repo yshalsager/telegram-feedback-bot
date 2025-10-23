@@ -12,7 +12,10 @@ from telegram.ext import Application
 
 from feedback_bot.crud import get_bot_config
 from feedback_bot.telegram.feedback_bot.bot import build_feedback_bot_application
-from feedback_bot.telegram.utils.cryptography import verify_bot_webhook_secret
+from feedback_bot.telegram.utils.cryptography import (
+    generate_bot_webhook_secret,
+    verify_bot_webhook_secret,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -24,11 +27,8 @@ class TelegramSecretTokenAuth(APIKeyHeader):
 
     def authenticate(self, request: HttpRequest, api_key: str) -> bool:
         """Validate the Telegram secret token."""
-        # For the main builder bot, use the global secret
-        if (
-            settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET
-            and api_key == settings.TELEGRAM_BUILDER_BOT_WEBHOOK_SECRET
-        ):
+        builder_secret = generate_bot_webhook_secret(settings.TELEGRAM_BUILDER_BOT_WEBHOOK_PATH)
+        if builder_secret and api_key == builder_secret:
             return True
 
         # For feedback bots, extract bot_uuid from URL and verify bot-specific secret
