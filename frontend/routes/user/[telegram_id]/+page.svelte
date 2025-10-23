@@ -152,16 +152,30 @@ async function handleDeleteUser() {
                 <h2 class="text-xl font-bold sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl">
                     Manage user
                 </h2>
-                <a
-                    class="text-sm font-medium text-[var(--tg-theme-button-color)] underline"
-                    href={`tg://user?id=${user?.telegram_id}`}
-                >
-                    {user?.username ? `@${user?.username}` : user?.telegram_id.toLocaleString()}
-                </a>
                 {#if user?.username}
-                    <p class="text-xs text-muted-foreground">
-                        Telegram ID: {user?.telegram_id.toLocaleString()}
-                    </p>
+                    <div class="flex flex-col items-center gap-1 text-sm">
+                        <a
+                            class="font-medium text-[var(--tg-theme-button-color)] underline"
+                            href={`https://t.me/${user.username}`}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
+                            @{user.username}
+                        </a>
+                        <a
+                            class="text-xs text-[var(--tg-theme-button-color)] underline"
+                            href={`tg://user?id=${user.telegram_id}`}
+                        >
+                            ID: {user.telegram_id.toLocaleString()}
+                        </a>
+                    </div>
+                {:else}
+                    <a
+                        class="text-sm font-medium text-[var(--tg-theme-button-color)] underline"
+                        href={`tg://user?id=${user?.telegram_id}`}
+                    >
+                        {user?.telegram_id.toLocaleString()}
+                    </a>
                 {/if}
             </div>
         {/snippet}
