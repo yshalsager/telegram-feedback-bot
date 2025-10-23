@@ -8,6 +8,7 @@ from telegram.ext import Application
 from feedback_bot.crud import get_bots_keys, get_bots_tokens
 from feedback_bot.models import Bot as BotConfig
 from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
+from feedback_bot.telegram.utils.errors import report_error
 from feedback_bot.utils.modules_loader import get_modules, load_modules
 
 logger = logging.getLogger(__name__)
@@ -41,6 +42,8 @@ def build_feedback_bot_application(bot_config: BotConfig) -> Application:
                 continue
 
             application.add_handler(handler_spec)
+
+    application.add_error_handler(report_error)
 
     return application
 
