@@ -4,7 +4,6 @@ from django.conf import settings
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 from ninja import Field, ModelSchema, Schema
-from ninja.errors import HttpError
 
 from feedback_bot.api.miniapp import router
 from feedback_bot.api.miniapp.decorators import DEFAULT_LANGUAGE_CODE, with_locale
@@ -21,19 +20,19 @@ from feedback_bot.models import User as UserModel
 LanguageLiteral = Literal[*settings.TELEGRAM_LANGUAGES] if settings.TELEGRAM_LANGUAGES else str
 
 
-async def _ensure_admin(user_data: dict[str, Any]) -> None:
+async def _ensure_admin(user_data: dict[str, Any]) -> tuple[int, dict[str, str]] | None:
     try:
         user_id = int(user_data.get('id'))
     except (TypeError, ValueError):
-        raise HttpError(403, {'status': 'error', 'message': str(_('not_authorized'))}) from None
+        return 403, {'status': 'error', 'message': str(_('not_authorized'))}
 
     if user_id in settings.TELEGRAM_BUILDER_BOT_ADMINS:
-        return
+        return None
 
     if await is_admin_user(user_id):
-        return
+        return None
 
-    raise HttpError(403, {'status': 'error', 'message': str(_('not_authorized'))})
+    return 403, {'status': 'error', 'message': str(_('not_authorized'))}
 
 
 def _normalize_username(raw_username: str | None) -> str:
@@ -42,10 +41,10 @@ def _normalize_username(raw_username: str | None) -> str:
         username = username[1:]
 
     if len(username) > 32:
-        raise HttpError(400, {'status': 'error', 'message': str(_('username_too_long'))})
+        raise ValueError(str(_('username_too_long')))
 
     if username and not username.replace('_', '').isalnum():
-        raise HttpError(400, {'status': 'error', 'message': str(_('username_invalid_characters'))})
+        raise ValueError(str(_('username_invalid_characters')))
 
     return username
 
@@ -128,12 +127,14 @@ class ErrorResponse(Schema):
 
 @router.get(
     '/user/',
-    response=list[UserOut],
+    response={200: list[UserOut], 403: ErrorResponse},
     url_name='list_users',
 )
-async def list_users(request: HttpRequest) -> list[UserModel]:
-    await _ensure_admin(request.auth)
-    return await get_users()
+async def list_users(request: HttpRequest) -> tuple[int, list[UserModel] | dict[str, str]]:
+    admin_check = await _ensure_admin(request.auth)
+    if admin_check:
+        return admin_check
+    return 200, await get_users()
 
 
 @router.get(
@@ -144,14 +145,16 @@ async def list_users(request: HttpRequest) -> list[UserModel]:
 @with_locale
 async def retrieve_user(
     request: HttpRequest, telegram_id: int
-) -> UserModel | tuple[int, dict[str, Any]]:
-    await _ensure_admin(request.auth)
+) -> tuple[int, UserModel | dict[str, str]]:
+    admin_check = await _ensure_admin(request.auth)
+    if admin_check:
+        return admin_check
 
     user = await get_user(telegram_id)
     if not user:
         return 404, {'status': 'error', 'message': str(_('user_not_found'))}
 
-    return user
+    return 200, user
 
 
 @router.post(
@@ -164,10 +167,15 @@ async def retrieve_user(
     url_name='add_user',
 )
 @with_locale
-async def add_user(request: HttpRequest, payload: AddUserIn) -> UserMutationResponse:
-    await _ensure_admin(request.auth)
+async def add_user(request: HttpRequest, payload: AddUserIn) -> tuple[int, dict[str, Any]]:
+    admin_check = await _ensure_admin(request.auth)
+    if admin_check:
+        return admin_check
 
-    username = _normalize_username(payload.username)
+    try:
+        username = _normalize_username(payload.username)
+    except ValueError as err:
+        return 400, {'status': 'error', 'message': str(err)}
 
     try:
         user, created = await upsert_user(
@@ -180,12 +188,15 @@ async def add_user(request: HttpRequest, payload: AddUserIn) -> UserMutationResp
             }
         )
     except ValueError as err:
-        raise HttpError(400, {'status': 'error', 'message': str(err)}) from err
+        return 400, {'status': 'error', 'message': str(err)}
 
-    message = str(_('user_added_successfully')) if created else str(_('user_updated_successfully'))
-    user_schema = UserOut.from_orm(user)
-
-    return UserMutationResponse(status='success', message=message, user=user_schema)
+    return 200, {
+        'status': 'success',
+        'message': str(_('user_added_successfully'))
+        if created
+        else str(_('user_updated_successfully')),
+        'user': user,
+    }
 
 
 @router.put(
@@ -202,7 +213,9 @@ async def add_user(request: HttpRequest, payload: AddUserIn) -> UserMutationResp
 async def manage_user(
     request: HttpRequest, telegram_id: int, payload: ManageUserIn
 ) -> tuple[int, dict[str, Any]]:
-    await _ensure_admin(request.auth)
+    admin_check = await _ensure_admin(request.auth)
+    if admin_check:
+        return admin_check
 
     existing_user = await get_user(telegram_id)
     if not existing_user:
@@ -211,7 +224,10 @@ async def manage_user(
     update_payload = payload.dict(exclude_none=True)
 
     if 'username' in update_payload:
-        update_payload['username'] = _normalize_username(update_payload['username'])
+        try:
+            update_payload['username'] = _normalize_username(update_payload['username'])
+        except ValueError as err:
+            return 400, {'status': 'error', 'message': str(err)}
 
     changes = {
         field: value
@@ -243,10 +259,10 @@ async def manage_user(
     url_name='delete_user',
 )
 @with_locale
-async def delete_user_entry(
-    request: HttpRequest, telegram_id: int
-) -> tuple[int, dict[str, Any]] | MutationMessage:
-    await _ensure_admin(request.auth)
+async def delete_user_entry(request: HttpRequest, telegram_id: int) -> tuple[int, dict[str, str]]:
+    admin_check = await _ensure_admin(request.auth)
+    if admin_check:
+        return admin_check
 
     if telegram_id in settings.TELEGRAM_BUILDER_BOT_ADMINS:
         return 403, {'status': 'error', 'message': str(_('cannot_delete_builder_admin'))}
@@ -255,4 +271,4 @@ async def delete_user_entry(
     if not deleted:
         return 404, {'status': 'error', 'message': str(_('user_not_found'))}
 
-    return MutationMessage(status='success', message=str(_('user_deleted_successfully')))
+    return 200, {'status': 'success', 'message': str(_('user_deleted_successfully'))}
