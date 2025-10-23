@@ -1,0 +1,20 @@
+services:
+  app:
+    restart: always
+    environment:
+      - GRANIAN_WORKERS=${GRANIAN_WORKERS:-4}
+      - GRANIAN_THREADS=${GRANIAN_THREADS:-1}
+      - GRANIAN_RELOAD=${GRANIAN_RELOAD:-0}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.telegram-feedback-bot.rule=Host(`${TRAEFIK_HOST}`)
+      - traefik.http.routers.telegram-feedback-bot.entrypoints=websecure
+      - traefik.http.routers.telegram-feedback-bot.tls=true
+      - traefik.http.routers.telegram-feedback-bot.tls.certresolver=lets-encrypt
+      - traefik.http.services.telegram-feedback-bot.loadbalancer.server.port=${GRANIAN_PORT:-8001}
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
