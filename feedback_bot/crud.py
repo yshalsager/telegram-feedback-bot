@@ -13,7 +13,7 @@ from feedback_bot.models import (
     MessageMapping,
     User,
 )
-from feedback_bot.telegram.utils.cryptography import decrypt_token
+from feedback_bot.telegram.utils.cryptography import decrypt_token, encrypt_token
 
 BOT_MANAGEMENT_FIELDS = (
     'name',
@@ -219,6 +219,15 @@ async def bump_outgoing_messages(bot: Bot) -> None:
     await stats.asave(update_fields=['outgoing_messages'])
 
 
+async def get_feedback_chat_count(bot: Bot) -> int:
+    return await FeedbackChat.objects.filter(bot=bot).acount()
+
+
+async def ensure_bot_stats(bot: Bot) -> BotStats:
+    stats, _ = await BotStats.objects.aget_or_create(bot=bot)
+    return stats
+
+
 async def create_bot(
     telegram_id: int,
     bot_token: str,
@@ -330,7 +339,16 @@ async def update_bot_settings(bot_uuid: UUID | str, owner: int, data: dict[str, 
     if not data:
         return None
 
-    updated = await Bot.objects.filter(_bot_owner_filter(bot_uuid, owner)).aupdate(**data)
+    update_payload = data.copy()
+    if 'bot_token' in update_payload:
+        raw_token = update_payload.pop('bot_token')
+        if raw_token is not None:
+            update_payload['_token'] = encrypt_token(raw_token)
+
+    if not update_payload:
+        return None
+
+    updated = await Bot.objects.filter(_bot_owner_filter(bot_uuid, owner)).aupdate(**update_payload)
     if not updated:
         return None
 

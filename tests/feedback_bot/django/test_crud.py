@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 from feedback_bot import crud
-from feedback_bot.models import BannedUser, Bot, BotStats, BroadcastMessage, FeedbackChat, User
+from feedback_bot.models import BannedUser, Bot, BroadcastMessage, FeedbackChat, User
 
 
 @pytest.fixture(autouse=True)
@@ -411,6 +411,33 @@ async def test_update_bot_settings_applies_changes():
 @pytest.mark.django
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.asyncio
+async def test_update_bot_settings_updates_token():
+    owner, _ = await crud.upsert_user({'id': 9091})
+    bot = await crud.create_bot(
+        telegram_id=777002,
+        bot_token='OLD_TOKEN',  # noqa: S106
+        username='upd_token_bot',
+        name='Token Bot',
+        owner=owner.telegram_id,
+        enable_confirmations=True,
+        start_message='hello',
+        feedback_received_message='thanks',
+    )
+
+    updated = await crud.update_bot_settings(
+        bot.uuid,
+        owner.telegram_id,
+        {'bot_token': 'NEW_TOKEN'},
+    )
+
+    assert updated is not None
+    stored_token = await crud.get_bot_token(bot.uuid, owner.telegram_id)
+    assert stored_token == 'NEW_TOKEN'  # noqa: S105
+
+
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
 async def test_update_bot_settings_requires_valid_filters():
     owner, _ = await crud.upsert_user({'id': 10010})
     bot = await crud.create_bot(
@@ -592,10 +619,12 @@ async def test_clear_feedback_chat_mappings_and_bump_stats():
     await crud.save_incoming_mapping(bot, chat, user_message_id=1, owner_message_id=2)
     await crud.save_outgoing_mapping(bot, chat, user_message_id=3, owner_message_id=4)
 
+    assert await crud.get_feedback_chat_count(bot) == 1
+
     await crud.bump_incoming_messages(bot)
     await crud.bump_outgoing_messages(bot)
 
-    stats = await BotStats.objects.aget(bot=bot)
+    stats = await crud.ensure_bot_stats(bot)
     assert stats.incoming_messages == 1
     assert stats.outgoing_messages == 1
 
