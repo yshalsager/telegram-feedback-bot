@@ -2,34 +2,12 @@ import {render, screen} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import AddUserPage from '~/routes/add_user/+page.svelte'
+import {createI18nMockModule, getI18nMock, type I18nMock} from '~/tests/utils/i18n-mock'
 
 const gotoMock = vi.hoisted(() => vi.fn())
 const onMock = vi.hoisted(() => vi.fn(() => vi.fn()))
 const showNotificationMock = vi.hoisted(() => vi.fn())
 const addUserMock = vi.hoisted(() => vi.fn(async () => ({})))
-
-const i18nMock = vi.hoisted(() => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const {derived, writable} = require('svelte/store')
-    const localeStore = writable('en')
-    const availableLocales = derived(localeStore, () => [
-        {locale: 'en', name: 'English'},
-        {locale: 'ar', name: 'Arabic'}
-    ])
-    const formatCharacterCount = vi.fn((count: number, limit = 4096) => `${count}/${limit}`)
-    const applyLocale = vi.fn(async (code: string) => {
-        localeStore.set(code)
-    })
-    return {
-        localeStore,
-        availableLocales,
-        formatCharacterCount,
-        applyLocale,
-        reset() {
-            localeStore.set('en')
-        }
-    }
-})
 
 vi.mock('$app/navigation', () => ({
     goto: gotoMock
@@ -51,13 +29,9 @@ vi.mock('$lib/api.js', () => ({
     add_user: (...args: unknown[]) => addUserMock(...args)
 }))
 
-vi.mock('~/lib/i18n', () => ({
-    locale: i18nMock.localeStore,
-    locales: ['en', 'ar'],
-    availableLocales: i18nMock.availableLocales,
-    formatCharacterCount: i18nMock.formatCharacterCount,
-    applyLocale: i18nMock.applyLocale
-}))
+vi.mock('~/lib/i18n', () => createI18nMockModule())
+
+let i18nMock: I18nMock
 
 describe('add_user +page.svelte', () => {
     beforeEach(() => {
@@ -67,6 +41,7 @@ describe('add_user +page.svelte', () => {
             status: 'success',
             user: {username: 'newuser', telegram_id: 42}
         })
+        i18nMock = getI18nMock()
         i18nMock.reset()
     })
 
