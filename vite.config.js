@@ -55,6 +55,18 @@ export default defineConfig({
     },
     test: {
         expect: {requireAssertions: true},
+        server: {
+            deps: {
+                inline: [
+                    '@lucide/svelte',
+                    'bits-ui',
+                    '@sveltejs/kit',
+                    'svelte-toolbelt',
+                    '@testing-library/svelte',
+                    'runed'
+                ]
+            }
+        },
         projects: [
             {
                 extends: './vite.config.js',
