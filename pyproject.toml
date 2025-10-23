@@ -4,17 +4,17 @@ version = "0.1.0"
 description = "A bot that builds feedback Telegram bots like Livegram but with topics support."
 authors = [{ name = "yshalsager", email = "contact@yshalsager.com" }]
 license = { text = "MIT" }
-requires-python = ">=3.13"
+requires-python = ">=3.14,<3.15"
 dependencies = [
     "cryptography>=46.0.3",
     "django>=5.2.7,<6",
     "django-asgi-lifespan>=0.5.0",
-    "django-ninja>=1.4.4",
+    "django-ninja>=1.4.5",
     "granian[reload,uvloop]>=2.5.5",
     "orjson>=3.11.3,<4",
-    "psycopg[binary]>=3.2.10,<4",
+    "psycopg[binary]>=3.2.11,<4",
     "python-telegram-bot>=22.5",
-    "regex>=2025.9.18",
+    "regex>=2025.10.23",
 ]
 
 [dependency-groups]
@@ -45,7 +45,7 @@ plugins = []
 [tool.ruff] # https://github.com/charliermarsh/ruff
 fix = true
 src = ["src"]
-target-version = "py313"
+target-version = "py314"
 line-length = 100
 
 [tool.ruff.lint]

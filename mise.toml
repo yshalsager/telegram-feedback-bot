@@ -3,7 +3,7 @@
 "aqua:pnpm/pnpm" = 'latest'
 lefthook = 'latest'
 node = "24"
-python = '3.13'
+python = '3.14'
 
 [tasks.default]
 depends = ['migrate', 'api-dev', 'client-dev']
