@@ -5,7 +5,7 @@ from django.conf import settings
 from django_asgi_lifespan.types import LifespanManager
 from telegram import BotCommandScopeAllPrivateChats, Update
 
-from feedback_bot.telegram.builder.bot import load_builder_modules, ptb_application
+from feedback_bot.telegram.builder.bot import get_ptb_application, load_builder_modules
 from feedback_bot.telegram.utils.cryptography import generate_bot_webhook_secret
 from feedback_bot.telegram.utils.restart import handle_restart
 
@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def ptb_lifespan_manager() -> LifespanManager:
     logger.info('ASGI Lifespan: Starting up...')
+    ptb_application = get_ptb_application()
     state = {'ptb_application': ptb_application}
 
     try:

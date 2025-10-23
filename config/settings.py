@@ -153,7 +153,11 @@ TELEGRAM_BUILDER_BOT_WEBHOOK_URL = getenv(
 )
 TELEGRAM_BUILDER_BOT_WEBHOOK_PATH = getenv('TELEGRAM_BUILDER_BOT_WEBHOOK_PATH', 'telegram')
 TELEGRAM_BUILDER_BOT_TOKEN = getenv('TELEGRAM_BUILDER_BOT_TOKEN', '')
-TELEGRAM_BUILDER_BOT_ADMINS = list(map(int, getenv('TELEGRAM_BUILDER_BOT_ADMINS', '').split(',')))
+TELEGRAM_BUILDER_BOT_ADMINS = [
+    int(admin.strip())
+    for admin in getenv('TELEGRAM_BUILDER_BOT_ADMINS', '').split(',')
+    if admin.strip()
+]
 TELEGRAM_ENCRYPTION_KEY = getenv('TELEGRAM_ENCRYPTION_KEY', '')
 
 if not any(

@@ -24,7 +24,8 @@ def test_load_builder_modules_registers_handlers(monkeypatch):
     handler = CommandHandler('foo', dummy)
     test_module = SimpleNamespace(HANDLERS=[handler])
 
-    monkeypatch.setattr(bot_module, 'ptb_application', DummyApp())
+    dummy_app = DummyApp()
+    monkeypatch.setattr(bot_module, 'get_ptb_application', lambda: dummy_app)
     monkeypatch.setattr(bot_module, 'load_modules', lambda modules: [test_module])
 
     commands = bot_module.load_builder_modules()
@@ -44,7 +45,8 @@ def test_load_builder_modules_skips_non_command_handlers(monkeypatch):
     non_command_handler = SimpleNamespace()
     test_module = SimpleNamespace(HANDLERS=[non_command_handler])
 
-    monkeypatch.setattr(bot_module, 'ptb_application', DummyApp())
+    dummy_app = DummyApp()
+    monkeypatch.setattr(bot_module, 'get_ptb_application', lambda: dummy_app)
     monkeypatch.setattr(bot_module, 'load_modules', lambda modules: [test_module])
 
     commands = bot_module.load_builder_modules()
