@@ -9,6 +9,7 @@ const showNotificationMock = vi.hoisted(() => vi.fn())
 const updateBotMock = vi.hoisted(() => vi.fn())
 const deleteBotMock = vi.hoisted(() => vi.fn())
 const mapBotResponseMock = vi.hoisted(() => vi.fn())
+const rotatedToken = '23456789:bcdefghijklmnopqrstuvwxyzABCDE12345'
 
 function createPageState() {
     return {
@@ -142,9 +143,7 @@ describe('+page.svelte', () => {
         expect(startMessage).toBeInstanceOf(HTMLTextAreaElement)
         expect(feedbackMessage).toBeInstanceOf(HTMLTextAreaElement)
 
-        const [saveButton] = Array.from(
-            document.querySelectorAll<HTMLButtonElement>('button[data-slot="button"]')
-        )
+        const saveButton = screen.getByRole('button', {name: 'Save'})
         expect(saveButton).toBeInstanceOf(HTMLButtonElement)
 
         await user.clear(startMessage)
@@ -152,7 +151,7 @@ describe('+page.svelte', () => {
         await user.clear(feedbackMessage)
         await user.type(feedbackMessage, 'Updated reply')
 
-        await user.click(saveButton as HTMLButtonElement)
+        await user.click(saveButton)
 
         await waitFor(() => {
             expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
@@ -164,6 +163,45 @@ describe('+page.svelte', () => {
         })
 
         expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
+        expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
+    })
+
+    it('rotates token when a new value is provided', async () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+
+        const rotatedBot: Bot = {
+            ...baseBot,
+            name: 'New Bot Name',
+            username: 'new_feedback_bot'
+        }
+
+        updateBotMock.mockResolvedValue({uuid: baseBot.uuid})
+        mapBotResponseMock.mockReturnValue(rotatedBot)
+
+        const user = userEvent.setup()
+        render(BotPage)
+
+        const tokenInput = screen.getByLabelText('Bot token') as HTMLInputElement
+        await user.type(tokenInput, rotatedToken)
+
+        const saveButton = screen.getByRole('button', {name: 'Save'})
+        await user.click(saveButton)
+
+        await waitFor(() => {
+            expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
+                enable_confirmations: baseBot.confirmations_on,
+                start_message: baseBot.start_message,
+                feedback_received_message: baseBot.feedback_received_message,
+                enabled: baseBot.enabled,
+                bot_token: rotatedToken
+            })
+        })
+
+        expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
+        expect(tokenInput.value).toBe('')
         expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
     })
 
@@ -179,15 +217,11 @@ describe('+page.svelte', () => {
         const user = userEvent.setup()
         render(BotPage)
 
-        const buttons = Array.from(
-            document.querySelectorAll<HTMLButtonElement>('button[data-slot="button"]')
-        )
-        const deleteButton =
-            buttons[1] ?? buttons.find(button => button.textContent?.includes('Delete'))
+        const deleteButton = screen.getByRole('button', {name: /Delete bot/})
 
         expect(deleteButton).toBeInstanceOf(HTMLButtonElement)
 
-        await user.click(deleteButton as HTMLButtonElement)
+        await user.click(deleteButton)
 
         expect(confirmSpy).toHaveBeenCalledTimes(1)
         await waitFor(() => {
@@ -196,6 +230,21 @@ describe('+page.svelte', () => {
         expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot deleted successfully', [
             {id: 'bot_deleted_success_close', type: 'close'}
         ])
+    })
+
+    it('navigates to banned users view', async () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+
+        const user = userEvent.setup()
+        render(BotPage)
+
+        const manageBannedButton = screen.getByRole('button', {name: 'Manage banned users'})
+        await user.click(manageBannedButton)
+
+        expect(gotoMock).toHaveBeenCalledWith(`/bot/${baseBot.uuid}/banned`)
     })
 
     it('registers Telegram popup closed handler once', () => {

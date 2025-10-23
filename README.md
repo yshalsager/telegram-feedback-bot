@@ -135,7 +135,7 @@ mise x pnpm -- pnpm run check
 
 - `config/` – Django project configuration and ASGI entrypoint.
 - `feedback_bot/` – Backend app (API, models, telegram builders, PTB handlers).
-- `frontend/` – SvelteKit mini app served inside Telegram.
+- `src/` – SvelteKit mini app served inside Telegram.
 - `data/` – Shared volume for runtime assets (bot storage, exports).
 - `docker-compose.yml` – Production-ready stack with Postgres + Granian.
 - `mise.toml` – Task runner and environment defaults.
@@ -151,4 +151,4 @@ mise x pnpm -- pnpm run check
 
 - `mise r` starts migrations, Granian, and the SvelteKit dev server in one go.
 - Use `mise x uv -- uv run manage.py shell_plus` for interactive debugging.
-- Internationalization helpers live under `frontend/locales` and `feedback_bot/locale`; run `mise r i18n_update` after editing strings.
+- Internationalization helpers live under `src/locales` and `feedback_bot/locale`; run `mise r i18n_update` after editing strings.

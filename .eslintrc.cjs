@@ -4,10 +4,10 @@ module.exports = {
     parserOptions: {
         project: './tsconfig.eslint.json'
     },
-    ignorePatterns: ['frontend/.svelte-kit/**', '.svelte-kit/**'],
+    ignorePatterns: ['src/.svelte-kit/**', '.svelte-kit/**'],
     overrides: [
         {
-            files: ['frontend/routes/**', 'frontend/lib/**', 'frontend/components/**'],
+            files: ['src/routes/**', 'src/lib/**', 'src/components/**'],
             parserOptions: {
                 project: './tsconfig.eslint.json'
             }

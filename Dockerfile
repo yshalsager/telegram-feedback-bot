@@ -26,7 +26,7 @@ RUN corepack enable && pnpm config set store-dir /root/.pnpm-store
 COPY package.json pnpm-lock.yaml .npmrc ./
 RUN --mount=type=cache,target=/root/.pnpm-store pnpm install --frozen-lockfile
 COPY svelte.config.js vite.config.js jsconfig.json tsconfig.eslint.json wuchale.config.js components.json vitest-setup-client.js ./
-COPY frontend ./frontend
+COPY src ./src
 COPY static ./static
 RUN pnpm run build
 

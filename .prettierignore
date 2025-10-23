@@ -4,7 +4,7 @@ pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
-/frontend/.svelte-kit
+/src/.svelte-kit
 
 # Miscellaneous
 /static/

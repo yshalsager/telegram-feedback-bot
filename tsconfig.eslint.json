@@ -7,9 +7,9 @@
         "allowUnusedLabels": false
     },
     "include": [
-        "frontend/**/*.ts",
-        "frontend/**/*.svelte",
-        "frontend/**/*.js"
+        "src/**/*.ts",
+        "src/**/*.svelte",
+        "src/**/*.js"
     ],
     "exclude": [
         "node_modules"

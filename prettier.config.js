@@ -44,5 +44,5 @@ export default {
         '^[./]'
     ],
     importOrderParserPlugins: ['svelte', 'typescript', 'decorators-legacy'],
-    tailwindStylesheet: './frontend/app.css'
+    tailwindStylesheet: './src/app.css'
 }

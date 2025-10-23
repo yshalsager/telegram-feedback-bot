@@ -28,7 +28,7 @@ export default defineConfig({
         domain({nameSource: 'pkg', tld: 'localhost'})
     ],
     resolve: {
-        alias: [{find: '~', replacement: path.resolve('frontend')}],
+        alias: [{find: '~', replacement: path.resolve('src')}],
         conditions: process.env.VITEST ? ['browser'] : undefined
     },
     server: {
@@ -41,7 +41,7 @@ export default defineConfig({
                 : [])
         ],
         fs: {
-            allow: ['./frontend']
+            allow: ['./src']
         },
         port: process.env.VITE_PORT ? parseInt(process.env.VITE_PORT) : 5173,
         host: true,
@@ -61,8 +61,8 @@ export default defineConfig({
                 test: {
                     name: 'components',
                     environment: 'jsdom',
-                    include: ['frontend/**/*.svelte.{test,spec}.{js,ts}'],
-                    exclude: ['frontend/lib/server/**'],
+                    include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+                    exclude: ['src/lib/server/**'],
                     setupFiles: ['./vitest-setup-client.js']
                 }
             },
@@ -71,8 +71,8 @@ export default defineConfig({
                 test: {
                     name: 'server',
                     environment: 'node',
-                    include: ['frontend/**/*.{test,spec}.{js,ts}'],
-                    exclude: ['frontend/**/*.svelte.{test,spec}.{js,ts}']
+                    include: ['src/**/*.{test,spec}.{js,ts}'],
+                    exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
                 }
             }
         ]
