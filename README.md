@@ -1,159 +1,154 @@
 # Telegram Feedback Bots Builder
 
-A bot that builds feedback Telegram bots like Livegram but with topics support.
-
-**Note**: If you don't need a builder and just want one feedback bot, checkout [standalone](https://github.com/yshalsager/telegram-feedback-bot/tree/standalone) branch.
+A self-hosted toolkit for provisioning and operating Telegram feedback bots. The new stack pairs a Django + python-telegram-bot backend with a SvelteKit mini app so owners can manage bots, rotate tokens, review stats, and handle banned users without leaving Telegram. Think of it as Livegram but more powerful.
 
 ## Features
 
-### Builder
+### Builder Bot
+- `/start` launches the inline menu with a deep link to the mini app.
+- `/broadcast` forwards announcements to all builder users.
+- `/whitelist`, `/manage`, `/restart`, and `/update` remain available for administrators.
 
--   Create new feedback bots.
--   Manage existing bots.
-    -   Delete bot.
-    -   Change its token.
-    -   Change its group.
-    -   Change bot messages (start, receive feedback, sent message feedback).
--   Admin options:
-    -   Whitelist users and remove them, disabled by default.
-    -   Broadcast messages to all users.
-    -   Restart all bots.
-    -   Enable or disable bots (via /manage).
-    -   Update bot code (via /update).
--   Multi-language support (automatically selected based on Telegram language).
+### Mini App Dashboard
+- Create feedback bots after validating their tokens against BotFather.
+- Toggle confirmations, update start / receipt messages, and link or unlink groups.
+- Rotate bot tokens securely with enforced admin approval before re-enabling (when configured).
+- Inspect live stats, review audit history of broadcasts, and manage banned users per bot.
+- Manage builder access: whitelist, language, admin flags, and removal.
 
-### Bots
+### Feedback Bots
+- Route every user conversation into its own forum topic (or the owner chat) for clean threading.
+- Forward edits, mirror replies back to the user, and acknowledge receipt when confirmations are on.
+- Provide `/broadcast`, `/ban`, `/unban`, and `/banned` commands for bot owners, plus `/start` for users.
 
--   Receive feedback messages from users.
--   Each user has its own topic that messages are sent to, so admins can reply to each user individually and chat history
-    is clear.
--   General topic messages aren't sent to users, so admins can discuss without spamming users.
--   Admins can broadcast messages to all users.
--   Bot statistics of users, received and sent messages.
+## Technology Stack
 
-## Configuration
+- **Backend:** Python 3, Django 5, Ninja API, python-telegram-bot 21, Granian (ASGI), SQLite (Postgres optional).
+- **Frontend:** SvelteKit, Vite, Tailwind CSS, Bits UI, Telegram Mini App SDK.
+- **Packaging & Tooling:** mise, uv, pnpm, Docker, lefthook.
+- **Infrastructure extras:** Traefik override (optional), encrypted token storage (Fernet).
 
-Create a .env file and fill it with requires values from `mise.toml` env section.
+## Setup
 
-```toml
-[env]
-# the Telegram bot token https://telegram.me/BotFather
-BOT_TOKEN = '0000000000:aaaaaaaaaaaaaaaaaaaa'
-# to connect to MTProto, which we use to upload media files (retrieve from https://my.telegram.org)
-API_ID = '0000000'
-API_HASH = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-# the Telegram account IDs that will have administrator permissions of the bot
-BOT_ADMINS = '000000,000000,000000'
-# Chat that will receive the bot messages
-CHAT_ID = '-10000000000'
-# Group topic that will be used for bot logs
-LOG_TOPIC_ID = 1
-# Require admin approval to add new bot
-NEW_BOT_ADMIN_APPROVAL = "true"
-DEBUG = 1
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yshalsager/telegram_feedback_bot.git
+   cd telegram_feedback_bot
+   ```
 
-Create an encryption key with `mise r generate-encryption-key`
-or `python -c "from secrets import token_bytes; print(token_bytes(32).hex())"`
-and update `ENCRYPTION_KEY` variable.
+2. **Install toolchain with mise**
+   ```bash
+   mise install
+   ```
+
+3. **Create `.env`** (values mirror [`mise.toml`](mise.toml)`[env]`). At minimum:
+   ```dotenv
+   DJANGO_SECRET_KEY="$(mise r generate-secret-key)"
+   TELEGRAM_BUILDER_BOT_TOKEN="123456789:AA..."
+   TELEGRAM_BUILDER_BOT_WEBHOOK_URL="https://your-domain.com"
+   TELEGRAM_BUILDER_BOT_WEBHOOK_PATH="telegram"
+   TELEGRAM_BUILDER_BOT_ADMINS="123456789,987654321"
+   TELEGRAM_ADMIN_CHAT_ID="-10000000000"
+   TELEGRAM_LOG_TOPIC_ID=1
+   TELEGRAM_ENCRYPTION_KEY="$(mise r generate-encryption-key)"
+   TELEGRAM_LANGUAGES="en ar"
+   POSTGRES_DB="feedback_bot"
+   POSTGRES_USER="feedback_bot_user"
+   POSTGRES_PASSWORD="super-secret"
+   DJANGO_ALLOWED_HOSTS="localhost 127.0.0.1"
+   TELEGRAM_NEW_BOT_ADMIN_APPROVAL=true
+   ``
+   Set `TELEGRAM_BUILDER_BOT_WEBHOOK_URL` to the public HTTPS origin serving Granian. Leave `DJANGO_USE_SQLITE=true` if you prefer SQLite for local experiments.
+
+4. **Install dependencies**
+   ```bash
+   mise x uv -- uv sync
+   mise x pnpm -- pnpm install
+   ```
+
+5. **Run migrations**
+   ```bash
+   mise x uv -- uv run manage.py migrate
+   ```
 
 ## Running
 
 ### Docker
 
--   `docker compose up`
+The compose stack bundles the backend, PTB workers, and Postgres. Copy your `.env` next to `docker-compose.yml`, then:
 
-### Poetry
+```bash
+docker compose up --build -d
+```
 
--   `poetry install`
--   `python3 -m src`
+Static assets from the SvelteKit build are served by Granian under `/app/`. Attach volume `data/` if you need to persist exported artifacts.
 
-## Usage
+### Manual (mise + uv + pnpm)
 
-### Builder
+Run backend and frontend separately during development:
 
--   `/start`: sends the main menu to create and manage bots.
--   `/whitelist [user_id]`: adds new users to the whitelist.'
--   `/manage`: manage users and bots by admin.
--   `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
--   `/restart`: restarts the bot.
--   `/update`: updates the bot code.
+```bash
+# Backend API + Telegram bots
+mise x uv -- uv run granian --interface asgi config.asgi:application
 
-### Bots
+# Frontend mini app
+mise x pnpm -- pnpm run dev
+```
 
--   `/start`: says hello.
--   Send a message, it will be forwarded to the bot owner or group.
--   Owner can reply to the message and it will be forwarded to the user.
--   `/broadcast`: sends a message to all bot users. Send as a reply to a message previously sent to the bot.
--   `/stats`: shows bot statistics.
+Or let mise orchestrate everything:
 
-## How it works?
+```bash
+mise run migrate
+mise run api-dev   # starts Granian with autoreload
+mise run client-dev
+```
 
--   Instead of using Telegram bots HTTP API (with long polling or webhooks), we
-    use [MTProto](https://core.telegram.org/mtproto) directly via Pyrogram, since Pyrogram uses persistent connections via
-    TCP sockets to interact with Telegram servers instead of actively asking for updates.
--   The builder bot is responsible for creating Pyrogram clients for bots, and managing them.
--   Only builder bot owner can enable or disable bots. Builder bot users can create their own feedback bots and manage
-    them.
--   SQLAlchemy and Alembic are used for database management. When a new bot is created, a new database is created with
-    Alembic to ensure the schema is up to date for all bots.
--   Feedback bot forwards messages from users to its created bot owner or group, so it can be replied to. The bot will
-    only send the reply to the user if message is a reply to user's message.
+For a production build of the mini app:
+
+```bash
+mise x pnpm -- pnpm run build
+```
+
+The compiled bundle lands in `build/` and is mounted automatically by Granian when `GRANIAN_STATIC_PATH_*` variables are set (default values already point there).
+
+## Telegram Webhook Notes
+
+- Set the builder webhook by exposing Granian at `https://<domain>/api/webhook/<TELEGRAM_BUILDER_BOT_WEBHOOK_PATH>/`.
+- Each managed bot receives a dedicated webhook at `/api/webhook/<bot_uuid>/`; secrets are generated from `TELEGRAM_ENCRYPTION_KEY`.
+- When admin approval is enabled (`TELEGRAM_NEW_BOT_ADMIN_APPROVAL=true`), new bots start disabled until a builder admin activates them from the dashboard.
+
+## Testing
+
+```bash
+# Backend tests
+mise x uv -- uv run pytest
+
+# Frontend unit tests
+mise x pnpm -- pnpm run test
+
+# Linting & type checks
+mise x pnpm -- pnpm run lint
+mise x pnpm -- pnpm run check
+```
+
+## Project Layout
+
+- `config/` – Django project configuration and ASGI entrypoint.
+- `feedback_bot/` – Backend app (API, models, telegram builders, PTB handlers).
+- `frontend/` – SvelteKit mini app served inside Telegram.
+- `data/` – Shared volume for runtime assets (bot storage, exports).
+- `docker-compose.yml` – Production-ready stack with Postgres + Granian.
+- `mise.toml` – Task runner and environment defaults.
 
 ## Acknowledgements
 
-### Libraries, Tools, etc
+- [Django](https://www.djangoproject.com/), [Ninja](https://django-ninja.dev/), and [Granian](https://github.com/emmett-framework/granian) for the backend.
+- [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) for Telegram integrations.
+- [SvelteKit](https://kit.svelte.dev/), [Tailwind CSS](https://tailwindcss.com/), and [Bits UI](https://www.bits-ui.com/) for the mini app.
+- [uv](https://github.com/astral-sh/uv) and [mise](https://mise.jdx.dev/) for fast, reproducible environments.
 
--   [Python](https://www.python.org/)
--   [Pyrogram](https://github.com/Mayuri-Chan/pyrofork)
--   [Plate](https://github.com/delivrance/plate)
--   [regex](https://github.com/mrabarnett/mrab-regex)
--   [SQLAlchemy](https://www.sqlalchemy.org/)
--   [Alembic](https://alembic.sqlalchemy.org/)
+## Development Tips
 
-## Development
-
-This project uses several tools to streamline the development process:
-
-### mise
-
-We use [mise](https://mise.jdx.dev/) for managing project-level dependencies and environment variables. mise helps
-ensure consistent development environments across different machines.
-
-To get started with mise:
-
-1. Install mise by following the instructions on the [official website](https://mise.jdx.dev/).
-2. Run `mise install` in the project root to set up the development environment.
-
-### Poetry
-
-[Poetry](https://python-poetry.org/) is used for dependency management and packaging. It provides a clean,
-version-controlled way to manage project dependencies.
-
-To set up the project with Poetry:
-
-1. Install Poetry by following the instructions on the [official website](https://python-poetry.org/docs/#installation).
-2. Run `poetry install` to install project dependencies.
-
-### Jurigged for Live Reload
-
-We use [Jurigged](https://github.com/breuleux/jurigged) for live code reloading during development. This allows you to
-see changes in your code immediately without manually restarting the application.
-
-To use Jurigged:
-
-1. Make sure you have installed the project dependencies using Poetry, including dev
-   dependencies `poetry install --with dev`.
-2. Run the bot with Jurigged:
-
-```bash
-poetry run jurigged -v -m src
-```
-
-## Internationalization (i18n)
-
--   We use [Plate](https://github.com/delivrance/plate) library to translate the bot's messages.
--   Translations are stored as JSON files in the `src/i18n/locales` directory, the default locale is `en_US`.
--   To add a new language, create a new JSON file in the `src/i18n/locales` directory, with the corresponding language
-    code,
-    translate the messages to that language.
+- `mise r` starts migrations, Granian, and the SvelteKit dev server in one go.
+- Use `mise x uv -- uv run manage.py shell_plus` for interactive debugging.
+- Internationalization helpers live under `frontend/locales` and `feedback_bot/locale`; run `mise r i18n_update` after editing strings.
