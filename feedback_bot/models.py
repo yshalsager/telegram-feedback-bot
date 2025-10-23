@@ -112,7 +112,7 @@ class MessageMapping(models.Model):
     # Message ID in the user's private chat with the bot
     user_message_id = models.BigIntegerField()
     # Message ID of the forwarded message in the owner's chat/group
-    owner_message_id = models.BigIntegerField(unique=True)
+    owner_message_id = models.BigIntegerField()
 
     class Meta:
         # Each message from the user can only be mapped once
