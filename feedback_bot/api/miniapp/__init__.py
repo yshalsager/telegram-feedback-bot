@@ -26,7 +26,7 @@ class TelegramMiniAppAuth(HttpBearer):
         The token should contain the Telegram Mini App init data.
         """
         if not token:
-            raise AuthenticationError('Missing token in Authorization header')
+            raise AuthenticationError(message='Missing token in Authorization header')
 
         # The token contains the init data for Telegram Mini App
         init_data = token
@@ -46,10 +46,10 @@ class TelegramMiniAppAuth(HttpBearer):
         )
 
         if not is_valid:
-            raise AuthenticationError('Invalid Telegram Mini App data')
+            raise AuthenticationError(message='Invalid Telegram Mini App data')
 
         if not (user := await user_is_whitelisted(user_data.get('id', 1))):
-            raise AuthenticationError('User is not whitelisted')
+            raise AuthenticationError(message='User is not whitelisted')
 
         user_data['language_code'] = user.language_code
         user_data['is_whitelisted'] = user.is_whitelisted
