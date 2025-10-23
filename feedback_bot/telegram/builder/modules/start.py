@@ -16,7 +16,7 @@ async def start(update: Update, context: CallbackContext) -> None:
     keyboard = InlineKeyboardMarkup.from_button(
         InlineKeyboardButton(
             str(_('open_mini_app')),
-            web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL}/'),
+            web_app=WebAppInfo(url=f'{settings.TELEGRAM_BUILDER_BOT_WEBHOOK_URL.rstrip("/")}/app/'),
         )
     )
 

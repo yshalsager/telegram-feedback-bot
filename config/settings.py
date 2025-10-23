@@ -13,14 +13,18 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from os import getenv
 from pathlib import Path
 
+
+def bool_env(name, default='false'):
+    return getenv(name, default).lower() in ('true', '1', 'yes')
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SVELTEKIT_BUILD_DIR = BASE_DIR / 'build'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 SECRET_KEY = getenv('DJANGO_SECRET_KEY', '')
-DEBUG = bool(getenv('DJANGO_DEBUG', ''))
+DEBUG = bool_env('DJANGO_DEBUG', 'false')
+FRONTEND_DEBUG = bool_env('PUBLIC_DEBUG', 'false')
 ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS', '').split()
 CSRF_TRUSTED_ORIGINS = [
     f'http://{host}:{getenv("VITE_PORT", "8000")}'
@@ -30,7 +34,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # Security Settings
-SECURE_SSL_REDIRECT = not DEBUG  # Redirect HTTP to HTTPS in production
+SECURE_SSL_REDIRECT = not DEBUG and not FRONTEND_DEBUG  # Redirect HTTP to HTTPS in production
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0  # 1 year in production
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
@@ -90,7 +94,7 @@ ASGI_APPLICATION = 'config.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-if getenv('DJANGO_USE_SQLITE', '').lower() in ('true', '1', 'yes'):
+if bool_env('DJANGO_USE_SQLITE', 'true'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

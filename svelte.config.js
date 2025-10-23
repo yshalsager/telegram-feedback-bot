@@ -15,6 +15,9 @@ const config = {
         },
         output: {
             bundleStrategy: 'inline'
+        },
+        paths: {
+            base: '/app'
         }
     }
 }
