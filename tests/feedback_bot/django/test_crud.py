@@ -4,7 +4,14 @@ from __future__ import annotations
 
 import pytest
 from feedback_bot import crud
-from feedback_bot.models import BannedUser, Bot, BroadcastMessage, FeedbackChat, User
+from feedback_bot.models import (
+    BannedUser,
+    Bot,
+    BroadcastMessage,
+    FeedbackChat,
+    MessageMapping,
+    User,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -492,6 +499,32 @@ async def test_get_feedback_chat_targets_supports_bot_and_id():
 
     assert sorted(targets_from_instance) == [1, 2]
     assert sorted(targets_from_id) == [1, 2]
+
+
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_delete_message_mapping_removes_entry():
+    owner, _ = await crud.upsert_user({'id': 16000})
+    bot = await crud.create_bot(
+        telegram_id=999350,
+        bot_token='DEL_MAP',  # noqa: S106
+        username='del_map_bot',
+        name='Delete Map Bot',
+        owner=owner.telegram_id,
+        start_message='hello',
+        feedback_received_message='received',
+    )
+
+    chat, _ = await crud.ensure_feedback_chat(bot, 555, None)
+    await crud.save_incoming_mapping(bot, chat, user_message_id=11, owner_message_id=22)
+    mapping = await crud.get_owner_message_mapping(bot, 22)
+    assert mapping is not None
+
+    await crud.delete_message_mapping(mapping)
+
+    remaining = await MessageMapping.objects.filter(bot=bot).acount()
+    assert remaining == 0
 
 
 @pytest.mark.django

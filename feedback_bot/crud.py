@@ -206,6 +206,10 @@ async def save_outgoing_mapping(
     )
 
 
+async def delete_message_mapping(mapping: MessageMapping) -> None:
+    await MessageMapping.objects.filter(pk=mapping.pk).adelete()
+
+
 async def bump_incoming_messages(bot: Bot) -> None:
     stats, _ = await BotStats.objects.aget_or_create(bot=bot)
     stats.incoming_messages += 1
