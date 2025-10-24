@@ -17,6 +17,7 @@ from feedback_bot.telegram.utils.broadcast import (
 
 
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Broadcast a message to the selected recipients."""
     if (
         update.effective_message is None
         or update.effective_message.reply_to_message is None
