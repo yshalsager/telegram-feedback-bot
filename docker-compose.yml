@@ -9,7 +9,7 @@ x-defaults: &defaults
 services:
   db:
     <<: *defaults
-    image: public.ecr.aws/docker/library/postgres:16.1-alpine
+    image: public.ecr.aws/docker/library/postgres:18-alpine
     ports:
       - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
     environment:
