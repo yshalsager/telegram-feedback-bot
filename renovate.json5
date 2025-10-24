@@ -13,19 +13,5 @@
             matchUpdateTypes: ["minor", "patch", "pin", "digest"],
             automerge: true,
         },
-    ],
-    customManagers: [
-        {
-            customType: "regex",
-            managerFilePatterns: ["/\\.pre-commit-config\\.yaml/"],
-            matchStrings: [
-                "(?<depName>[^'\" ]+)==(?<currentValue>[^'\" ,\\s]+)",
-            ],
-            datasourceTemplate: "pypi",
-            versioningTemplate: "pep440",
-        },
-    ],
-    pip_requirements: {
-        enabled: false,
-    },
+    ]
 }
