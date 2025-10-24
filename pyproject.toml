@@ -1,6 +1,6 @@
 [project]
 name = "feedback-telegram-bot"
-version = "0.1.0"
+version = "3.0.0"
 description = "A bot that builds feedback Telegram bots like Livegram but with topics support."
 authors = [{ name = "yshalsager", email = "contact@yshalsager.com" }]
 license = { file = "LICENSE" }
