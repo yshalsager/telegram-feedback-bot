@@ -8,7 +8,12 @@ from telegram import Update
 from telegram.ext import CommandHandler, ContextTypes, filters
 
 from feedback_bot.crud import get_feedback_chat_targets, record_broadcast_message
-from feedback_bot.telegram.utils.broadcast import broadcast_to_chats
+from feedback_bot.telegram.utils.broadcast import (
+    broadcast_to_chats,
+    extract_filters_text,
+    filters_help_text,
+    parse_broadcast_filters,
+)
 
 
 def _resolve_bot_reference(bot_config: Any) -> Any:
@@ -22,7 +27,6 @@ def _resolve_bot_reference(bot_config: Any) -> Any:
 
 
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Broadcasts message to feedback bot users."""
     if (
         update.effective_message is None
         or update.effective_message.reply_to_message is None
@@ -32,7 +36,6 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     bot_config = context.bot_data['bot_config']
-
     owner_id = getattr(bot_config, 'owner_id', None)
     if owner_id is None or update.effective_user.id != owner_id:
         return
@@ -41,7 +44,13 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if bot_reference is None:
         return
 
-    chat_ids = await get_feedback_chat_targets(bot_reference)
+    filters_text = extract_filters_text(update.effective_message)
+    filters_payload, error = parse_broadcast_filters(filters_text)
+    if error:
+        await update.effective_message.reply_text(f'{error}\n{filters_help_text()}')
+        return
+
+    chat_ids = await get_feedback_chat_targets(bot_reference, filters_payload or None)
     if not chat_ids:
         await update.effective_message.reply_text(
             _('No subscribers to broadcast to.'),
@@ -49,10 +58,10 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
-    message_to_send = update.effective_message.reply_to_message
+    source = update.effective_message.reply_to_message
     sent, failed = await broadcast_to_chats(
         context.bot,
-        message_to_send,
+        source,
         chat_ids,
         record=partial(record_broadcast_message, bot=bot_reference),
     )

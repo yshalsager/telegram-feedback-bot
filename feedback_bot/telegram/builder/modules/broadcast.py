@@ -8,11 +8,15 @@ from telegram.ext import CommandHandler, ContextTypes, filters
 
 from feedback_bot.crud import get_builder_broadcast_targets, record_broadcast_message
 from feedback_bot.telegram.builder.filters import is_admin
-from feedback_bot.telegram.utils.broadcast import broadcast_to_chats
+from feedback_bot.telegram.utils.broadcast import (
+    broadcast_to_chats,
+    extract_filters_text,
+    filters_help_text,
+    parse_broadcast_filters,
+)
 
 
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Broadcasts message to builder bot users."""
     if (
         update.effective_message is None
         or update.effective_message.reply_to_message is None
@@ -20,8 +24,13 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     ):
         return
 
-    message_to_send = update.effective_message.reply_to_message
-    chat_ids = await get_builder_broadcast_targets()
+    filters_text = extract_filters_text(update.effective_message)
+    filters_payload, error = parse_broadcast_filters(filters_text)
+    if error:
+        await update.effective_message.reply_text(f'{error}\n{filters_help_text()}')
+        return
+
+    chat_ids = await get_builder_broadcast_targets(filters_payload or None)
     if not chat_ids:
         await update.effective_message.reply_text(
             _('No recipients to broadcast to.'),
@@ -29,9 +38,10 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
+    source = update.effective_message.reply_to_message
     sent, failed = await broadcast_to_chats(
         context.bot,
-        message_to_send,
+        source,
         chat_ids,
         record=partial(record_broadcast_message, bot=None),
     )

@@ -42,10 +42,11 @@ async def test_broadcast_sends_to_targets(monkeypatch, app_with_handlers, ptb_se
         entities=[MessageEntity(type='bot_command', offset=0, length=len('/broadcast'))],
     )
 
-    update = Update.de_json(build_update(command).to_dict(), app_with_handlers.bot)
-    await app_with_handlers.process_update(update)
+    update_command = Update.de_json(build_update(command).to_dict(), app_with_handlers.bot)
+    await app_with_handlers.process_update(update_command)
 
     assert targets_mock.await_count == 1
+    assert targets_mock.await_args.args == (None,)
     assert copy_mock.await_count == 2
     first_call = copy_mock.await_args_list[0]
     assert first_call.kwargs['chat_id'] == 222
@@ -87,8 +88,31 @@ async def test_broadcast_reports_missing_targets(
         entities=[MessageEntity(type='bot_command', offset=0, length=len('/broadcast'))],
     )
 
-    update = Update.de_json(build_update(command).to_dict(), app_with_handlers.bot)
-    await app_with_handlers.process_update(update)
+    update_command = Update.de_json(build_update(command).to_dict(), app_with_handlers.bot)
+    await app_with_handlers.process_update(update_command)
 
     assert ptb_send.await_count == 1
     assert ptb_send.await_args.kwargs['text'] == 'No recipients to broadcast to.'
+
+
+@parametrize_broadcast
+async def test_broadcast_passes_filters(monkeypatch, app_with_handlers, ptb_send, ptb_errors):
+    monkeypatch.setattr(ExtBot, 'copy_message', AsyncMock())
+    monkeypatch.setattr('feedback_bot.telegram.utils.broadcast.sleep', AsyncMock())
+
+    targets_mock = AsyncMock(return_value=[])
+    monkeypatch.setattr(broadcast_module, 'get_builder_broadcast_targets', targets_mock)
+
+    original = build_message(444, text='payload', message_id=60)
+    command = build_message(
+        111,
+        text='/broadcast\nsample_every 3\nusername_only yes',
+        message_id=61,
+        reply_to=original,
+        entities=[MessageEntity(type='bot_command', offset=0, length=len('/broadcast'))],
+    )
+
+    update_command = Update.de_json(build_update(command).to_dict(), app_with_handlers.bot)
+    await app_with_handlers.process_update(update_command)
+
+    assert targets_mock.await_args.args == ({'sample_stride': 3, 'username_only': True},)

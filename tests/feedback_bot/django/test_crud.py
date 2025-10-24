@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+
 import pytest
 from feedback_bot import crud
 from feedback_bot.models import (
@@ -509,6 +511,87 @@ async def test_get_feedback_chat_targets_supports_bot_and_id():
 
     assert sorted(targets_from_instance) == [1, 2]
     assert sorted(targets_from_id) == [1, 2]
+
+
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_get_builder_broadcast_targets_applies_filters():
+    base = datetime(2024, 1, 1, tzinfo=UTC)
+
+    owner_ids = [21000, 21001, 21002, 21003]
+    owners = []
+    usernames = ['alpha', None, 'gamma', 'delta']
+    for index, telegram_id in enumerate(owner_ids):
+        owner, _ = await crud.upsert_user({'id': telegram_id, 'username': usernames[index]})
+        owner.created_at = base + timedelta(days=index + 1)
+        await owner.asave(update_fields=['created_at'])
+        owners.append(owner)
+
+    for idx, owner in enumerate(owners):
+        await crud.create_bot(
+            telegram_id=900000 + idx,
+            bot_token=f'OWNER_{idx}',
+            username=f'owner_bot_{idx}',
+            name=f'Owner Bot {idx}',
+            owner=owner.telegram_id,
+            start_message='hi',
+            feedback_received_message='thanks',
+        )
+
+    filters = {
+        'joined_after': base,
+        'username_only': True,
+        'sample_stride': 2,
+    }
+
+    targets = await crud.get_builder_broadcast_targets(filters)
+
+    assert targets == [21000, 21003]
+
+
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_get_feedback_chat_targets_applies_filters():
+    owner, _ = await crud.upsert_user({'id': 31000})
+    bot = await crud.create_bot(
+        telegram_id=100030,
+        bot_token='FILTER',  # noqa: S106
+        username='filter_bot',
+        name='Filter Bot',
+        owner=owner.telegram_id,
+        start_message='hi',
+        feedback_received_message='thanks',
+    )
+
+    now = datetime.now(UTC)
+    data = [
+        (10, 'one', now - timedelta(days=10)),
+        (20, 'two', now - timedelta(days=2)),
+        (30, '', now - timedelta(days=1)),
+        (40, 'four', now - timedelta(days=1)),
+        (50, 'five', None),
+        (60, 'six', now - timedelta(days=1)),
+    ]
+    for user_id, username, last in data:
+        await FeedbackChat.objects.acreate(
+            bot=bot,
+            user_telegram_id=user_id,
+            username=username,
+            last_feedback_at=last,
+        )
+
+    filters = {
+        'joined_after': now - timedelta(days=5),
+        'active_after': now - timedelta(days=3),
+        'username_only': True,
+        'sample_stride': 2,
+    }
+
+    targets = await crud.get_feedback_chat_targets(bot, filters)
+
+    assert targets == [20, 60]
 
 
 @pytest.mark.django

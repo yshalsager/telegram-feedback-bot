@@ -1,5 +1,6 @@
 """Tests for the feedback bot broadcast command."""
 
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -51,7 +52,7 @@ async def test_owner_broadcasts_to_all(monkeypatch, feedback_app):
     await _process_broadcast(app, command)
 
     expected_reference = broadcast_module._resolve_bot_reference(bot_config)
-    targets_mock.assert_awaited_once_with(expected_reference)
+    targets_mock.assert_awaited_once_with(expected_reference, None)
     assert copy_mock.await_count == 2
     first_call = copy_mock.await_args_list[0]
     assert first_call.kwargs['chat_id'] == 777
@@ -64,7 +65,7 @@ async def test_owner_broadcasts_to_all(monkeypatch, feedback_app):
 
     assert sleep_mock.await_count == 2
 
-    send_mock.assert_awaited_once()
+    assert send_mock.await_count == 1
     assert send_mock.await_args.kwargs['text'] == 'Broadcast completed: sent to 2 chats.'
 
 
@@ -120,5 +121,49 @@ async def test_broadcast_reports_when_no_targets(monkeypatch, feedback_app):
 
     await _process_broadcast(app, command)
 
-    send_mock.assert_awaited_once()
+    assert send_mock.await_count == 1
     assert send_mock.await_args.kwargs['text'] == 'No subscribers to broadcast to.'
+
+
+async def test_broadcast_passes_filters(monkeypatch, feedback_app):
+    app, bot_config = feedback_app
+    bot_config.id = 54
+
+    monkeypatch.setattr(ExtBot, 'copy_message', AsyncMock())
+    monkeypatch.setattr('feedback_bot.telegram.utils.broadcast.sleep', AsyncMock())
+
+    targets_mock = AsyncMock(return_value=[])
+    monkeypatch.setattr(broadcast_module, 'get_feedback_chat_targets', targets_mock)
+
+    send_mock = AsyncMock()
+    monkeypatch.setattr(ExtBot, 'send_message', send_mock)
+
+    original = build_message(bot_config.owner_id, text='announcement', message_id=120)
+    command = build_message(
+        bot_config.owner_id,
+        text='/broadcast',
+        message_id=121,
+        reply_to=original,
+        entities=[MessageEntity(type='bot_command', offset=0, length=len('/broadcast'))],
+    )
+
+    command = build_message(
+        bot_config.owner_id,
+        text='/broadcast\nsample_every 5\nusername_only yes\nactive_within 3',
+        message_id=121,
+        reply_to=original,
+        entities=[MessageEntity(type='bot_command', offset=0, length=len('/broadcast'))],
+    )
+
+    await _process_broadcast(app, command)
+
+    expected_reference = broadcast_module._resolve_bot_reference(bot_config)
+    assert targets_mock.await_count == 1
+    first_args = targets_mock.await_args.args
+    assert first_args[0] == expected_reference
+    filters_arg = first_args[1]
+    assert filters_arg['sample_stride'] == 5
+    assert filters_arg['username_only'] is True
+    assert isinstance(filters_arg['active_after'], datetime)
+    expected = datetime.now(UTC) - timedelta(days=3)
+    assert abs(filters_arg['active_after'] - expected) < timedelta(seconds=5)

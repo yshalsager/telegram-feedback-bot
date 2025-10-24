@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-24T19:17:58.667Z\n"
+"PO-Revision-Date: 2025-10-24T20:11:24.766Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -542,7 +542,7 @@ msgstr "مكافحة الرسائل المزعجة"
 msgid "Anti-flood wait (seconds)"
 msgstr "مدة الانتظار (ثوانٍ) لمكافحة الرسائل المزعجة"
 
-#. placeholder {0}: Number.isFinite(antiflood_seconds) ? antiflood_seconds.toLocaleString() : '—'
+#. placeholder {0}: Number.isFinite( antiflood_seconds ) ? antiflood_seconds.toLocaleString() : '—'
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
 msgstr "عند التفعيل، يمكن للمستخدمين إرسال رسالة واحدة كل {0} ثانية ويتلقون تنبيهاً عند التقييد."

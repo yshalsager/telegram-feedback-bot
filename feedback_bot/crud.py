@@ -345,25 +345,73 @@ def _bot_owner_filter(bot_uuid: UUID | str, owner: int) -> Q:
     return filters
 
 
-async def get_builder_broadcast_targets() -> list[int]:
-    qs = (
-        Bot.objects.filter(owner__telegram_id__isnull=False)
+def _apply_stride(chat_ids: list[int], stride: int | None) -> list[int]:
+    if stride and stride > 1:
+        return chat_ids[::stride]
+    return chat_ids
+
+
+async def get_builder_broadcast_targets(filters: dict[str, Any] | None = None) -> list[int]:
+    qs = Bot.objects.filter(owner__telegram_id__isnull=False)
+
+    if filters:
+        joined_after = filters.get('joined_after')
+        if joined_after:
+            qs = qs.filter(owner__created_at__gte=joined_after)
+
+        joined_before = filters.get('joined_before')
+        if joined_before:
+            qs = qs.filter(owner__created_at__lte=joined_before)
+
+        if filters.get('username_only'):
+            qs = qs.filter(owner__username__isnull=False).exclude(owner__username='')
+
+    chat_ids = [
+        chat_id
+        async for chat_id in qs.order_by('owner__telegram_id')
         .values_list('owner__telegram_id', flat=True)
         .distinct()
-    )
-    return [chat_id async for chat_id in qs]
+    ]
+    stride = filters.get('sample_stride') if filters else None
+    return _apply_stride(chat_ids, stride)
 
 
-async def get_feedback_chat_targets(bot: Bot | int) -> list[int]:
+def _feedback_join_field() -> str:
+    return 'created_at' if hasattr(FeedbackChat, 'created_at') else 'last_feedback_at'
+
+
+async def get_feedback_chat_targets(
+    bot: Bot | int, filters: dict[str, Any] | None = None
+) -> list[int]:
     if isinstance(bot, Bot):
-        qs = bot.feedback_chats.values_list('user_telegram_id', flat=True).distinct()
+        qs = bot.feedback_chats.all()
     else:
-        qs = (
-            FeedbackChat.objects.filter(bot_id=bot)
-            .values_list('user_telegram_id', flat=True)
-            .distinct()
-        )
-    return [chat_id async for chat_id in qs]
+        qs = FeedbackChat.objects.filter(bot_id=bot)
+
+    if filters:
+        joined_after = filters.get('joined_after')
+        if joined_after:
+            qs = qs.filter(**{f'{_feedback_join_field()}__gte': joined_after})
+
+        joined_before = filters.get('joined_before')
+        if joined_before:
+            qs = qs.filter(**{f'{_feedback_join_field()}__lte': joined_before})
+
+        active_after = filters.get('active_after')
+        if active_after:
+            qs = qs.filter(last_feedback_at__gte=active_after)
+
+        if filters.get('username_only'):
+            qs = qs.filter(username__isnull=False).exclude(username='')
+
+    ids = [
+        chat_id
+        async for chat_id in qs.order_by('user_telegram_id')
+        .values_list('user_telegram_id', flat=True)
+        .distinct()
+    ]
+    stride = filters.get('sample_stride') if filters else None
+    return _apply_stride(ids, stride)
 
 
 async def record_broadcast_message(

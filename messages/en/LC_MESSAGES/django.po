@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-24 17:42+0000\n"
+"POT-Creation-Date: 2025-10-24 20:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,71 +17,71 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: feedback_bot/api/miniapp/bots.py:165
+#: feedback_bot/api/miniapp/bots.py:179
 msgid "invalid_bot_token"
 msgstr "Invalid bot token. Please check your token and try again."
 
-#: feedback_bot/api/miniapp/bots.py:167
+#: feedback_bot/api/miniapp/bots.py:181
 msgid "unable_to_validate_bot_token"
 msgstr ""
 "Unable to validate bot token. Please check your token format and try again."
 
-#: feedback_bot/api/miniapp/bots.py:189
+#: feedback_bot/api/miniapp/bots.py:203
 msgid "cannot_add_builder_bot"
 msgstr "You cannot add the builder bot as a bot"
 
-#: feedback_bot/api/miniapp/bots.py:193
+#: feedback_bot/api/miniapp/bots.py:207
 msgid "bot_already_exists"
 msgstr "Bot already exists"
 
-#: feedback_bot/api/miniapp/bots.py:246 feedback_bot/api/miniapp/bots.py:281
-#: feedback_bot/api/miniapp/bots.py:373 feedback_bot/api/miniapp/bots.py:408
-#: feedback_bot/api/miniapp/bots.py:425 feedback_bot/api/miniapp/bots.py:455
-#: feedback_bot/api/miniapp/bots.py:471 feedback_bot/api/miniapp/bots.py:489
-#: feedback_bot/api/miniapp/bots.py:507 feedback_bot/api/miniapp/bots.py:525
-#: feedback_bot/api/miniapp/bots.py:562
+#: feedback_bot/api/miniapp/bots.py:260 feedback_bot/api/miniapp/bots.py:295
+#: feedback_bot/api/miniapp/bots.py:387 feedback_bot/api/miniapp/bots.py:422
+#: feedback_bot/api/miniapp/bots.py:439 feedback_bot/api/miniapp/bots.py:469
+#: feedback_bot/api/miniapp/bots.py:485 feedback_bot/api/miniapp/bots.py:503
+#: feedback_bot/api/miniapp/bots.py:521 feedback_bot/api/miniapp/bots.py:539
+#: feedback_bot/api/miniapp/bots.py:576
 msgid "bot_not_found"
 msgstr "Bot not found"
 
-#: feedback_bot/api/miniapp/bots.py:274
+#: feedback_bot/api/miniapp/bots.py:288
 msgid "cannot_use_builder_bot_token"
 msgstr "You cannot use the builder bot token."
 
-#: feedback_bot/api/miniapp/bots.py:300
+#: feedback_bot/api/miniapp/bots.py:314
 msgid "token_does_not_match_bot"
 msgstr "Token belongs to a different bot."
 
-#: feedback_bot/api/miniapp/bots.py:322
+#: feedback_bot/api/miniapp/bots.py:336
 msgid "Admin approval required before enabling this bot"
 msgstr "Admin approval required before enabling this bot"
 
-#: feedback_bot/api/miniapp/bots.py:417
+#: feedback_bot/api/miniapp/bots.py:431
 msgid "no_fields_to_update"
 msgstr "No fields to update"
 
-#: feedback_bot/api/miniapp/bots.py:473
+#: feedback_bot/api/miniapp/bots.py:487
 msgid "bot_deleted"
 msgstr "Bot deleted"
 
-#: feedback_bot/api/miniapp/bots.py:535
+#: feedback_bot/api/miniapp/bots.py:549
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:70
 #, python-format
 msgid "User %(user_id)d banned."
 msgstr "User %(user_id)d banned."
 
-#: feedback_bot/api/miniapp/bots.py:537
+#: feedback_bot/api/miniapp/bots.py:551
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:70
 #, python-format
 msgid "User %(user_id)d was already banned."
 msgstr "User %(user_id)d was already banned."
 
-#: feedback_bot/api/miniapp/bots.py:566
+#: feedback_bot/api/miniapp/bots.py:580
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:86
 #, python-format
 msgid "User %(user_id)d unbanned."
 msgstr "User %(user_id)d unbanned."
 
-#: feedback_bot/api/miniapp/bots.py:568
+#: feedback_bot/api/miniapp/bots.py:582
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:86
 #, python-format
 msgid "User %(user_id)d was not banned."
@@ -124,18 +124,18 @@ msgstr "Cannot delete a core builder admin."
 msgid "user_deleted_successfully"
 msgstr "User deleted successfully."
 
-#: feedback_bot/telegram/builder/modules/broadcast.py:27
+#: feedback_bot/telegram/builder/modules/broadcast.py:36
 msgid "No recipients to broadcast to."
 msgstr "No recipients to broadcast to."
 
-#: feedback_bot/telegram/builder/modules/broadcast.py:38
-#: feedback_bot/telegram/feedback_bot/modules/broadcast.py:59
+#: feedback_bot/telegram/builder/modules/broadcast.py:48
+#: feedback_bot/telegram/feedback_bot/modules/broadcast.py:68
 #, python-format
 msgid "Broadcast completed: sent to %(sent)d chats."
 msgstr "Broadcast completed: sent to %(sent)d chats."
 
-#: feedback_bot/telegram/builder/modules/broadcast.py:40
-#: feedback_bot/telegram/feedback_bot/modules/broadcast.py:61
+#: feedback_bot/telegram/builder/modules/broadcast.py:50
+#: feedback_bot/telegram/feedback_bot/modules/broadcast.py:70
 #, python-format
 msgid " Failed for %(failed)d chats."
 msgstr " Failed for %(failed)d chats."
@@ -174,7 +174,7 @@ msgstr ""
 "Banned users:\n"
 "%(entries)s"
 
-#: feedback_bot/telegram/feedback_bot/modules/broadcast.py:47
+#: feedback_bot/telegram/feedback_bot/modules/broadcast.py:56
 msgid "No subscribers to broadcast to."
 msgstr "No subscribers to broadcast to."
 
@@ -197,26 +197,6 @@ msgstr "Nothing to clear."
 msgid "Could not clear messages."
 msgstr "Could not clear messages."
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:190
-msgid "This bot does not accept photos."
-msgstr "This bot does not accept photos."
-
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:191
-msgid "This bot does not accept videos."
-msgstr "This bot does not accept videos."
-
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:192
-msgid "This bot does not accept voice messages."
-msgstr "This bot does not accept voice messages."
-
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:193
-msgid "This bot does not accept documents."
-msgstr "This bot does not accept documents."
-
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:194
-msgid "This bot does not accept stickers."
-msgstr "This bot does not accept stickers."
-
 #: feedback_bot/telegram/feedback_bot/modules/groups.py:33
 #, python-format
 msgid "%(bot_name)s will forward feedback to %(chat_name)s."
@@ -227,24 +207,45 @@ msgstr "%(bot_name)s will forward feedback to %(chat_name)s."
 msgid "%(bot_name)s has been unlinked from %(chat_title)s."
 msgstr "%(bot_name)s has been unlinked from %(chat_title)s."
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:268
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:192
+msgid "This bot does not accept photos."
+msgstr "This bot does not accept photos."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:193
+msgid "This bot does not accept videos."
+msgstr "This bot does not accept videos."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:194
+msgid "This bot does not accept voice messages."
+msgstr "This bot does not accept voice messages."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:195
+msgid "This bot does not accept documents."
+msgstr "This bot does not accept documents."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:196
+msgid "This bot does not accept stickers."
+msgstr "This bot does not accept stickers."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:273
+#, python-brace-format
 msgid "Too many messages. Please wait {seconds} seconds before sending again."
 msgstr "Too many messages. Please wait {seconds} seconds before sending again."
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:249
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:295
 msgid "Thanks for your feedback!"
 msgstr "Thanks for your feedback!"
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:294
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:345
 #, python-brace-format
 msgid "User updated their message. New copy: {link}"
 msgstr "User updated their message. New copy: {link}"
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:296
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:347
 msgid "User updated their message."
 msgstr "User updated their message."
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:347
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:398
 msgid "Sent message updated"
 msgstr "Sent message updated"
 
@@ -268,6 +269,22 @@ msgstr ""
 "✍️ <b>Messages</b>\n"
 "• %(incoming)d inbound messages\n"
 "• %(outgoing)d replies sent\n"
+
+#: feedback_bot/telegram/utils/broadcast.py:120
+msgid ""
+"Reply with filters (one per line) or \"done\" to send to everyone:\n"
+"- joined_after YYYY-MM-DD\n"
+"- joined_before YYYY-MM-DD\n"
+"- active_within DAYS\n"
+"- username_only [yes|no]\n"
+"- sample_every N"
+msgstr ""
+"Reply with filters (one per line) or \"done\" to send to everyone:\n"
+"- joined_after YYYY-MM-DD\n"
+"- joined_before YYYY-MM-DD\n"
+"- active_within DAYS\n"
+"- username_only [yes|no]\n"
+"- sample_every N"
 
 #: feedback_bot/telegram/utils/restart.py:13
 msgid "restarted_successfully"
