@@ -31,6 +31,11 @@ class User(TimestampedModel):
 
 
 class Bot(TimestampedModel):
+    class CommunicationMode(models.TextChoices):
+        STANDARD = 'standard', 'standard'
+        PRIVATE = 'private', 'private'
+        ANONYMOUS = 'anonymous', 'anonymous'
+
     """
     The central model representing each feedback bot created by a User.
     This merges concepts from telegram-feedback-bot's Bot model and olgram's Bot model.
@@ -77,6 +82,11 @@ class Bot(TimestampedModel):
     allow_sticker_messages = models.BooleanField(default=True)
     antiflood_enabled = models.BooleanField(default=False)
     antiflood_seconds = models.PositiveIntegerField(default=60)
+    communication_mode = models.CharField(
+        max_length=16,
+        choices=CommunicationMode.choices,
+        default=CommunicationMode.STANDARD,
+    )
 
     def __str__(self) -> str:
         return f'@{self.username}'

@@ -25,6 +25,7 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 - Rotate bot tokens securely with enforced admin approval before re-enabling (when configured).
 - Inspect live stats, review audit history of broadcasts, and manage banned users per bot.
 - Decide which media types (photos, videos, voice, files, stickers) each bot accepts before forwarding.
+- Choose a communication mode per bot (standard, private, or anonymous) to control how user details appear to moderators and in forwarded threads.
 - Toggle and tune anti-flood protection to cap incoming messages at a configurable interval and warn users when throttled.
 - Manage builder access: whitelist, language, admin flags, and removal.
 

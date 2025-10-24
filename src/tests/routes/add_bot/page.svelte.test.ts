@@ -2,7 +2,6 @@ import {render, screen} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import AddBotPage from '~/routes/add_bot/+page.svelte'
-import {createI18nMockModule, getI18nMock, type I18nMock} from '~/tests/utils/i18n-mock'
 
 const gotoMock = vi.hoisted(() => vi.fn())
 const onMock = vi.hoisted(() => vi.fn(() => vi.fn()))
@@ -29,17 +28,39 @@ vi.mock('$lib/api.js', () => ({
     add_bot: (...args: unknown[]) => addBotMock(...args)
 }))
 
-vi.mock('~/lib/i18n', () => createI18nMockModule())
-
-let i18nMock: I18nMock
+vi.mock('~/lib/i18n', () => {
+    const localeStore = {
+        subscribe: (fn: (value: string) => void) => {
+            fn('en')
+            return () => {}
+        },
+        set: vi.fn()
+    }
+    const availableLocales = {
+        subscribe: (fn: (value: Array<{locale: string; name: string}>) => void) => {
+            fn([
+                {locale: 'en', name: 'English'},
+                {locale: 'ar', name: 'Arabic'}
+            ])
+            return () => {}
+        }
+    }
+    return {
+        locale: localeStore,
+        locales: ['en', 'ar'],
+        availableLocales,
+        formatNumber: (value: number) => value.toString(),
+        formatCharacterCount: (value: number, limit = 4096) => `${value}/${limit}`,
+        applyLocale: vi.fn(),
+        initLocale: vi.fn(async () => 'en')
+    }
+})
 
 describe('add_bot +page.svelte', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         addBotMock.mockReset()
         addBotMock.mockResolvedValue({status: 'success', bot: {username: 'new_bot'}})
-        i18nMock = getI18nMock()
-        i18nMock.reset()
     })
 
     it('validates bot token format and keeps save disabled when invalid', async () => {
@@ -71,12 +92,35 @@ describe('add_bot +page.svelte', () => {
 
         await expect(addBotMock).toHaveBeenCalledWith(
             validToken,
-            true,
             expect.stringContaining('Welcome'),
-            expect.stringContaining('Thank you')
+            expect.stringContaining('Thank you'),
+            'standard'
         )
         expect(showNotificationMock).toHaveBeenCalledWith('', expect.stringContaining('@new_bot'), [
             {id: 'bot_successfully_added_close', type: 'close'}
         ])
+    })
+
+    it('respects selected communication mode', async () => {
+        const user = userEvent.setup()
+        render(AddBotPage)
+
+        const validToken = `12345678:${'A'.repeat(35)}`
+        const tokenInput = screen.getByLabelText('Bot token') as HTMLInputElement
+        const anonymousOption = screen.getByLabelText(/Anonymous/, {
+            selector: 'input[type="radio"]'
+        })
+        const saveButton = screen.getByRole('button', {name: 'Save'})
+
+        await user.type(tokenInput, validToken)
+        await user.click(anonymousOption as HTMLInputElement)
+        await user.click(saveButton)
+
+        await expect(addBotMock).toHaveBeenCalledWith(
+            validToken,
+            expect.any(String),
+            expect.any(String),
+            'anonymous'
+        )
     })
 })

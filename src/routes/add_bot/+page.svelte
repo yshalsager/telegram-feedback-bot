@@ -9,7 +9,7 @@ import {showNotification} from '~/lib/telegram.js'
 import {add_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
 import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator/index.js'
+import {Separator} from '$lib/components/ui/separator'
 import {Textarea} from '$lib/components/ui/textarea'
 import {formatCharacterCount} from '$lib/i18n'
 
@@ -26,6 +26,7 @@ let startMessage = $state(/* @wc-include */ 'Welcome to [name] bot. Please send 
 let feedbackReceivedMessage = $state(
     /* @wc-include */ 'Thank you for your feedback. We will get back to you soon.'
 )
+let communication_mode = $state('standard')
 let disableSubmit = $state(false)
 // Bot token regex validation
 const botTokenRegex = /^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$/
@@ -39,6 +40,28 @@ let isFormValid = $derived(
         feedbackReceivedMessage.trim() !== ''
 )
 
+const communication_mode_options: {
+    value: 'standard' | 'private' | 'anonymous'
+    title: string
+    description: string
+}[] = [
+    {
+        value: 'standard',
+        title: 'Standard',
+        description: 'Forward with usernames and profile links.'
+    },
+    {
+        value: 'private',
+        title: 'Private',
+        description: 'Shows public name only; profile links removed.'
+    },
+    {
+        value: 'anonymous',
+        title: 'Anonymous',
+        description: 'Replaces user identity with a request number.'
+    }
+]
+
 // Format character count with locale-specific number formatting
 const onBotSuccessfullyAdded = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
     if (payload.button_id === 'bot_successfully_added_close') goto(resolve('/'))
@@ -50,7 +73,8 @@ async function handleSaveBot() {
     const response = (await add_bot(
         botToken,
         startMessage,
-        feedbackReceivedMessage
+        feedbackReceivedMessage,
+        communication_mode
     )) as AddBotResponse
     if (response?.status === 'success') {
         showNotification(
@@ -108,7 +132,7 @@ async function handleSaveBot() {
                 id="start-message"
                 class="min-h-[80px] w-full resize-none"
                 aria-required="true"
-                maxlength="4096"
+                maxlength={4096}
                 required
                 bind:value={startMessage}
             />
@@ -128,13 +152,41 @@ async function handleSaveBot() {
                 id="feedback-message"
                 class="min-h-[80px] w-full resize-none"
                 aria-required="true"
-                maxlength="4096"
+                maxlength={4096}
                 required
                 bind:value={feedbackReceivedMessage}
             />
             <p class="text-end text-xs text-muted-foreground">
                 {formatCharacterCount(feedbackReceivedMessage.length)}
             </p>
+        </section>
+
+        <section class="space-y-2">
+            <span class="block text-start text-sm font-semibold text-foreground">
+                Communication mode
+            </span>
+            <div class="space-y-2">
+                {#each communication_mode_options as option (option.value)}
+                    <label
+                        class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    >
+                        <input
+                            name="communication-mode"
+                            class="mt-1 accent-[var(--tg-theme-button-color)]"
+                            checked={communication_mode === option.value}
+                            onchange={() => (communication_mode = option.value)}
+                            type="radio"
+                            value={option.value}
+                        />
+                        <span class="space-y-1">
+                            <span class="block font-medium text-foreground">{option.title}</span>
+                            <span class="block text-xs text-muted-foreground"
+                                >{option.description}</span
+                            >
+                        </span>
+                    </label>
+                {/each}
+            </div>
         </section>
 
         <div class="pt-4">

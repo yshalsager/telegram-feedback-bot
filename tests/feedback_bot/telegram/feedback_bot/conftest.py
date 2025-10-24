@@ -59,8 +59,12 @@ async def feedback_app(monkeypatch, db) -> tuple[Application, Bot]:
             updates['feedback_received_message'] = 'Thanks'
         if bot_config.start_message != 'Hi':
             updates['start_message'] = 'Hi'
+        if bot_config.communication_mode != Bot.CommunicationMode.STANDARD:
+            updates['communication_mode'] = Bot.CommunicationMode.STANDARD
         if updates:
             await Bot.objects.filter(pk=bot_config.pk).aupdate(**updates)
+            await bot_config.arefresh_from_db()
+        else:
             await bot_config.arefresh_from_db()
 
     await BannedUser.objects.filter(bot=bot_config).adelete()

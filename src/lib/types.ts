@@ -15,6 +15,7 @@ export type Bot = {
     allow_sticker_messages: boolean
     antiflood_enabled: boolean
     antiflood_seconds: number
+    communication_mode: 'standard' | 'private' | 'anonymous'
     forward_chat_id: number | null
     created_at: string
     updated_at: string

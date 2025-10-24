@@ -23,6 +23,7 @@ from feedback_bot.crud import (
     bump_outgoing_messages,
     clear_feedback_chat_mappings,
     ensure_feedback_chat,
+    get_feedback_chat_by_topic,
     get_owner_message_mapping,
     get_user_message_mapping,
     is_user_banned,
@@ -45,24 +46,19 @@ async def _create_topic(
     if not bot_config.forward_chat_id:
         return None
 
-    name = (
-        message.chat.full_name
-        or message.chat.title
-        or message.chat.username
-        or f'{message.from_user.first_name}'
-    )
-    topic = await context.bot.create_forum_topic(chat_id=bot_config.forward_chat_id, name=name[:64])
-
-    intro_lines = [escape(name)]
-    if message.from_user.username:
-        intro_lines.append(f'@{escape(message.from_user.username)}')
-    intro_lines.append(f'<a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>')
-    await context.bot.send_message(
+    title = _topic_title(bot_config, message, feedback_chat)[:64] or f'#{feedback_chat.id}'
+    topic = await context.bot.create_forum_topic(
         chat_id=bot_config.forward_chat_id,
-        message_thread_id=topic.message_thread_id,
-        text='\n'.join(intro_lines),
-        parse_mode=ParseMode.HTML,
-        disable_web_page_preview=True,
+        name=title,
+    )
+
+    await _send_intro_message(
+        context,
+        bot_config,
+        bot_config.forward_chat_id,
+        message,
+        feedback_chat,
+        thread_id=topic.message_thread_id,
     )
 
     await set_feedback_chat_topic(feedback_chat, topic.message_thread_id)
@@ -84,6 +80,20 @@ async def _ensure_topic(
     return await _create_topic(context, bot_config, message, feedback_chat)
 
 
+async def _deliver_incoming_message(
+    message: Message,
+    destination_chat_id: int,
+    topic_id: int | None,
+    use_copy: bool,
+):
+    kwargs: dict[str, object] = {'chat_id': destination_chat_id}
+    if topic_id is not None:
+        kwargs['message_thread_id'] = topic_id
+    if use_copy:
+        return await message.copy(**kwargs)
+    return await message.forward(**kwargs)
+
+
 async def _forward_with_topic_fallback(
     context: ContextTypes.DEFAULT_TYPE,
     bot_config: Bot,
@@ -92,10 +102,10 @@ async def _forward_with_topic_fallback(
     destination_chat_id: int,
     topic_id: int | None,
 ) -> tuple[Message, int | None]:
+    use_copy = _should_copy_incoming(bot_config)
     try:
-        forwarded = await message.forward(
-            chat_id=destination_chat_id,
-            message_thread_id=topic_id,
+        forwarded = await _deliver_incoming_message(
+            message, destination_chat_id, topic_id, use_copy
         )
         return forwarded, topic_id
     except BadRequest as exc:  # pragma: no cover - topic recreation path
@@ -104,9 +114,8 @@ async def _forward_with_topic_fallback(
         await clear_feedback_chat_mappings(bot_config, feedback_chat)
         await set_feedback_chat_topic(feedback_chat, None)
         new_topic = await _create_topic(context, bot_config, message, feedback_chat)
-        forwarded = await message.forward(
-            chat_id=destination_chat_id,
-            message_thread_id=new_topic,
+        forwarded = await _deliver_incoming_message(
+            message, destination_chat_id, new_topic, use_copy
         )
         return forwarded, new_topic
 
@@ -118,11 +127,18 @@ def _is_topic_missing(error: BadRequest) -> bool:
 
 def _should_process_reply(bot_config: Bot, message: Message, bot_user_id: int) -> bool:
     is_private_chat = message.chat.type == ChatType.PRIVATE
-    if is_private_chat and message.from_user.id != bot_config.owner_id:
+    if is_private_chat and message.from_user and message.from_user.id != bot_config.owner_id:
         return False
     replied = message.reply_to_message
     if not replied:
-        return False
+        mode = _communication_mode(bot_config)
+        if mode not in {Bot.CommunicationMode.PRIVATE, Bot.CommunicationMode.ANONYMOUS}:
+            return False
+        return bool(
+            bot_config.forward_chat_id
+            and message.chat_id == bot_config.forward_chat_id
+            and message.message_thread_id is not None
+        )
     if (
         replied.forward_origin
         or getattr(replied, 'forward_from', None)
@@ -204,28 +220,89 @@ def _media_block_message(bot_config: Bot, message: Message) -> str | None:
     return None
 
 
-async def _send_intro_message(
-    context: ContextTypes.DEFAULT_TYPE, destination_chat_id: int, message: Message
-) -> None:
-    intro_lines = [
-        escape(
-            message.chat.full_name
-            or message.chat.title
-            or message.chat.username
-            or message.from_user.full_name
-            or message.from_user.username
-            or str(message.from_user.id)
-        )
-    ]
-    if message.from_user.username:
-        intro_lines.append(f'@{escape(message.from_user.username)}')
-    intro_lines.append(f'<a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>')
+def _communication_mode(bot_config: Bot) -> str:
+    return getattr(bot_config, 'communication_mode', Bot.CommunicationMode.STANDARD)
 
-    await context.bot.send_message(
-        chat_id=destination_chat_id,
-        text='\n'.join(intro_lines),
-        parse_mode=ParseMode.HTML,
+
+def _standard_display_name(message: Message) -> str:
+    return (
+        message.chat.full_name
+        or message.chat.title
+        or message.chat.username
+        or message.from_user.full_name
+        or message.from_user.username
+        or (message.from_user.first_name if message.from_user else None)
+        or str(message.from_user.id if message.from_user else '')
+        or 'User'
     )
+
+
+def _private_display_name(message: Message) -> str:
+    return (
+        (message.from_user.full_name if message.from_user else None)
+        or (message.from_user.first_name if message.from_user else None)
+        or message.chat.full_name
+        or 'User'
+    )
+
+
+def _topic_title(bot_config: Bot, message: Message, feedback_chat: FeedbackChat) -> str:
+    mode = _communication_mode(bot_config)
+    if mode == Bot.CommunicationMode.ANONYMOUS:
+        return f'#{feedback_chat.id}'
+    if mode == Bot.CommunicationMode.PRIVATE:
+        return _private_display_name(message)
+    return _standard_display_name(message)
+
+
+def _intro_lines(bot_config: Bot, message: Message, feedback_chat: FeedbackChat) -> list[str]:
+    mode = _communication_mode(bot_config)
+    if mode == Bot.CommunicationMode.ANONYMOUS:
+        return [escape(f'#{feedback_chat.id}')]
+
+    name = _topic_title(bot_config, message, feedback_chat)
+    lines = [escape(name)]
+
+    if mode == Bot.CommunicationMode.PRIVATE:
+        return lines
+
+    if message.from_user and message.from_user.username:
+        lines.append(f'@{escape(message.from_user.username)}')
+    if message.from_user:
+        lines.append(f'<a href="tg://user?id={message.from_user.id}">{message.from_user.id}</a>')
+    return lines
+
+
+def _should_copy_incoming(bot_config: Bot) -> bool:
+    return _communication_mode(bot_config) in {
+        Bot.CommunicationMode.PRIVATE,
+        Bot.CommunicationMode.ANONYMOUS,
+    }
+
+
+async def _send_intro_message(
+    context: ContextTypes.DEFAULT_TYPE,
+    bot_config: Bot,
+    destination_chat_id: int,
+    message: Message,
+    feedback_chat: FeedbackChat,
+    *,
+    thread_id: int | None = None,
+) -> None:
+    lines = _intro_lines(bot_config, message, feedback_chat)
+    if not lines:
+        return
+
+    kwargs: dict[str, object] = {
+        'chat_id': destination_chat_id,
+        'text': '\n'.join(lines),
+        'parse_mode': ParseMode.HTML,
+        'disable_web_page_preview': True,
+    }
+    if thread_id is not None:
+        kwargs['message_thread_id'] = thread_id
+
+    await context.bot.send_message(**kwargs)
 
 
 async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -254,7 +331,13 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         bot_config, message.from_user.id, message.from_user.username
     )
     if created and not bot_config.forward_chat_id:
-        await _send_intro_message(context, destination_chat_id, message)
+        await _send_intro_message(
+            context,
+            bot_config,
+            destination_chat_id,
+            message,
+            feedback_chat,
+        )
 
     now = message.date or datetime.now(UTC)
     now = now.replace(tzinfo=UTC) if now.tzinfo is None else now.astimezone(UTC)
@@ -340,9 +423,10 @@ async def edit_forwarded_feedback(update: Update, context: ContextTypes.DEFAULT_
     if topic_id:
         message_kwargs['message_thread_id'] = topic_id
 
-    if forwarded.link:
+    link = getattr(forwarded, 'link', None)
+    if link:
         message_kwargs['disable_web_page_preview'] = True
-        text = _('User updated their message. New copy: {link}').format(link=forwarded.link)
+        text = _('User updated their message. New copy: {link}').format(link=link)
     else:
         text = _('User updated their message.')
 
@@ -351,7 +435,7 @@ async def edit_forwarded_feedback(update: Update, context: ContextTypes.DEFAULT_
 
 async def reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
-    if not message or not message.from_user or not message.reply_to_message:
+    if not message or not message.from_user:
         return
 
     bot_config: Bot = context.bot_data['bot_config']
@@ -361,12 +445,29 @@ async def reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if not _should_process_reply(bot_config, message, context.bot.id):
         return
 
-    mapping = await get_owner_message_mapping(bot_config, message.reply_to_message.message_id)
-    if mapping is None:
-        return
+    mapping: MessageMapping | None = None
+    feedback_chat: FeedbackChat | None = None
+    reply_to: int | None = None
 
-    target_chat_id = mapping.user_chat.user_telegram_id
-    reply_to = mapping.user_message_id if mapping.user_message_id else None
+    if message.reply_to_message:
+        mapping = await get_owner_message_mapping(bot_config, message.reply_to_message.message_id)
+
+    if mapping:
+        feedback_chat = mapping.user_chat
+        reply_to = mapping.user_message_id if mapping.user_message_id else None
+    else:
+        mode = _communication_mode(bot_config)
+        if (
+            mode in {Bot.CommunicationMode.PRIVATE, Bot.CommunicationMode.ANONYMOUS}
+            and bot_config.forward_chat_id
+            and message.chat_id == bot_config.forward_chat_id
+            and message.message_thread_id is not None
+        ):
+            feedback_chat = await get_feedback_chat_by_topic(bot_config, message.message_thread_id)
+        if feedback_chat is None:
+            return
+
+    target_chat_id = feedback_chat.user_telegram_id
 
     result = await message.copy(
         chat_id=target_chat_id,
@@ -374,9 +475,7 @@ async def reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         allow_sending_without_reply=True,
     )
 
-    await save_outgoing_mapping(
-        bot_config, mapping.user_chat, result.message_id, message.message_id
-    )
+    await save_outgoing_mapping(bot_config, feedback_chat, result.message_id, message.message_id)
     await bump_outgoing_messages(bot_config)
 
     await message.set_reaction('👍')

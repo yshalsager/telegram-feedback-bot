@@ -34,6 +34,10 @@ export function mapBotResponse(data: Record<string, unknown>, fallbackUuid: stri
             typeof data.antiflood_seconds === 'number'
                 ? Math.max(data.antiflood_seconds, 1)
                 : Math.max(Number(data.antiflood_seconds ?? 60) || 60, 1),
+        communication_mode:
+            typeof data.communication_mode === 'string'
+                ? (data.communication_mode as Bot['communication_mode'])
+                : 'standard',
         forward_chat_id:
             typeof data.forward_chat_id === 'number'
                 ? data.forward_chat_id

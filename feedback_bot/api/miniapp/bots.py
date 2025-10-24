@@ -1,4 +1,4 @@
-from typing import Any, NamedTuple
+from typing import Any, Literal, NamedTuple
 from uuid import UUID
 
 from django.conf import settings
@@ -50,6 +50,10 @@ class AddBotIn(Schema):
         description='The feedback received message for the bot',
         max_length=MessageLimit.MAX_TEXT_LENGTH,
     )
+    communication_mode: Literal[*BotModel.CommunicationMode.values] = Field(
+        default=BotModel.CommunicationMode.STANDARD,
+        description='Mode controlling what user information is shown to moderators',
+    )
 
 
 class UpdateBotIn(Schema):
@@ -72,6 +76,7 @@ class UpdateBotIn(Schema):
     allow_sticker_messages: bool | None = Field(default=None)
     antiflood_enabled: bool | None = Field(default=None)
     antiflood_seconds: int | None = Field(default=None, ge=1, le=3600)
+    communication_mode: Literal[*BotModel.CommunicationMode.values] | None = Field(default=None)
 
 
 class StatusMessage(Schema):
@@ -147,6 +152,7 @@ class BotOut(Schema):
     allow_sticker_messages: bool
     antiflood_enabled: bool
     antiflood_seconds: int
+    communication_mode: Literal[*BotModel.CommunicationMode.values]
     created_at: str = Field(..., alias='created_at.isoformat')
     updated_at: str = Field(..., alias='updated_at.isoformat')
 
@@ -206,6 +212,8 @@ async def add_bot(  # noqa: PLR0911
     if bot_already_exists:
         return 400, {'status': 'error', 'message': str(_('bot_already_exists'))}
 
+    communication_mode = payload.communication_mode or BotModel.CommunicationMode.STANDARD
+
     bot = await create_bot(
         bot_info['telegram_id'],
         payload.bot_token,
@@ -214,6 +222,7 @@ async def add_bot(  # noqa: PLR0911
         user_data['id'],
         payload.start_message,
         payload.feedback_received_message,
+        communication_mode=communication_mode,
     )
 
     if not bot:
@@ -420,6 +429,12 @@ async def update_bot(  # noqa: PLR0911
     existing_bot = await get_bot(bot_uuid, owner_id)
     if not existing_bot:
         return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    if 'communication_mode' in update_data:
+        mode_value = update_data['communication_mode']
+        if not mode_value:
+            update_data.pop('communication_mode', None)
+        update_data['communication_mode'] = mode_value
 
     token_update, token_error = await _prepare_token_update(
         bot_uuid, owner_id, existing_bot, update_data

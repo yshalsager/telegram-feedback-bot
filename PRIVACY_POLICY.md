@@ -20,6 +20,7 @@ Telegram Feedback Bots Builder is an open-source project you self-host to provis
 - Encrypted bot token (stored with Fernet encryption)
 - Generated bot UUID used for webhook URLs
 - Configurable start/feedback message templates
+- Communication mode settings (standard, private, or anonymous) that determine what user details are shown to moderators when forwarding
 - Anti-flood settings (toggle state and cooldown duration in seconds)
 - Media type flags for accepting/rejecting photos, videos, voice messages, documents, and stickers
 - Forwarding destination (owner chat or linked group)

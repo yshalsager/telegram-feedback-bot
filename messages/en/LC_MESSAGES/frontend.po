@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-24T20:11:24.765Z\n"
+"PO-Revision-Date: 2025-10-24T21:48:25.908Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -546,3 +546,44 @@ msgstr "Anti-flood wait (seconds)"
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
 msgstr "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Communication mode"
+msgstr "Communication mode"
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Standard"
+msgstr "Standard"
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Forward with usernames and profile links."
+msgstr "Forward with usernames and profile links."
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Private"
+msgstr "Private"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Show only the public name to moderators."
+msgstr "Show only the public name to moderators."
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Anonymous"
+msgstr "Anonymous"
+
+#: src/routes/add_bot/+page.svelte
+msgid "Shows public name only; profile links removed."
+msgstr "Shows public name only; profile links removed."
+
+#: src/routes/add_bot/+page.svelte
+msgid "Replaces user identity with a request number."
+msgstr "Replaces user identity with a request number."
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Replace identity with a request number."
+msgstr "Replace identity with a request number."

@@ -11,7 +11,7 @@ import {showNotification} from '~/lib/telegram.js'
 import {delete_bot, unlink_bot_forward_chat, update_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
 import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator/index.js'
+import {Separator} from '$lib/components/ui/separator'
 import {Textarea} from '$lib/components/ui/textarea'
 import {formatCharacterCount} from '$lib/i18n'
 import {mapBotResponse} from '$lib/mappers/bot'
@@ -36,6 +36,7 @@ let allow_video_messages = $state(true)
 let allow_voice_messages = $state(true)
 let allow_document_messages = $state(true)
 let allow_sticker_messages = $state(true)
+let communication_mode = $state('standard')
 let antiflood_enabled = $state(false)
 let antiflood_seconds = $state(60)
 let pendingToken = $state('')
@@ -51,6 +52,7 @@ const hasChanges = $derived(
             (startMessage !== bot.start_message ||
                 feedbackReceivedMessage !== bot.feedback_received_message ||
                 enabled !== bot.enabled ||
+                communication_mode !== bot.communication_mode ||
                 allow_photo_messages !== bot.allow_photo_messages ||
                 allow_video_messages !== bot.allow_video_messages ||
                 allow_voice_messages !== bot.allow_voice_messages ||
@@ -61,6 +63,28 @@ const hasChanges = $derived(
                 trimmedPendingToken !== '')
     )
 )
+
+const communication_mode_options: {
+    value: Bot['communication_mode']
+    title: string
+    description: string
+}[] = [
+    {
+        value: 'standard',
+        title: 'Standard',
+        description: 'Forward with usernames and profile links.'
+    },
+    {
+        value: 'private',
+        title: 'Private',
+        description: 'Show only the public name to moderators.'
+    },
+    {
+        value: 'anonymous',
+        title: 'Anonymous',
+        description: 'Replace identity with a request number.'
+    }
+]
 
 let disableSubmit = $state(false)
 let disableDelete = $state(false)
@@ -99,6 +123,7 @@ if (data) {
         allow_voice_messages = data.bot.allow_voice_messages
         allow_document_messages = data.bot.allow_document_messages
         allow_sticker_messages = data.bot.allow_sticker_messages
+        communication_mode = data.bot.communication_mode
         antiflood_enabled = data.bot.antiflood_enabled
         antiflood_seconds = data.bot.antiflood_seconds ?? 60
         pendingToken = ''
@@ -112,6 +137,7 @@ if (data) {
         allow_voice_messages = true
         allow_document_messages = true
         allow_sticker_messages = true
+        communication_mode = 'standard'
         antiflood_enabled = false
         antiflood_seconds = 60
         pendingToken = ''
@@ -136,6 +162,7 @@ async function handleUpdateBot() {
         allow_voice_messages,
         allow_document_messages,
         allow_sticker_messages,
+        communication_mode,
         antiflood_enabled,
         antiflood_seconds: normalizedCooldown,
         ...(trimmedPendingToken !== '' ? {bot_token: trimmedPendingToken} : {})
@@ -151,6 +178,7 @@ async function handleUpdateBot() {
         allow_voice_messages = updated.allow_voice_messages
         allow_document_messages = updated.allow_document_messages
         allow_sticker_messages = updated.allow_sticker_messages
+        communication_mode = updated.communication_mode
         antiflood_enabled = updated.antiflood_enabled
         antiflood_seconds = updated.antiflood_seconds
         pendingToken = ''
@@ -299,7 +327,7 @@ async function unlink_group() {
                 <Textarea
                     id="start-message"
                     class="min-h-[80px] w-full resize-none"
-                    maxlength="4096"
+                    maxlength={4096}
                     required
                     bind:value={startMessage}
                 />
@@ -318,7 +346,7 @@ async function unlink_group() {
                 <Textarea
                     id="feedback-message"
                     class="min-h-[80px] w-full resize-none"
-                    maxlength="4096"
+                    maxlength={4096}
                     required
                     bind:value={feedbackReceivedMessage}
                 />
@@ -347,6 +375,35 @@ async function unlink_group() {
                 <p class="text-xs text-muted-foreground">
                     Leave empty to keep the current token. Updating rotates it immediately.
                 </p>
+            </section>
+
+            <section class="space-y-2">
+                <span class="block text-start text-sm font-semibold text-foreground">
+                    Communication mode
+                </span>
+                <div class="space-y-2">
+                    {#each communication_mode_options as option (option.value)}
+                        <label
+                            class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                        >
+                            <input
+                                name="communication-mode"
+                                class="mt-1 accent-[var(--tg-theme-button-color)]"
+                                checked={communication_mode === option.value}
+                                onchange={() => (communication_mode = option.value)}
+                                type="radio"
+                                value={option.value}
+                            />
+                            <span class="space-y-1">
+                                <span class="block font-medium text-foreground">{option.title}</span
+                                >
+                                <span class="block text-xs text-muted-foreground"
+                                    >{option.description}</span
+                                >
+                            </span>
+                        </label>
+                    {/each}
+                </div>
             </section>
 
             <Separator class="my-4" />

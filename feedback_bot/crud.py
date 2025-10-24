@@ -32,6 +32,7 @@ BOT_MANAGEMENT_FIELDS = (
     'allow_sticker_messages',
     'antiflood_enabled',
     'antiflood_seconds',
+    'communication_mode',
     'forward_chat_id',
     'owner__username',
     'owner__telegram_id',
@@ -177,6 +178,12 @@ async def set_feedback_chat_last_warning(
     return chat
 
 
+async def get_feedback_chat_by_topic(bot: Bot, topic_id: int) -> FeedbackChat | None:
+    return (
+        await FeedbackChat.objects.filter(bot=bot, topic_id=topic_id).select_related('bot').afirst()
+    )
+
+
 async def clear_feedback_chat_mappings(bot: Bot, chat: FeedbackChat) -> None:
     await MessageMapping.objects.filter(bot=bot, user_chat=chat).adelete()
 
@@ -277,7 +284,10 @@ async def create_bot(
     owner: int,
     start_message: str,
     feedback_received_message: str,
+    *,
+    communication_mode: str | None = None,
 ) -> Bot:
+    mode = communication_mode or Bot.CommunicationMode.STANDARD
     bot = await Bot.objects.acreate(
         telegram_id=telegram_id,
         username=username,
@@ -287,6 +297,7 @@ async def create_bot(
         enabled=not settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL,
         start_message=start_message,
         feedback_received_message=feedback_received_message,
+        communication_mode=mode,
     )
     return bot
 
@@ -325,6 +336,7 @@ async def get_bot_config(uuid: str) -> Bot:
             'antiflood_enabled',
             'antiflood_seconds',
             'forward_chat_id',
+            'communication_mode',
             '_token',
         )
         .afirst()

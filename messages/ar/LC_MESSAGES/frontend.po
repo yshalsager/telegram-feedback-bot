@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-24T20:11:24.766Z\n"
+"PO-Revision-Date: 2025-10-24T21:48:25.913Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -546,3 +546,44 @@ msgstr "مدة الانتظار (ثوانٍ) لمكافحة الرسائل ال�
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
 msgstr "عند التفعيل، يمكن للمستخدمين إرسال رسالة واحدة كل {0} ثانية ويتلقون تنبيهاً عند التقييد."
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Communication mode"
+msgstr "وضع التواصل"
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Standard"
+msgstr "عادي"
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Forward with usernames and profile links."
+msgstr "إعادة التوجيه مع أسماء المستخدمين وروابط الملفات الشخصية."
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Private"
+msgstr "خاص"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Show only the public name to moderators."
+msgstr "اعرض الاسم العام فقط للمشرفين."
+
+#: src/routes/add_bot/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Anonymous"
+msgstr "مجهول"
+
+#: src/routes/add_bot/+page.svelte
+msgid "Shows public name only; profile links removed."
+msgstr "يعرض الاسم العام فقط؛ دون روابط الملف الشخصي."
+
+#: src/routes/add_bot/+page.svelte
+msgid "Replaces user identity with a request number."
+msgstr "يستبدل هوية المستخدم برقم طلب."
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Replace identity with a request number."
+msgstr "يستبدل هوية المستخدم برقم طلب."

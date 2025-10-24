@@ -78,14 +78,20 @@ export async function set_language(language) {
  * @param {string} feedback_received_message - The feedback received message
  * @returns {Promise<object>} - The response data
  */
-export async function add_bot(bot_token, start_message, feedback_received_message) {
+export async function add_bot(
+    bot_token,
+    start_message,
+    feedback_received_message,
+    communication_mode = 'standard'
+) {
     const response = await fetch('/api/bot/', {
         method: 'POST',
         headers: get_authorization_headers(),
         body: JSON.stringify({
             bot_token,
             start_message,
-            feedback_received_message
+            feedback_received_message,
+            communication_mode
         })
     })
     const data = await response.json()

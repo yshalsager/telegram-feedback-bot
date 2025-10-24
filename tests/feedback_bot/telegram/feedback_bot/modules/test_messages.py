@@ -21,6 +21,7 @@ def _build_context(bot_config, *, bot_id: int, send_message=None, edit_message_t
         id=bot_id,
         send_message=send_message or AsyncMock(),
         edit_message_text=edit_message_text or AsyncMock(),
+        create_forum_topic=AsyncMock(return_value=SimpleNamespace(message_thread_id=999_999)),
     )
     bot_data = {'bot_config': bot_config}
     application = SimpleNamespace(bot_data=bot_data, bot=bot)
@@ -70,7 +71,93 @@ async def test_forward_feedback_creates_mapping(monkeypatch, feedback_app):
     intro_payload = send_mock.await_args.kwargs
     assert intro_payload['chat_id'] == bot_config.owner_id
     assert intro_payload['parse_mode'] == 'HTML'
+    assert intro_payload['disable_web_page_preview'] is True
     assert intro_payload['text'].startswith('Tester')
+
+
+async def test_forward_feedback_private_mode_uses_copy(monkeypatch, feedback_app):
+    _, bot_config = feedback_app
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+    await Bot.objects.filter(pk=bot_config.pk).aupdate(
+        communication_mode=Bot.CommunicationMode.PRIVATE
+    )
+    bot_config.communication_mode = Bot.CommunicationMode.PRIVATE
+
+    user_message = build_message(999, message_id=11, text='hi there', username='tester')
+
+    copied = SimpleNamespace(message_id=55)
+    copy_mock = AsyncMock(return_value=copied)
+    forward_mock = AsyncMock()
+    reply_mock = AsyncMock()
+    _patch_message_method(monkeypatch, 'copy', copy_mock)
+    _patch_message_method(monkeypatch, 'forward', forward_mock)
+    _patch_message_method(monkeypatch, 'reply_text', reply_mock)
+
+    send_mock = AsyncMock()
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id, send_message=send_mock)
+    update = SimpleNamespace(effective_message=user_message)
+
+    await messages_module.forward_feedback(update, context)
+
+    copy_mock.assert_awaited_once()
+    forward_mock.assert_not_awaited()
+    kwargs = copy_mock.await_args.kwargs
+    assert kwargs['chat_id'] == bot_config.owner_id
+    assert 'message_thread_id' not in kwargs
+
+    intro_payload = send_mock.await_args.kwargs
+    assert '@' not in intro_payload['text']
+    assert 'tg://user' not in intro_payload['text']
+    reply_mock.assert_awaited_once_with(user_message, 'Thanks', reply_to_message_id=11)
+
+
+async def test_forward_feedback_anonymous_topic(monkeypatch, feedback_app):
+    _, bot_config = feedback_app
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+    await Bot.objects.filter(pk=bot_config.pk).aupdate(
+        communication_mode=Bot.CommunicationMode.ANONYMOUS,
+        forward_chat_id=-100222333,
+    )
+    bot_config.communication_mode = Bot.CommunicationMode.ANONYMOUS
+    bot_config.forward_chat_id = -100222333
+
+    user_message = build_message(999, message_id=11, text='hi there', username='tester')
+
+    copied = SimpleNamespace(message_id=60)
+    copy_mock = AsyncMock(return_value=copied)
+    forward_mock = AsyncMock()
+    reply_mock = AsyncMock()
+    _patch_message_method(monkeypatch, 'copy', copy_mock)
+    _patch_message_method(monkeypatch, 'forward', forward_mock)
+    _patch_message_method(monkeypatch, 'reply_text', reply_mock)
+
+    send_mock = AsyncMock()
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id, send_message=send_mock)
+    topic_mock = AsyncMock(return_value=SimpleNamespace(message_thread_id=444))
+    context.bot.create_forum_topic = topic_mock
+
+    update = SimpleNamespace(effective_message=user_message)
+
+    await messages_module.forward_feedback(update, context)
+
+    copy_mock.assert_awaited_once()
+    forward_mock.assert_not_awaited()
+    kwargs = copy_mock.await_args.kwargs
+    assert kwargs['chat_id'] == bot_config.forward_chat_id
+    assert kwargs['message_thread_id'] == 444
+
+    topic_kwargs = topic_mock.await_args.kwargs
+    assert topic_kwargs['name'].startswith('#')
+
+    intro_payload = send_mock.await_args.kwargs
+    assert intro_payload['message_thread_id'] == 444
+    assert intro_payload['text'].startswith('#')
+    assert 'tg://user' not in intro_payload['text']
+
+    chat = await FeedbackChat.objects.aget(bot=bot_config, user_telegram_id=999)
+    assert chat.topic_id == 444
 
 
 async def test_forward_feedback_blocks_banned_user(monkeypatch, feedback_app):
@@ -97,7 +184,9 @@ async def test_forward_feedback_blocks_banned_user(monkeypatch, feedback_app):
 
 async def test_forward_feedback_throttles_when_antiflood_enabled(monkeypatch, feedback_app):
     _, bot_config = feedback_app
-    await Bot.objects.filter(pk=bot_config.pk).aupdate(antiflood_enabled=True, antiflood_seconds=120)
+    await Bot.objects.filter(pk=bot_config.pk).aupdate(
+        antiflood_enabled=True, antiflood_seconds=120
+    )
     await bot_config.arefresh_from_db()
     await FeedbackChat.objects.filter(bot=bot_config).adelete()
     await MessageMapping.objects.filter(bot=bot_config).adelete()
@@ -134,14 +223,11 @@ async def test_forward_feedback_throttles_when_antiflood_enabled(monkeypatch, fe
     throttled_call = reply_mock.await_args_list[-1]
     assert throttled_call.args[0] is second_message
     assert (
-        throttled_call.args[1]
-        == 'Too many messages. Please wait 120 seconds before sending again.'
+        throttled_call.args[1] == 'Too many messages. Please wait 120 seconds before sending again.'
     )
     assert throttled_call.kwargs == {'reply_to_message_id': 12}
 
-    chat_after_warning = await FeedbackChat.objects.aget(
-        bot=bot_config, user_telegram_id=999
-    )
+    chat_after_warning = await FeedbackChat.objects.aget(bot=bot_config, user_telegram_id=999)
     assert chat_after_warning.last_warning_at is not None
 
     third_message = build_message(
@@ -171,9 +257,7 @@ async def test_forward_feedback_throttles_when_antiflood_enabled(monkeypatch, fe
     assert reply_mock.await_count == 3
     assert reply_mock.await_args_list[-1].args[1] == 'Thanks'
 
-    chat_after_reset = await FeedbackChat.objects.aget(
-        bot=bot_config, user_telegram_id=999
-    )
+    chat_after_reset = await FeedbackChat.objects.aget(bot=bot_config, user_telegram_id=999)
     assert chat_after_reset.last_warning_at is None
 
 
@@ -290,6 +374,61 @@ async def test_edit_forwarded_feedback_blocks_disallowed_media(monkeypatch, feed
     )
     mapping = await MessageMapping.objects.aget(bot=bot_config, user_message_id=11)
     assert mapping.owner_message_id == 22
+
+
+async def test_reply_to_feedback_without_reply_in_private_topic(monkeypatch, feedback_app):
+    _, bot_config = feedback_app
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+    await Bot.objects.filter(pk=bot_config.pk).aupdate(
+        communication_mode=Bot.CommunicationMode.PRIVATE,
+        forward_chat_id=-100222333,
+    )
+    bot_config.communication_mode = Bot.CommunicationMode.PRIVATE
+    bot_config.forward_chat_id = -100222333
+
+    feedback_chat, _ = await FeedbackChat.objects.aget_or_create(
+        bot=bot_config,
+        user_telegram_id=999,
+        defaults={'username': '', 'topic_id': 777},
+    )
+    feedback_chat.topic_id = 777
+    await feedback_chat.asave(update_fields=['topic_id'])
+
+    owner_reply = build_message(
+        bot_config.owner_id,
+        message_id=31,
+        text='answer',
+        chat_id=-100222333,
+        chat_type='supergroup',
+    )
+    owner_reply._frozen = False
+    owner_reply.message_thread_id = 777
+    owner_reply._frozen = True
+
+    copy_mock = AsyncMock(return_value=MessageId(88))
+    reaction_mock = AsyncMock()
+    _patch_message_method(monkeypatch, 'copy', copy_mock)
+    _patch_message_method(monkeypatch, 'set_reaction', reaction_mock)
+
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id)
+    update = SimpleNamespace(effective_message=owner_reply)
+
+    await messages_module.reply_to_feedback(update, context)
+
+    copy_mock.assert_awaited_once_with(
+        owner_reply,
+        chat_id=999,
+        reply_to_message_id=None,
+        allow_sending_without_reply=True,
+    )
+    reaction_mock.assert_awaited_once_with(owner_reply, '👍')
+
+    mapping = await MessageMapping.objects.select_related('user_chat').aget(
+        bot=bot_config, owner_message_id=31
+    )
+    assert mapping.user_chat == feedback_chat
+    assert mapping.user_message_id == 88
 
 
 async def test_reply_to_feedback_copies_message(monkeypatch, feedback_app):

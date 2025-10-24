@@ -79,6 +79,7 @@ type Bot = {
     start_message: string
     feedback_received_message: string
     enabled: boolean
+    communication_mode: 'standard' | 'private' | 'anonymous'
     allow_photo_messages: boolean
     allow_video_messages: boolean
     allow_voice_messages: boolean
@@ -101,6 +102,7 @@ const baseBot: Bot = {
     start_message: 'Welcome!',
     feedback_received_message: 'Thanks for sharing',
     enabled: true,
+    communication_mode: 'standard',
     allow_photo_messages: true,
     allow_video_messages: true,
     allow_voice_messages: true,
@@ -140,7 +142,8 @@ describe('+page.svelte', () => {
         const updatedBot: Bot = {
             ...baseBot,
             start_message: 'New welcome message',
-            feedback_received_message: 'Updated reply'
+            feedback_received_message: 'Updated reply',
+            communication_mode: 'standard'
         }
 
         updateBotMock.mockResolvedValue({uuid: baseBot.uuid})
@@ -170,6 +173,7 @@ describe('+page.svelte', () => {
                 start_message: 'New welcome message',
                 feedback_received_message: 'Updated reply',
                 enabled: updatedBot.enabled,
+                communication_mode: updatedBot.communication_mode,
                 allow_photo_messages: updatedBot.allow_photo_messages,
                 allow_video_messages: updatedBot.allow_video_messages,
                 allow_voice_messages: updatedBot.allow_voice_messages,
@@ -193,7 +197,8 @@ describe('+page.svelte', () => {
         const rotatedBot: Bot = {
             ...baseBot,
             name: 'New Bot Name',
-            username: 'new_feedback_bot'
+            username: 'new_feedback_bot',
+            communication_mode: 'standard'
         }
 
         updateBotMock.mockResolvedValue({uuid: baseBot.uuid})
@@ -213,6 +218,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                communication_mode: baseBot.communication_mode,
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
                 allow_voice_messages: baseBot.allow_voice_messages,
@@ -257,6 +263,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                communication_mode: baseBot.communication_mode,
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
                 allow_voice_messages: false,
@@ -269,6 +276,51 @@ describe('+page.svelte', () => {
 
         expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
         expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
+    })
+
+    it('updates communication mode when selection changes', async () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+
+        const modeBot: Bot = {
+            ...baseBot,
+            communication_mode: 'private'
+        }
+
+        updateBotMock.mockResolvedValue({uuid: baseBot.uuid})
+        mapBotResponseMock.mockReturnValue(modeBot)
+
+        const user = userEvent.setup()
+        render(BotPage)
+
+        const privateOption = screen.getByLabelText(/Private/, {
+            selector: 'input[type="radio"]'
+        }) as HTMLInputElement
+        expect(privateOption).toBeInTheDocument()
+        await user.click(privateOption)
+
+        const saveButton = screen.getByRole('button', {name: 'Save'})
+        await user.click(saveButton)
+
+        await waitFor(() => {
+            expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
+                start_message: baseBot.start_message,
+                feedback_received_message: baseBot.feedback_received_message,
+                enabled: baseBot.enabled,
+                communication_mode: 'private',
+                allow_photo_messages: baseBot.allow_photo_messages,
+                allow_video_messages: baseBot.allow_video_messages,
+                allow_voice_messages: baseBot.allow_voice_messages,
+                allow_document_messages: baseBot.allow_document_messages,
+                allow_sticker_messages: baseBot.allow_sticker_messages,
+                antiflood_seconds: baseBot.antiflood_seconds,
+                antiflood_enabled: baseBot.antiflood_enabled
+            })
+        })
+
+        expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
     })
 
     it('updates antiflood setting when toggled', async () => {
@@ -299,6 +351,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                communication_mode: baseBot.communication_mode,
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
                 allow_voice_messages: baseBot.allow_voice_messages,
@@ -347,6 +400,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                communication_mode: baseBot.communication_mode,
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
                 allow_voice_messages: baseBot.allow_voice_messages,
@@ -359,6 +413,31 @@ describe('+page.svelte', () => {
 
         expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
         expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
+    })
+
+    it('disables mode downgrade when anonymous is set', () => {
+        const anonymousBot: Bot = {
+            ...baseBot,
+            communication_mode: 'anonymous'
+        }
+
+        setPageState({
+            params: {uuid: anonymousBot.uuid},
+            data: {bot: anonymousBot, errorMessage: null}
+        })
+
+        render(BotPage)
+
+        const standardOption = screen.getByLabelText(/Standard/, {
+            selector: 'input[type="radio"]'
+        }) as HTMLInputElement
+        const anonymousOption = screen.getByLabelText(/Anonymous/, {
+            selector: 'input[type="radio"]'
+        }) as HTMLInputElement
+
+        expect(standardOption).toBeDisabled()
+        expect(anonymousOption).toBeChecked()
+        expect(screen.getByText('Anonymous mode is permanent for this bot.')).toBeInTheDocument()
     })
 
     it('asks for confirmation before deleting a bot', async () => {
