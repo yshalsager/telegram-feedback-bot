@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 21:51+0000\n"
+"POT-Creation-Date: 2025-10-24 17:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,70 +18,70 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: feedback_bot/api/miniapp/bots.py:168
+#: feedback_bot/api/miniapp/bots.py:165
 msgid "invalid_bot_token"
 msgstr "رمز البوت غير صالح، تحقق منه وحاول ومجددا"
 
-#: feedback_bot/api/miniapp/bots.py:170
+#: feedback_bot/api/miniapp/bots.py:167
 msgid "unable_to_validate_bot_token"
 msgstr "تعذر التحقق من رمز البوت، تأكد منه وحاول مجددا"
 
-#: feedback_bot/api/miniapp/bots.py:192
+#: feedback_bot/api/miniapp/bots.py:189
 msgid "cannot_add_builder_bot"
 msgstr "لا يمكنك إضافة صانع البوتات"
 
-#: feedback_bot/api/miniapp/bots.py:196
+#: feedback_bot/api/miniapp/bots.py:193
 msgid "bot_already_exists"
 msgstr "البوت مضاف سابقا"
 
-#: feedback_bot/api/miniapp/bots.py:250 feedback_bot/api/miniapp/bots.py:288
-#: feedback_bot/api/miniapp/bots.py:380 feedback_bot/api/miniapp/bots.py:415
-#: feedback_bot/api/miniapp/bots.py:432 feedback_bot/api/miniapp/bots.py:462
-#: feedback_bot/api/miniapp/bots.py:478 feedback_bot/api/miniapp/bots.py:496
-#: feedback_bot/api/miniapp/bots.py:514 feedback_bot/api/miniapp/bots.py:532
-#: feedback_bot/api/miniapp/bots.py:569
+#: feedback_bot/api/miniapp/bots.py:246 feedback_bot/api/miniapp/bots.py:281
+#: feedback_bot/api/miniapp/bots.py:373 feedback_bot/api/miniapp/bots.py:408
+#: feedback_bot/api/miniapp/bots.py:425 feedback_bot/api/miniapp/bots.py:455
+#: feedback_bot/api/miniapp/bots.py:471 feedback_bot/api/miniapp/bots.py:489
+#: feedback_bot/api/miniapp/bots.py:507 feedback_bot/api/miniapp/bots.py:525
+#: feedback_bot/api/miniapp/bots.py:562
 msgid "bot_not_found"
 msgstr "البوت غير موجود."
 
-#: feedback_bot/api/miniapp/bots.py:281
+#: feedback_bot/api/miniapp/bots.py:274
 msgid "cannot_use_builder_bot_token"
 msgstr "لا يمكنك استخدام رمز البوت الخاص بالمنشئ."
 
-#: feedback_bot/api/miniapp/bots.py:307
+#: feedback_bot/api/miniapp/bots.py:300
 msgid "token_does_not_match_bot"
 msgstr "الرمز يخص بوتًا مختلفًا."
 
-#: feedback_bot/api/miniapp/bots.py:329
+#: feedback_bot/api/miniapp/bots.py:322
 msgid "Admin approval required before enabling this bot"
 msgstr "يتطلب تفعيل هذا البوت موافقة المشرف."
 
-#: feedback_bot/api/miniapp/bots.py:424
+#: feedback_bot/api/miniapp/bots.py:417
 msgid "no_fields_to_update"
 msgstr "لا توجد بيانات لتحديثها."
 
-#: feedback_bot/api/miniapp/bots.py:480
+#: feedback_bot/api/miniapp/bots.py:473
 msgid "bot_deleted"
 msgstr "حذف البوت بنجاح."
 
-#: feedback_bot/api/miniapp/bots.py:542
+#: feedback_bot/api/miniapp/bots.py:535
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:70
 #, python-format
 msgid "User %(user_id)d banned."
 msgstr "حظر المستخدم %(user_id)d."
 
-#: feedback_bot/api/miniapp/bots.py:544
+#: feedback_bot/api/miniapp/bots.py:537
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:70
 #, python-format
 msgid "User %(user_id)d was already banned."
 msgstr "المستخدم %(user_id)d محظور بالفعل."
 
-#: feedback_bot/api/miniapp/bots.py:573
+#: feedback_bot/api/miniapp/bots.py:566
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:86
 #, python-format
 msgid "User %(user_id)d unbanned."
 msgstr "رفع الحظر عن المستخدم %(user_id)d."
 
-#: feedback_bot/api/miniapp/bots.py:575
+#: feedback_bot/api/miniapp/bots.py:568
 #: feedback_bot/telegram/feedback_bot/modules/ban.py:86
 #, python-format
 msgid "User %(user_id)d was not banned."
@@ -180,6 +180,25 @@ msgstr ""
 msgid "No subscribers to broadcast to."
 msgstr "لا يوجد مشتركون لإرسال الرسالة إليهم."
 
+#: feedback_bot/telegram/feedback_bot/modules/delete.py:48
+msgid "Nothing to delete."
+msgstr "لا يوجد ما يمكن حذفه."
+
+#: feedback_bot/telegram/feedback_bot/modules/delete.py:64
+msgid "Could not delete the message."
+msgstr "تعذّر حذف الرسالة."
+
+#: feedback_bot/telegram/feedback_bot/modules/delete.py:93
+#: feedback_bot/telegram/feedback_bot/modules/delete.py:99
+#: feedback_bot/telegram/feedback_bot/modules/delete.py:108
+#: feedback_bot/telegram/feedback_bot/modules/delete.py:113
+msgid "Nothing to clear."
+msgstr "لا يوجد ما يمكن إزالته."
+
+#: feedback_bot/telegram/feedback_bot/modules/delete.py:129
+msgid "Could not clear messages."
+msgstr "تعذّر إزالة الرسائل."
+
 #: feedback_bot/telegram/feedback_bot/modules/groups.py:33
 #, python-format
 msgid "%(bot_name)s will forward feedback to %(chat_name)s."
@@ -190,20 +209,20 @@ msgstr "سيرسل %(bot_name)s التغذية الراجعة إلى %(chat_name
 msgid "%(bot_name)s has been unlinked from %(chat_title)s."
 msgstr "تم فك ارتباط %(bot_name)s من %(chat_title)s."
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:250
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:249
 msgid "Thanks for your feedback!"
 msgstr "شكرًا على ملاحظاتك!"
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:296
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:294
 #, python-brace-format
 msgid "User updated their message. New copy: {link}"
 msgstr "حدّث المستخدم رسالته. النسخة الجديدة: {link}"
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:298
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:296
 msgid "User updated their message."
 msgstr "حدّث المستخدم رسالته."
 
-#: feedback_bot/telegram/feedback_bot/modules/messages.py:350
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:347
 msgid "Sent message updated"
 msgstr "حدثت الرسالة المرسلة"
 

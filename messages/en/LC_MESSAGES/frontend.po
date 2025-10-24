@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-23T21:09:59.333Z\n"
+"PO-Revision-Date: 2025-10-24T17:42:17.453Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -140,11 +140,6 @@ msgstr "Start message"
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Feedback received message"
 msgstr "Feedback received message"
-
-#: src/routes/add_bot/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-msgid "Message received confirmations"
-msgstr "Message received confirmations"
 
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to update bot"
