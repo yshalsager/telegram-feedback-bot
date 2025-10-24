@@ -1,13 +1,21 @@
 # Telegram Feedback Bots Builder
 
+<p align="center">
+  <img src="static/favicon.svg" alt="Telegram Feedback Bots Builder logo" width="96" height="96" />
+</p>
+
 A self-hosted toolkit for provisioning and operating Telegram feedback bots. The new stack pairs a Django + python-telegram-bot backend with a SvelteKit mini app so owners can manage bots, rotate tokens, review stats, and handle banned users without leaving Telegram. Think of it as Livegram but more powerful.
+
+[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/) [![Made with Python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+
+[![PayPal](https://img.shields.io/badge/PayPal-Donate-00457C?style=flat&labelColor=00457C&logo=PayPal&logoColor=white&link=https://www.paypal.me/yshalsager)](https://www.paypal.me/yshalsager) [![Patreon](https://img.shields.io/badge/Patreon-Support-F96854?style=flat&labelColor=F96854&logo=Patreon&logoColor=white&link=https://www.patreon.com/XiaomiFirmwareUpdater)](https://www.patreon.com/XiaomiFirmwareUpdater) [![Liberapay](https://img.shields.io/badge/Liberapay-Support-F6C915?style=flat&labelColor=F6C915&logo=Liberapay&logoColor=white&link=https://liberapay.com/yshalsager)](https://liberapay.com/yshalsager)
 
 ## Features
 
 ### Builder Bot
 
 - `/start` launches the inline menu with a deep link to the mini app.
-- `/broadcast` forwards announcements to all builder users.
+- `/broadcast` forwards announcements to builder users with optional filters (joined before/after a date, active in the last N days, username-only, sample every Nth user).
 - `/whitelist`, `/manage`, `/restart`, and `/update` remain available for administrators.
 
 ### Mini App Dashboard
@@ -27,7 +35,21 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 - Route every user conversation into its own forum topic (or the owner chat) for clean threading.
 - Forward edits, mirror replies back to the user, and automatically acknowledge receipt with an emoji.
 - Politely decline disallowed media with a localized reply while leaving text enabled.
-- Provide owner tooling: `/broadcast`, `/ban`, `/unban`, `/banned`, `/delete` (reply to remove a single pair), and `/clear` (reply to drop that message and everything after it in the thread), plus `/start` for users.
+- Provide owner tooling: `/broadcast`, `/ban`, `/unban`, `/banned`, `/delete` (reply to remove a single pair), and `/clear` (reply to drop that message and everything after it in the thread), plus `/start` for users. Broadcasts can reuse the same filters as the builder bot.
+
+### Broadcast Segmentation Cheat Sheet
+
+Reply to the message you want to send with `/broadcast` and put filters on the following lines of the **same** command message. Leave the command by itself (or add `done`) to reach everyone:
+
+```
+joined_after 2024-01-01
+joined_before 2024-05-01
+active_within 14
+username_only yes
+sample_every 3
+```
+
+Dates accept `YYYY-MM-DD` or ISO datetimes. `active_within` is expressed in days and maps to recent feedback activity. `sample_every` keeps every Nth chat after other filters run.
 
 ## Technology Stack
 
@@ -167,7 +189,8 @@ mise x pnpm -- pnpm run check
 - `mise.toml` – Task runner and environment defaults.
 
 ### Historical Versions
-- [Original Pyrogram-based builder](https://github.com/yshalsager/telegram-feedback-bot/blob/master/README.md)
+
+- [Original Pyrogram-based builder](https://github.com/yshalsager/telegram-feedback-bot/blob/v2/README.md)
 - [Standalone single-bot edition](https://github.com/yshalsager/telegram-feedback-bot/blob/standalone/README.md)
 
 ## Acknowledgements
