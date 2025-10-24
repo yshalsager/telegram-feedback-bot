@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Any
 from uuid import UUID
 
@@ -208,6 +209,21 @@ async def save_outgoing_mapping(
 
 async def delete_message_mapping(mapping: MessageMapping) -> None:
     await MessageMapping.objects.filter(pk=mapping.pk).adelete()
+
+
+async def delete_message_mappings(mappings: Sequence[MessageMapping]) -> None:
+    ids = [mapping.pk for mapping in mappings if mapping.pk]
+    if ids:
+        await MessageMapping.objects.filter(pk__in=ids).adelete()
+
+
+async def list_chat_message_mappings(bot: Bot, chat: FeedbackChat) -> list[MessageMapping]:
+    return [
+        mapping
+        async for mapping in MessageMapping.objects.select_related('user_chat')
+        .filter(bot=bot, user_chat=chat)
+        .order_by('owner_message_id', 'pk')
+    ]
 
 
 async def bump_incoming_messages(bot: Bot) -> None:

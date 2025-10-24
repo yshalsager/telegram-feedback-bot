@@ -5,11 +5,13 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 ## Features
 
 ### Builder Bot
+
 - `/start` launches the inline menu with a deep link to the mini app.
 - `/broadcast` forwards announcements to all builder users.
 - `/whitelist`, `/manage`, `/restart`, and `/update` remain available for administrators.
 
 ### Mini App Dashboard
+
 - Create feedback bots after validating their tokens against BotFather.
 - Update start / receipt messages and link or unlink groups.
 - Rotate bot tokens securely with enforced admin approval before re-enabling (when configured).
@@ -17,9 +19,10 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 - Manage builder access: whitelist, language, admin flags, and removal.
 
 ### Feedback Bots
+
 - Route every user conversation into its own forum topic (or the owner chat) for clean threading.
 - Forward edits, mirror replies back to the user, and automatically acknowledge receipt with an emoji.
-- Provide `/broadcast`, `/ban`, `/unban`, and `/banned` commands for bot owners, plus `/start` for users.
+- Provide owner tooling: `/broadcast`, `/ban`, `/unban`, `/banned`, `/delete` (reply to remove a single pair), and `/clear` (reply to drop that message and everything after it in the thread), plus `/start` for users.
 
 ## Technology Stack
 
@@ -31,45 +34,51 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 ## Setup
 
 1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yshalsager/telegram_feedback_bot.git
-   cd telegram_feedback_bot
-   ```
+
+    ```bash
+    git clone https://github.com/yshalsager/telegram_feedback_bot.git
+    cd telegram_feedback_bot
+    ```
 
 2. **Install toolchain with mise**
-   ```bash
-   mise install
-   ```
+
+    ```bash
+    mise install
+    ```
 
 3. **Create `.env`** (values mirror [`mise.toml`](mise.toml)`[env]`). At minimum:
-   ```dotenv
-   DJANGO_SECRET_KEY="$(mise r generate-secret-key)"
-   TELEGRAM_BUILDER_BOT_TOKEN="123456789:AA..."
-   TELEGRAM_BUILDER_BOT_WEBHOOK_URL="https://your-domain.com"
-   TELEGRAM_BUILDER_BOT_WEBHOOK_PATH="telegram"
-   TELEGRAM_BUILDER_BOT_ADMINS="123456789,987654321"
-   TELEGRAM_ADMIN_CHAT_ID="-10000000000"
-   TELEGRAM_LOG_TOPIC_ID=1
-   TELEGRAM_ENCRYPTION_KEY="$(mise r generate-encryption-key)"
-   TELEGRAM_LANGUAGES="en ar"
-   POSTGRES_DB="feedback_bot"
-   POSTGRES_USER="feedback_bot_user"
-   POSTGRES_PASSWORD="super-secret"
-   DJANGO_ALLOWED_HOSTS="localhost 127.0.0.1"
-   TELEGRAM_NEW_BOT_ADMIN_APPROVAL=true
-   ``
-   Set `TELEGRAM_BUILDER_BOT_WEBHOOK_URL` to the public HTTPS origin serving Granian. Leave `DJANGO_USE_SQLITE=true` if you prefer SQLite for local experiments.
+
+    ```dotenv
+    DJANGO_SECRET_KEY="$(mise r generate-secret-key)"
+    TELEGRAM_BUILDER_BOT_TOKEN="123456789:AA..."
+    TELEGRAM_BUILDER_BOT_WEBHOOK_URL="https://your-domain.com"
+    TELEGRAM_BUILDER_BOT_WEBHOOK_PATH="telegram"
+    TELEGRAM_BUILDER_BOT_ADMINS="123456789,987654321"
+    TELEGRAM_ADMIN_CHAT_ID="-10000000000"
+    TELEGRAM_LOG_TOPIC_ID=1
+    TELEGRAM_ENCRYPTION_KEY="$(mise r generate-encryption-key)"
+    TELEGRAM_LANGUAGES="en ar"
+    POSTGRES_DB="feedback_bot"
+    POSTGRES_USER="feedback_bot_user"
+    POSTGRES_PASSWORD="super-secret"
+    DJANGO_ALLOWED_HOSTS="localhost 127.0.0.1"
+    TELEGRAM_NEW_BOT_ADMIN_APPROVAL=true
+    ``
+    Set `TELEGRAM_BUILDER_BOT_WEBHOOK_URL` to the public HTTPS origin serving Granian. Leave `DJANGO_USE_SQLITE=true` if you prefer SQLite for local experiments.
+
+    ```
 
 4. **Install dependencies**
-   ```bash
-   mise x uv -- uv sync
-   mise x pnpm -- pnpm install
-   ```
+
+    ```bash
+    mise x uv -- uv sync
+    mise x pnpm -- pnpm install
+    ```
 
 5. **Run migrations**
-   ```bash
-   mise x uv -- uv run manage.py migrate
-   ```
+    ```bash
+    mise x uv -- uv run manage.py migrate
+    ```
 
 ## Running
 
@@ -136,10 +145,10 @@ mise x pnpm -- pnpm run check
 1. **Create backups** of your existing `feedback_bot.db` builder database and the per-bot files inside `data/` (or whichever paths you configured).
 2. **Populate environment variables** used by the legacy stack. Export the old `ENCRYPTION_KEY` (the XOR key from the Pyrogram build) alongside the new `.env` variables.
 3. **Install and migrate** the Django project as described above, then run:
-   ```bash
-   mise x uv -- uv run manage.py migrate_legacy_data --builder-db feedback_bot.db --data-dir data
-   ```
-   Adjust the paths if your legacy assets live elsewhere. The command can be re-run safely; it upserts records.
+    ```bash
+    mise x uv -- uv run manage.py migrate_legacy_data --builder-db feedback_bot.db --data-dir data
+    ```
+    Adjust the paths if your legacy assets live elsewhere. The command can be re-run safely; it upserts records.
 4. **Review migrated bots** in the mini app. Re-enable each bot once you are satisfied (admin approval still applies when `TELEGRAM_NEW_BOT_ADMIN_APPROVAL=true`).
 5. **Reset webhooks** by redeploying the app or restarting `granian` so the builder and managed bots pick up their new webhook endpoints.
 
