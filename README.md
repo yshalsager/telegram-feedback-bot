@@ -18,6 +18,8 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 - Inspect live stats, review audit history of broadcasts, and manage banned users per bot.
 - Manage builder access: whitelist, language, admin flags, and removal.
 
+🔒 See the [Privacy Policy](PRIVACY_POLICY.md) for details on data that is stored.
+
 ### Feedback Bots
 
 - Route every user conversation into its own forum topic (or the owner chat) for clean threading.
@@ -160,6 +162,10 @@ mise x pnpm -- pnpm run check
 - `data/` – Shared volume for runtime assets (bot storage, exports).
 - `docker-compose.yml` – Production-ready stack with Postgres + Granian.
 - `mise.toml` – Task runner and environment defaults.
+
+### Historical Versions
+- [Original Pyrogram-based builder](https://github.com/yshalsager/telegram-feedback-bot/blob/master/README.md)
+- [Standalone single-bot edition](https://github.com/yshalsager/telegram-feedback-bot/blob/standalone/README.md)
 
 ## Acknowledgements
 
