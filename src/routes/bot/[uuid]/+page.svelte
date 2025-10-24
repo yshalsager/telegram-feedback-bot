@@ -28,7 +28,6 @@ const botUuid = $derived(page.params.uuid ?? '')
 const pageData = page.data as PageData | undefined
 
 let bot = $state<Bot | null>(null)
-let enableConfirmations = $state(true)
 let enabled = $state(true)
 let startMessage = $state('')
 let feedbackReceivedMessage = $state('')
@@ -44,7 +43,6 @@ const hasChanges = $derived(
         bot &&
             (startMessage !== bot.start_message ||
                 feedbackReceivedMessage !== bot.feedback_received_message ||
-                enableConfirmations !== bot.confirmations_on ||
                 enabled !== bot.enabled ||
                 trimmedPendingToken !== '')
     )
@@ -79,14 +77,12 @@ if (data) {
 
     if (data.bot) {
         bot = data.bot
-        enableConfirmations = data.bot.confirmations_on
         enabled = data.bot.enabled
         startMessage = data.bot.start_message
         feedbackReceivedMessage = data.bot.feedback_received_message
         pendingToken = ''
     } else {
         bot = null
-        enableConfirmations = true
         enabled = true
         startMessage = ''
         feedbackReceivedMessage = ''
@@ -101,7 +97,6 @@ async function handleUpdateBot() {
     if (!bot) return
     disableSubmit = true
     const response = (await update_bot(botUuid, {
-        enable_confirmations: enableConfirmations,
         start_message: startMessage,
         feedback_received_message: feedbackReceivedMessage,
         enabled,
@@ -110,7 +105,6 @@ async function handleUpdateBot() {
     if (response?.uuid === botUuid) {
         const updated = mapBotResponse(response as Record<string, unknown>, botUuid)
         bot = updated
-        enableConfirmations = updated.confirmations_on
         enabled = updated.enabled
         startMessage = updated.start_message
         feedbackReceivedMessage = updated.feedback_received_message
@@ -311,12 +305,6 @@ async function unlink_group() {
             </section>
 
             <Separator class="my-4" />
-
-            <SwitchRow
-                id="enable-confirmations-toggle"
-                label="Message received confirmations"
-                bind:checked={enableConfirmations}
-            />
 
             <SwitchRow
                 id="bot-status-toggle"

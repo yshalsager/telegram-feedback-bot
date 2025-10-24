@@ -11,14 +11,14 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 
 ### Mini App Dashboard
 - Create feedback bots after validating their tokens against BotFather.
-- Toggle confirmations, update start / receipt messages, and link or unlink groups.
+- Update start / receipt messages and link or unlink groups.
 - Rotate bot tokens securely with enforced admin approval before re-enabling (when configured).
 - Inspect live stats, review audit history of broadcasts, and manage banned users per bot.
 - Manage builder access: whitelist, language, admin flags, and removal.
 
 ### Feedback Bots
 - Route every user conversation into its own forum topic (or the owner chat) for clean threading.
-- Forward edits, mirror replies back to the user, and acknowledge receipt when confirmations are on.
+- Forward edits, mirror replies back to the user, and automatically acknowledge receipt with an emoji.
 - Provide `/broadcast`, `/ban`, `/unban`, and `/banned` commands for bot owners, plus `/start` for users.
 
 ## Technology Stack

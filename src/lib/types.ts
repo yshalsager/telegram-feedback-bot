@@ -7,7 +7,6 @@ export type Bot = {
     owner_telegram_id: number
     start_message: string
     feedback_received_message: string
-    confirmations_on: boolean
     enabled: boolean
     forward_chat_id: number | null
     created_at: string

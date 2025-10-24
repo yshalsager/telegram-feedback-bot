@@ -18,7 +18,6 @@ const bot = vi.hoisted(() => ({
     owner_telegram_id: 1,
     start_message: 'start',
     feedback_received_message: 'received',
-    confirmations_on: true,
     enabled: true,
     forward_chat_id: null,
     created_at: '2025-01-01T00:00:00Z',

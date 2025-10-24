@@ -45,7 +45,6 @@ async def test_add_bot_creates_record(miniapp_client, monkeypatch):
 
     payload = {
         'bot_token': BOT_TOKEN,
-        'enable_confirmations': True,
         'start_message': 'Hello there!',
         'feedback_received_message': 'Thanks!',
     }
@@ -90,7 +89,6 @@ async def test_add_bot_rejects_duplicate_token(miniapp_client, monkeypatch):
 
     payload = {
         'bot_token': BOT_TOKEN,
-        'enable_confirmations': True,
         'start_message': 'Hello',
         'feedback_received_message': 'Thanks',
     }
@@ -139,7 +137,6 @@ async def test_list_and_update_bot(miniapp_client, monkeypatch):
         headers=headers,
         json={
             'bot_token': BOT_TOKEN,
-            'enable_confirmations': True,
             'start_message': 'start',
             'feedback_received_message': 'received',
         },
@@ -198,7 +195,6 @@ async def test_update_bot_disabling_removes_webhook(miniapp_client, monkeypatch,
         username='toggle_bot',
         name='Toggle Bot',
         owner=auth_state['user']['id'],
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -256,7 +252,6 @@ async def test_update_bot_enabling_sets_webhook(miniapp_client, monkeypatch, set
         username='toggle_bot',
         name='Toggle Bot',
         owner=auth_state['user']['id'],
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -315,7 +310,6 @@ async def test_update_bot_enabling_rolls_back_on_webhook_failure(
         username='failing_bot',
         name='Failing Bot',
         owner=auth_state['user']['id'],
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -361,7 +355,6 @@ async def test_update_bot_enable_requires_admin_when_approval_enabled(miniapp_cl
         username='approval_bot',
         name='Approval Bot',
         owner=auth_state['user']['id'],
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -406,7 +399,6 @@ async def test_update_bot_token_rotates_successfully(miniapp_client, monkeypatch
         username='rotate_bot',
         name='Rotate Bot',
         owner=auth_state['user']['id'],
-        enable_confirmations=True,
         start_message='hello',
         feedback_received_message='thanks',
     )
@@ -469,7 +461,6 @@ async def test_update_bot_token_rejects_mismatch(miniapp_client, monkeypatch):
         username='mismatch_bot',
         name='Mismatch Bot',
         owner=auth_state['user']['id'],
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -526,7 +517,6 @@ async def test_update_bot_token_rejects_builder_token(miniapp_client, monkeypatc
         username='builder_block',
         name='Builder Block',
         owner=auth_state['user']['id'],
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -581,7 +571,6 @@ async def test_update_bot_token_rolls_back_on_webhook_failure(
         username='rollback_bot',
         name='Rollback Bot',
         owner=auth_state['user']['id'],
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -652,7 +641,6 @@ async def test_unlink_bot_forward_chat(miniapp_client, monkeypatch):
         headers=headers,
         json={
             'bot_token': BOT_TOKEN,
-            'enable_confirmations': True,
             'start_message': 'start',
             'feedback_received_message': 'received',
         },
@@ -708,7 +696,6 @@ async def test_add_bot_rejects_builder_token(miniapp_client, monkeypatch, settin
 
     payload = {
         'bot_token': BOT_TOKEN,
-        'enable_confirmations': True,
         'start_message': 'start',
         'feedback_received_message': 'received',
     }
@@ -748,7 +735,6 @@ async def test_add_bot_invalid_token_surfaces_error(miniapp_client, monkeypatch)
 
     payload = {
         'bot_token': BOT_TOKEN,
-        'enable_confirmations': True,
         'start_message': 'hello',
         'feedback_received_message': 'bye',
     }
@@ -795,7 +781,6 @@ async def test_admin_can_toggle_foreign_bot(miniapp_client, monkeypatch, setting
         username='foreign_bot',
         name='Foreign Bot',
         owner=owner_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -855,7 +840,6 @@ async def test_bot_stats_endpoint_returns_counts(miniapp_client, monkeypatch):
         headers=headers,
         json={
             'bot_token': BOT_TOKEN,
-            'enable_confirmations': True,
             'start_message': 'start',
             'feedback_received_message': 'received',
         },
@@ -913,7 +897,6 @@ async def test_banned_users_management(miniapp_client, monkeypatch):
         headers=headers,
         json={
             'bot_token': BOT_TOKEN,
-            'enable_confirmations': True,
             'start_message': 'start',
             'feedback_received_message': 'received',
         },
@@ -1015,7 +998,6 @@ async def test_delete_bot_removes_record(miniapp_client, monkeypatch):
         headers=headers,
         json={
             'bot_token': BOT_TOKEN,
-            'enable_confirmations': True,
             'start_message': 'Hi',
             'feedback_received_message': 'Bye',
         },

@@ -74,23 +74,16 @@ export async function set_language(language) {
 /**
  * Add a bot
  * @param {string} bot_token - The token of the bot to add
- * @param {boolean} enable_confirmations - Whether to enable confirmations
  * @param {string} start_message - The start message for the bot
  * @param {string} feedback_received_message - The feedback received message
  * @returns {Promise<object>} - The response data
  */
-export async function add_bot(
-    bot_token,
-    enable_confirmations,
-    start_message,
-    feedback_received_message
-) {
+export async function add_bot(bot_token, start_message, feedback_received_message) {
     const response = await fetch('/api/bot/', {
         method: 'POST',
         headers: get_authorization_headers(),
         body: JSON.stringify({
             bot_token,
-            enable_confirmations,
             start_message,
             feedback_received_message
         })

@@ -210,7 +210,6 @@ async def test_delete_user_removes_user_and_bots(miniapp_client):
         username='target_bot',
         name='Target Bot',
         owner=target_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )

@@ -182,7 +182,6 @@ class Command(BaseCommand):
                 received_message = (settings_payload.get('received_message') or received_default)[
                     :4096
                 ]
-                confirmations = bool(settings_payload.get('confirmations', True))
 
                 bot, _ = Bot.objects.get_or_create(
                     telegram_id=telegram_id, defaults={'owner': owner}
@@ -196,7 +195,6 @@ class Command(BaseCommand):
                 else:
                     bot.forward_chat_id = int(forward_chat_id)
                 bot.enabled = bool(row['enabled'])
-                bot.confirmations_on = confirmations
                 bot.start_message = start_message
                 bot.feedback_received_message = received_message
                 bot.token = decrypt_legacy_token(row['token'])

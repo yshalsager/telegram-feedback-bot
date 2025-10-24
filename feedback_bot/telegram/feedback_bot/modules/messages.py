@@ -246,9 +246,8 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     await save_incoming_mapping(bot_config, feedback_chat, message.message_id, forwarded.message_id)
     await bump_incoming_messages(bot_config)
 
-    if bot_config.confirmations_on:
-        text = bot_config.feedback_received_message or _('Thanks for your feedback!')
-        await message.reply_text(text, reply_to_message_id=message.message_id)
+    text = bot_config.feedback_received_message or _('Thanks for your feedback!')
+    await message.reply_text(text, reply_to_message_id=message.message_id)
 
 
 async def edit_forwarded_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -283,21 +282,20 @@ async def edit_forwarded_feedback(update: Update, context: ContextTypes.DEFAULT_
 
     await update_incoming_mapping(bot_config, message.message_id, forwarded.message_id)
 
-    if bot_config.confirmations_on:
-        message_kwargs: dict[str, object] = {
-            'chat_id': destination_chat_id,
-            'reply_to_message_id': forwarded.message_id,
-        }
-        if topic_id:
-            message_kwargs['message_thread_id'] = topic_id
+    message_kwargs: dict[str, object] = {
+        'chat_id': destination_chat_id,
+        'reply_to_message_id': forwarded.message_id,
+    }
+    if topic_id:
+        message_kwargs['message_thread_id'] = topic_id
 
-        if forwarded.link:
-            message_kwargs['disable_web_page_preview'] = True
-            text = _('User updated their message. New copy: {link}').format(link=forwarded.link)
-        else:
-            text = _('User updated their message.')
+    if forwarded.link:
+        message_kwargs['disable_web_page_preview'] = True
+        text = _('User updated their message. New copy: {link}').format(link=forwarded.link)
+    else:
+        text = _('User updated their message.')
 
-        await context.bot.send_message(text=text, **message_kwargs)
+    await context.bot.send_message(text=text, **message_kwargs)
 
 
 async def reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -330,8 +328,7 @@ async def reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     )
     await bump_outgoing_messages(bot_config)
 
-    if bot_config.confirmations_on:
-        await message.set_reaction('👍')
+    await message.set_reaction('👍')
 
 
 async def edit_reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -346,7 +343,7 @@ async def edit_reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_T
         return
 
     edited = await _apply_edit(context, mapping, message)
-    if edited and bot_config.confirmations_on:
+    if edited:
         await message.reply_text(_('Sent message updated'), reply_to_message_id=message.id)
 
 

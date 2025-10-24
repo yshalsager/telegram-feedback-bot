@@ -48,7 +48,6 @@ async def feedback_app(monkeypatch, db) -> tuple[Application, Bot]:
             'username': 'feedback_bot',
             'start_message': 'Hi',
             'feedback_received_message': 'Thanks',
-            'confirmations_on': True,
         },
     )
     if created:
@@ -56,8 +55,6 @@ async def feedback_app(monkeypatch, db) -> tuple[Application, Bot]:
         await bot_config.asave()
     else:
         updates = {}
-        if not bot_config.confirmations_on:
-            updates['confirmations_on'] = True
         if bot_config.feedback_received_message != 'Thanks':
             updates['feedback_received_message'] = 'Thanks'
         if bot_config.start_message != 'Hi':

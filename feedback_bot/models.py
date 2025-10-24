@@ -68,9 +68,6 @@ class Bot(TimestampedModel):
     feedback_received_message = models.TextField(
         default='Thank you for your feedback!', max_length=4096
     )
-    confirmations_on = models.BooleanField(
-        default=True, help_text='Send confirmation messages to users.'
-    )
 
     enabled = models.BooleanField(default=not settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL)
 

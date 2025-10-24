@@ -78,7 +78,6 @@ type Bot = {
     owner_telegram_id: number
     start_message: string
     feedback_received_message: string
-    confirmations_on: boolean
     enabled: boolean
     forward_chat_id: number | null
     created_at: string
@@ -94,7 +93,6 @@ const baseBot: Bot = {
     owner_telegram_id: 456,
     start_message: 'Welcome!',
     feedback_received_message: 'Thanks for sharing',
-    confirmations_on: true,
     enabled: true,
     forward_chat_id: null,
     created_at: new Date('2024-01-01').toISOString(),
@@ -155,7 +153,6 @@ describe('+page.svelte', () => {
 
         await waitFor(() => {
             expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
-                enable_confirmations: updatedBot.confirmations_on,
                 start_message: 'New welcome message',
                 feedback_received_message: 'Updated reply',
                 enabled: updatedBot.enabled
@@ -192,7 +189,6 @@ describe('+page.svelte', () => {
 
         await waitFor(() => {
             expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
-                enable_confirmations: baseBot.confirmations_on,
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,

@@ -92,7 +92,6 @@ async def test_create_bot_persists_and_returns_decrypted_token():
         username='test_bot',
         name='Test Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='hi',
         feedback_received_message='thanks',
     )
@@ -116,7 +115,6 @@ async def test_delete_bot_removes_entry():
         username='delete_bot',
         name='Delete Bot',
         owner=owner.telegram_id,
-        enable_confirmations=False,
         start_message='start',
         feedback_received_message='received',
     )
@@ -137,7 +135,6 @@ async def test_bot_exists_checks_presence():
         username='exists_bot',
         name='Exists Bot',
         owner=owner.telegram_id,
-        enable_confirmations=False,
         start_message='start',
         feedback_received_message='received',
     )
@@ -157,7 +154,6 @@ async def test_update_bot_forward_chat_by_telegram_id_updates_destination():
         username='link_bot',
         name='Link Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -261,7 +257,6 @@ async def test_get_bots_tokens_returns_decrypted_tokens():
         username='token_bot_1',
         name='Token Bot 1',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -271,7 +266,6 @@ async def test_get_bots_tokens_returns_decrypted_tokens():
         username='token_bot_2',
         name='Token Bot 2',
         owner=owner.telegram_id,
-        enable_confirmations=False,
         start_message='start',
         feedback_received_message='received',
     )
@@ -292,7 +286,6 @@ async def test_get_bot_token_returns_decrypted_secret():
         username='token_dec',
         name='Token Dec',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -314,7 +307,6 @@ async def test_get_bot_token_allows_admin_access():
         username='token_admin',
         name='Token Admin',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -335,7 +327,6 @@ async def test_get_bot_config_returns_enabled_bot():
         username='cfg_bot',
         name='Cfg Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='hello',
         feedback_received_message='reply',
     )
@@ -359,7 +350,6 @@ async def test_get_bots_respects_admin_visibility():
         username='adm_bot',
         name='Admin Bot',
         owner=admin.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -369,7 +359,6 @@ async def test_get_bots_respects_admin_visibility():
         username='owner_bot',
         name='Owner Bot',
         owner=owner2.telegram_id,
-        enable_confirmations=False,
         start_message='start',
         feedback_received_message='received',
     )
@@ -392,7 +381,6 @@ async def test_update_bot_settings_applies_changes():
         username='upd_bot',
         name='Upd Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='hello',
         feedback_received_message='thanks',
     )
@@ -400,12 +388,11 @@ async def test_update_bot_settings_applies_changes():
     updated = await crud.update_bot_settings(
         bot.uuid,
         owner.telegram_id,
-        {'start_message': 'new', 'confirmations_on': False},
+        {'start_message': 'new'},
     )
 
     assert updated is not None
     assert updated.start_message == 'new'
-    assert updated.confirmations_on is False
 
 
 @pytest.mark.django
@@ -419,7 +406,6 @@ async def test_update_bot_settings_updates_token():
         username='upd_token_bot',
         name='Token Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='hello',
         feedback_received_message='thanks',
     )
@@ -446,7 +432,6 @@ async def test_update_bot_settings_requires_valid_filters():
         username='upd_none',
         name='Upd None',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='hello',
         feedback_received_message='thanks',
     )
@@ -467,7 +452,6 @@ async def test_get_builder_broadcast_targets_returns_owner_ids():
         username='broadcast_a',
         name='Broadcast A',
         owner=owner_a.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -477,7 +461,6 @@ async def test_get_builder_broadcast_targets_returns_owner_ids():
         username='broadcast_b',
         name='Broadcast B',
         owner=owner_b.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -498,7 +481,6 @@ async def test_get_feedback_chat_targets_supports_bot_and_id():
         username='chatbot',
         name='Chat Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='hey',
         feedback_received_message='received',
     )
@@ -525,7 +507,6 @@ async def test_record_broadcast_message_handles_builder_and_bot():
         username='broadcast_rec',
         name='Broadcast Rec',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -551,7 +532,6 @@ async def test_ensure_feedback_chat_updates_username():
         username='chat_upd',
         name='Chat Upd',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -576,7 +556,6 @@ async def test_mapping_helpers_create_and_fetch_records():
         username='map_bot',
         name='Map Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -609,7 +588,6 @@ async def test_clear_feedback_chat_mappings_and_bump_stats():
         username='stat_bot',
         name='Stat Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )
@@ -645,7 +623,6 @@ async def test_ban_helpers_manage_banned_users():
         username='ban_bot',
         name='Ban Bot',
         owner=owner.telegram_id,
-        enable_confirmations=True,
         start_message='start',
         feedback_received_message='received',
     )

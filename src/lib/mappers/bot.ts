@@ -1,7 +1,6 @@
 import type {Bot} from '$lib/types'
 
 export function mapBotResponse(data: Record<string, unknown>, fallbackUuid: string): Bot {
-    const confirmationsValue = data.confirmations_on
     const enabledValue = data.enabled
 
     return {
@@ -16,10 +15,6 @@ export function mapBotResponse(data: Record<string, unknown>, fallbackUuid: stri
             typeof data.feedback_received_message === 'string'
                 ? data.feedback_received_message
                 : '',
-        confirmations_on:
-            typeof confirmationsValue === 'boolean'
-                ? confirmationsValue
-                : Boolean(confirmationsValue),
         enabled: typeof enabledValue === 'boolean' ? enabledValue : Boolean(enabledValue),
         forward_chat_id:
             typeof data.forward_chat_id === 'number'

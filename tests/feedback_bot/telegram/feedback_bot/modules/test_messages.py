@@ -35,7 +35,6 @@ def _patch_message_method(monkeypatch, method: str, mock: AsyncMock) -> None:
 
 async def test_forward_feedback_creates_mapping(monkeypatch, feedback_app):
     _, bot_config = feedback_app
-    bot_config.confirmations_on = True
     await FeedbackChat.objects.filter(bot=bot_config).adelete()
     await MessageMapping.objects.filter(bot=bot_config).adelete()
 
@@ -95,7 +94,6 @@ async def test_forward_feedback_blocks_banned_user(monkeypatch, feedback_app):
 
 async def test_edit_forwarded_feedback_updates_owner_message(monkeypatch, feedback_app):
     _, bot_config = feedback_app
-    bot_config.confirmations_on = True
     await FeedbackChat.objects.filter(bot=bot_config).adelete()
     await MessageMapping.objects.filter(bot=bot_config).adelete()
     bot_config.forward_chat_id = -100222333
@@ -140,7 +138,6 @@ async def test_edit_forwarded_feedback_updates_owner_message(monkeypatch, feedba
 
 async def test_reply_to_feedback_copies_message(monkeypatch, feedback_app):
     _, bot_config = feedback_app
-    bot_config.confirmations_on = True
     await FeedbackChat.objects.filter(bot=bot_config).adelete()
     await MessageMapping.objects.filter(bot=bot_config).adelete()
 
@@ -202,7 +199,6 @@ async def test_reply_to_feedback_copies_message(monkeypatch, feedback_app):
 
 async def test_edit_reply_to_feedback_updates_user_message(monkeypatch, feedback_app):
     _, bot_config = feedback_app
-    bot_config.confirmations_on = True
     await FeedbackChat.objects.filter(bot=bot_config).adelete()
     await MessageMapping.objects.filter(bot=bot_config).adelete()
 
@@ -258,7 +254,6 @@ async def test_edit_reply_to_feedback_updates_user_message(monkeypatch, feedback
 
 async def test_reply_to_feedback_allows_forward_origin_in_private(monkeypatch, feedback_app):
     app, bot_config = feedback_app
-    bot_config.confirmations_on = True
     bot_config.forward_chat_id = None
 
     await FeedbackChat.objects.filter(bot=bot_config).adelete()
@@ -318,7 +313,6 @@ async def test_reply_to_feedback_allows_forward_origin_in_private(monkeypatch, f
 
 async def test_edit_forwarded_feedback_notifies_without_link(monkeypatch, feedback_app):
     _, bot_config = feedback_app
-    bot_config.confirmations_on = True
     bot_config.forward_chat_id = None
 
     await FeedbackChat.objects.filter(bot=bot_config).adelete()

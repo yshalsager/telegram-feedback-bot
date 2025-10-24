@@ -42,7 +42,6 @@ class AddBotIn(Schema):
     bot_token: str = Field(
         ..., description='The token of the bot to add', pattern=BOT_TOKEN_PATTERN
     )
-    enable_confirmations: bool = Field(default=True, description='Whether to enable confirmations')
     start_message: str = Field(
         ..., description='The start message for the bot', max_length=MessageLimit.MAX_TEXT_LENGTH
     )
@@ -55,7 +54,6 @@ class AddBotIn(Schema):
 
 class UpdateBotIn(Schema):
     bot_token: str | None = Field(default=None, pattern=BOT_TOKEN_PATTERN)
-    enable_confirmations: bool | None = Field(alias='confirmations_on', default=None)
     start_message: str | None = Field(
         default=None,
         description='Updated start message',
@@ -133,7 +131,6 @@ class BotOut(Schema):
     owner_telegram_id: int = Field(..., alias='owner.telegram_id')
     start_message: str
     feedback_received_message: str
-    confirmations_on: bool
     enabled: bool
     forward_chat_id: int | None
     created_at: str = Field(..., alias='created_at.isoformat')
@@ -201,7 +198,6 @@ async def add_bot(  # noqa: PLR0911
         bot_info['username'],
         bot_info['name'],
         user_data['id'],
-        payload.enable_confirmations,
         payload.start_message,
         payload.feedback_received_message,
     )
@@ -253,10 +249,7 @@ async def retrieve_bot(
 
 
 def _build_update_payload(payload: UpdateBotIn) -> dict[str, Any]:
-    update_data = payload.dict(exclude_unset=True)
-    if 'enable_confirmations' in update_data:
-        update_data['confirmations_on'] = update_data.pop('enable_confirmations')
-    return update_data
+    return payload.dict(exclude_unset=True)
 
 
 async def _prepare_token_update(  # noqa: PLR0911

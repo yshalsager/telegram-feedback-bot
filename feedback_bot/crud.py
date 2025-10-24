@@ -21,7 +21,6 @@ BOT_MANAGEMENT_FIELDS = (
     'username',
     'uuid',
     'enabled',
-    'confirmations_on',
     'start_message',
     'feedback_received_message',
     'forward_chat_id',
@@ -234,7 +233,6 @@ async def create_bot(
     username: str,
     name: str,
     owner: int,
-    enable_confirmations: bool,
     start_message: str,
     feedback_received_message: str,
 ) -> Bot:
@@ -245,7 +243,6 @@ async def create_bot(
         token=bot_token,
         owner_id=owner,
         enabled=not settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL,
-        confirmations_on=enable_confirmations,
         start_message=start_message,
         feedback_received_message=feedback_received_message,
     )
@@ -279,7 +276,6 @@ async def get_bot_config(uuid: str) -> Bot:
             'start_message',
             'feedback_received_message',
             'forward_chat_id',
-            'confirmations_on',
             '_token',
         )
         .afirst()

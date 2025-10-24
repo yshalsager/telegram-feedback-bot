@@ -5,7 +5,6 @@ import {Loader} from '@lucide/svelte'
 import type {EventPayload} from '@telegram-apps/sdk-svelte'
 import {on} from '@telegram-apps/sdk-svelte'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
-import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
 import {add_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
@@ -23,7 +22,6 @@ type AddBotResponse = {
 }
 
 let botToken = $state('')
-let enableConfirmations = $state(true)
 let startMessage = $state(/* @wc-include */ 'Welcome to [name] bot. Please send your feedback.')
 let feedbackReceivedMessage = $state(
     /* @wc-include */ 'Thank you for your feedback. We will get back to you soon.'
@@ -51,7 +49,6 @@ async function handleSaveBot() {
     disableSubmit = true
     const response = (await add_bot(
         botToken,
-        enableConfirmations,
         startMessage,
         feedbackReceivedMessage
     )) as AddBotResponse
@@ -139,16 +136,6 @@ async function handleSaveBot() {
                 {formatCharacterCount(feedbackReceivedMessage.length)}
             </p>
         </section>
-
-        <Separator class="my-6" />
-
-        <SwitchRow
-            id="enable-confirmations"
-            label="Message received confirmations"
-            bind:checked={enableConfirmations}
-        />
-
-        <Separator class="my-6" />
 
         <div class="pt-4">
             <Button
