@@ -8,7 +8,7 @@ import ListItem from '~/components/management/ListItem.svelte'
 import ManagementCard from '~/components/management/ManagementCard.svelte'
 import {list_bots, list_users} from '$lib/api.js'
 import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator/index.js'
+import {Separator} from '$lib/components/ui/separator'
 import {session} from '$lib/stores.svelte.js'
 import type {Bot, User} from '$lib/types.ts'
 

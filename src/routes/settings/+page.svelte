@@ -1,9 +1,9 @@
 <script lang="ts">
 import {Globe, Hash} from '@lucide/svelte/icons'
 import {set_language} from '$lib/api.js'
-import * as Avatar from '$lib/components/ui/avatar/index.js'
-import * as Card from '$lib/components/ui/card/index.js'
-import {Separator} from '$lib/components/ui/separator/index.js'
+import * as Avatar from '$lib/components/ui/avatar'
+import * as Card from '$lib/components/ui/card'
+import {Separator} from '$lib/components/ui/separator'
 import {applyLocale, availableLocales, locale} from '$lib/i18n'
 import {session} from '$lib/stores.svelte.js'
 import {showNotification} from '$lib/telegram.js'

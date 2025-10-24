@@ -415,7 +415,7 @@ describe('+page.svelte', () => {
         expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
     })
 
-    it('disables mode downgrade when anonymous is set', () => {
+    it('allows switching away from anonymous mode', async () => {
         const anonymousBot: Bot = {
             ...baseBot,
             communication_mode: 'anonymous'
@@ -426,18 +426,36 @@ describe('+page.svelte', () => {
             data: {bot: anonymousBot, errorMessage: null}
         })
 
+        updateBotMock.mockResolvedValue({uuid: anonymousBot.uuid})
+        mapBotResponseMock.mockReturnValue({...anonymousBot, communication_mode: 'standard'})
+
+        const user = userEvent.setup()
         render(BotPage)
 
         const standardOption = screen.getByLabelText(/Standard/, {
             selector: 'input[type="radio"]'
         }) as HTMLInputElement
-        const anonymousOption = screen.getByLabelText(/Anonymous/, {
-            selector: 'input[type="radio"]'
-        }) as HTMLInputElement
+        const saveButton = screen.getByRole('button', {name: 'Save'})
 
-        expect(standardOption).toBeDisabled()
-        expect(anonymousOption).toBeChecked()
-        expect(screen.getByText('Anonymous mode is permanent for this bot.')).toBeInTheDocument()
+        expect(standardOption).not.toBeDisabled()
+        await user.click(standardOption)
+        await user.click(saveButton)
+
+        await waitFor(() => {
+            expect(updateBotMock).toHaveBeenCalledWith(anonymousBot.uuid, {
+                start_message: anonymousBot.start_message,
+                feedback_received_message: anonymousBot.feedback_received_message,
+                enabled: anonymousBot.enabled,
+                communication_mode: 'standard',
+                allow_photo_messages: anonymousBot.allow_photo_messages,
+                allow_video_messages: anonymousBot.allow_video_messages,
+                allow_voice_messages: anonymousBot.allow_voice_messages,
+                allow_document_messages: anonymousBot.allow_document_messages,
+                allow_sticker_messages: anonymousBot.allow_sticker_messages,
+                antiflood_seconds: anonymousBot.antiflood_seconds,
+                antiflood_enabled: anonymousBot.antiflood_enabled
+            })
+        })
     })
 
     it('asks for confirmation before deleting a bot', async () => {

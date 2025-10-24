@@ -19,6 +19,7 @@ const bot = vi.hoisted(() => ({
     start_message: 'start',
     feedback_received_message: 'received',
     enabled: true,
+    communication_mode: 'standard',
     forward_chat_id: null,
     created_at: '2025-01-01T00:00:00Z',
     updated_at: '2025-01-01T00:00:00Z'

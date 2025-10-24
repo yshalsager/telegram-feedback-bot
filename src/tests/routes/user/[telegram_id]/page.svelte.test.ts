@@ -2,7 +2,34 @@ import {render, screen, waitFor} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import UserPage from '~/routes/user/[telegram_id]/+page.svelte'
-import {createI18nMockModule, getI18nMock, type I18nMock} from '~/tests/utils/i18n-mock'
+
+vi.mock('~/lib/i18n', () => {
+    const localeStore = {
+        subscribe: (fn: (value: string) => void) => {
+            fn('en')
+            return () => {}
+        },
+        set: vi.fn()
+    }
+    const availableLocales = {
+        subscribe: (fn: (value: Array<{locale: string; name: string}>) => void) => {
+            fn([
+                {locale: 'en', name: 'English'},
+                {locale: 'ar', name: 'Arabic'}
+            ])
+            return () => {}
+        }
+    }
+    return {
+        locale: localeStore,
+        locales: ['en', 'ar'],
+        availableLocales,
+        formatNumber: (value: number) => value.toString(),
+        formatCharacterCount: (value: number, limit = 4096) => `${value}/${limit}`,
+        applyLocale: vi.fn(),
+        initLocale: vi.fn(async () => 'en')
+    }
+})
 
 const showNotificationMock = vi.hoisted(() => vi.fn())
 const updateUserDetailMock = vi.hoisted(() => vi.fn(async () => ({})))
@@ -53,16 +80,10 @@ vi.mock('$lib/mappers/user', () => ({
     mapUserResponse: (...args: unknown[]) => mapUserResponseMock(...args)
 }))
 
-vi.mock('~/lib/i18n', () => createI18nMockModule())
-
-let i18nMock: I18nMock
-
 describe('user detail +page.svelte', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         Object.assign(pageState, createPageState())
-        i18nMock = getI18nMock()
-        i18nMock.reset()
         updateUserDetailMock.mockReset()
         deleteUserMock.mockReset()
         mapUserResponseMock.mockReset()

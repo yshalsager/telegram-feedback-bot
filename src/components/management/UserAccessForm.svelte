@@ -3,7 +3,7 @@ import type {Snippet} from 'svelte'
 import {Loader} from '@lucide/svelte'
 import {Button} from '$lib/components/ui/button'
 import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator/index.js'
+import {Separator} from '$lib/components/ui/separator'
 import {availableLocales} from '$lib/i18n'
 import SwitchRow from './SwitchRow.svelte'
 

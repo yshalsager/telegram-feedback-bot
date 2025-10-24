@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import {Popover as PopoverPrimitive} from 'bits-ui'
 import {cn} from '~/lib/utils'
 
@@ -9,6 +9,8 @@ let {
     align = 'center',
     portalProps,
     ...restProps
+}: PopoverPrimitive.ContentProps & {
+    portalProps?: PopoverPrimitive.PortalProps
 } = $props()
 </script>
 

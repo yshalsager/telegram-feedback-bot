@@ -1,6 +1,6 @@
 <script lang="ts">
 import type {Snippet} from 'svelte'
-import * as Card from '$lib/components/ui/card/index.js'
+import * as Card from '$lib/components/ui/card'
 
 type Props = {
     title: string

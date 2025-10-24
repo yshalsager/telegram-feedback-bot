@@ -8,7 +8,7 @@ import {showNotification} from '~/lib/telegram.js'
 import {ban_user, list_banned_users, unban_user} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
 import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator/index.js'
+import {Separator} from '$lib/components/ui/separator'
 import {Textarea} from '$lib/components/ui/textarea'
 import type {BannedUser, Bot} from '$lib/types.ts'
 import type {PageData} from './$types'
@@ -189,7 +189,7 @@ async function handleUnban(userId: number) {
                     id="ban-reason"
                     class="min-h-[72px]"
                     aria-label="Ban reason"
-                    maxlength="512"
+                    maxlength={512}
                     placeholder="Reason (optional)"
                     bind:value={newBanReason}
                 />

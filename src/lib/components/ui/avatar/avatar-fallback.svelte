@@ -1,8 +1,12 @@
-<script>
+<script lang="ts">
 import {Avatar as AvatarPrimitive} from 'bits-ui'
 import {cn} from '~/lib/utils'
 
-let {ref = $bindable(null), class: className, ...restProps} = $props()
+let {
+    ref = $bindable(null),
+    class: className,
+    ...restProps
+}: AvatarPrimitive.FallbackProps = $props()
 </script>
 
 <AvatarPrimitive.Fallback
