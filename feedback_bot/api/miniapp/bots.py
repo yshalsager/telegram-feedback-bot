@@ -65,6 +65,11 @@ class UpdateBotIn(Schema):
         max_length=MessageLimit.MAX_TEXT_LENGTH,
     )
     enabled: bool | None = Field(default=None)
+    allow_photo_messages: bool | None = Field(default=None)
+    allow_video_messages: bool | None = Field(default=None)
+    allow_voice_messages: bool | None = Field(default=None)
+    allow_document_messages: bool | None = Field(default=None)
+    allow_sticker_messages: bool | None = Field(default=None)
 
 
 class StatusMessage(Schema):
@@ -133,6 +138,11 @@ class BotOut(Schema):
     feedback_received_message: str
     enabled: bool
     forward_chat_id: int | None
+    allow_photo_messages: bool
+    allow_video_messages: bool
+    allow_voice_messages: bool
+    allow_document_messages: bool
+    allow_sticker_messages: bool
     created_at: str = Field(..., alias='created_at.isoformat')
     updated_at: str = Field(..., alias='updated_at.isoformat')
 

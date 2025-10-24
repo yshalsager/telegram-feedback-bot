@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-24T17:42:17.458Z\n"
+"PO-Revision-Date: 2025-10-24T18:15:06.138Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -157,6 +157,50 @@ msgstr "حفظ"
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to update bot"
 msgstr "فشل تحديث البوت"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Media permissions"
+msgstr "أذونات الوسائط"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Choose which media types users can send to this bot."
+msgstr "اختر أنواع الوسائط التي يُسمح للمستخدمين بإرسالها لهذا البوت."
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Photos"
+msgstr "الصور"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Videos"
+msgstr "الفيديوهات"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Voice messages"
+msgstr "الرسائل الصوتية"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Files"
+msgstr "الملفات"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Stickers"
+msgstr "الملصقات"
+
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Allowed"
+msgstr "مسموح"
+
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Blocked"
+msgstr "محظور"
 
 #. placeholder {0}: bot.username
 #: src/routes/bot/[uuid]/+page.svelte

@@ -8,6 +8,11 @@ export type Bot = {
     start_message: string
     feedback_received_message: string
     enabled: boolean
+    allow_photo_messages: boolean
+    allow_video_messages: boolean
+    allow_voice_messages: boolean
+    allow_document_messages: boolean
+    allow_sticker_messages: boolean
     forward_chat_id: number | null
     created_at: string
     updated_at: string

@@ -16,6 +16,7 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 - Update start / receipt messages and link or unlink groups.
 - Rotate bot tokens securely with enforced admin approval before re-enabling (when configured).
 - Inspect live stats, review audit history of broadcasts, and manage banned users per bot.
+- Decide which media types (photos, videos, voice, files, stickers) each bot accepts before forwarding.
 - Manage builder access: whitelist, language, admin flags, and removal.
 
 🔒 See the [Privacy Policy](PRIVACY_POLICY.md) for details on data that is stored.
@@ -24,6 +25,7 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 
 - Route every user conversation into its own forum topic (or the owner chat) for clean threading.
 - Forward edits, mirror replies back to the user, and automatically acknowledge receipt with an emoji.
+- Politely decline disallowed media with a localized reply while leaving text enabled.
 - Provide owner tooling: `/broadcast`, `/ban`, `/unban`, `/banned`, `/delete` (reply to remove a single pair), and `/clear` (reply to drop that message and everything after it in the thread), plus `/start` for users.
 
 ## Technology Stack

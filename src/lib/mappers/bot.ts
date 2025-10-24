@@ -16,6 +16,16 @@ export function mapBotResponse(data: Record<string, unknown>, fallbackUuid: stri
                 ? data.feedback_received_message
                 : '',
         enabled: typeof enabledValue === 'boolean' ? enabledValue : Boolean(enabledValue),
+        allow_photo_messages:
+            typeof data.allow_photo_messages === 'boolean' ? data.allow_photo_messages : true,
+        allow_video_messages:
+            typeof data.allow_video_messages === 'boolean' ? data.allow_video_messages : true,
+        allow_voice_messages:
+            typeof data.allow_voice_messages === 'boolean' ? data.allow_voice_messages : true,
+        allow_document_messages:
+            typeof data.allow_document_messages === 'boolean' ? data.allow_document_messages : true,
+        allow_sticker_messages:
+            typeof data.allow_sticker_messages === 'boolean' ? data.allow_sticker_messages : true,
         forward_chat_id:
             typeof data.forward_chat_id === 'number'
                 ? data.forward_chat_id

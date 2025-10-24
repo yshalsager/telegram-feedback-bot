@@ -395,11 +395,12 @@ async def test_update_bot_settings_applies_changes():
     updated = await crud.update_bot_settings(
         bot.uuid,
         owner.telegram_id,
-        {'start_message': 'new'},
+        {'start_message': 'new', 'allow_voice_messages': False},
     )
 
     assert updated is not None
     assert updated.start_message == 'new'
+    assert updated.allow_voice_messages is False
 
 
 @pytest.mark.django

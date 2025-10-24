@@ -31,6 +31,11 @@ let bot = $state<Bot | null>(null)
 let enabled = $state(true)
 let startMessage = $state('')
 let feedbackReceivedMessage = $state('')
+let allow_photo_messages = $state(true)
+let allow_video_messages = $state(true)
+let allow_voice_messages = $state(true)
+let allow_document_messages = $state(true)
+let allow_sticker_messages = $state(true)
 let pendingToken = $state('')
 let loadError = $state<string | null>(null)
 let stats = $state<BotStats | null>(null)
@@ -44,6 +49,11 @@ const hasChanges = $derived(
             (startMessage !== bot.start_message ||
                 feedbackReceivedMessage !== bot.feedback_received_message ||
                 enabled !== bot.enabled ||
+                allow_photo_messages !== bot.allow_photo_messages ||
+                allow_video_messages !== bot.allow_video_messages ||
+                allow_voice_messages !== bot.allow_voice_messages ||
+                allow_document_messages !== bot.allow_document_messages ||
+                allow_sticker_messages !== bot.allow_sticker_messages ||
                 trimmedPendingToken !== '')
     )
 )
@@ -80,12 +90,22 @@ if (data) {
         enabled = data.bot.enabled
         startMessage = data.bot.start_message
         feedbackReceivedMessage = data.bot.feedback_received_message
+        allow_photo_messages = data.bot.allow_photo_messages
+        allow_video_messages = data.bot.allow_video_messages
+        allow_voice_messages = data.bot.allow_voice_messages
+        allow_document_messages = data.bot.allow_document_messages
+        allow_sticker_messages = data.bot.allow_sticker_messages
         pendingToken = ''
     } else {
         bot = null
         enabled = true
         startMessage = ''
         feedbackReceivedMessage = ''
+        allow_photo_messages = true
+        allow_video_messages = true
+        allow_voice_messages = true
+        allow_document_messages = true
+        allow_sticker_messages = true
         pendingToken = ''
     }
 
@@ -100,6 +120,11 @@ async function handleUpdateBot() {
         start_message: startMessage,
         feedback_received_message: feedbackReceivedMessage,
         enabled,
+        allow_photo_messages,
+        allow_video_messages,
+        allow_voice_messages,
+        allow_document_messages,
+        allow_sticker_messages,
         ...(trimmedPendingToken !== '' ? {bot_token: trimmedPendingToken} : {})
     })) as UpdateBotResponse
     if (response?.uuid === botUuid) {
@@ -108,6 +133,11 @@ async function handleUpdateBot() {
         enabled = updated.enabled
         startMessage = updated.start_message
         feedbackReceivedMessage = updated.feedback_received_message
+        allow_photo_messages = updated.allow_photo_messages
+        allow_video_messages = updated.allow_video_messages
+        allow_voice_messages = updated.allow_voice_messages
+        allow_document_messages = updated.allow_document_messages
+        allow_sticker_messages = updated.allow_sticker_messages
         pendingToken = ''
         showNotification('', '✅ Bot updated successfully')
     } else {
@@ -312,6 +342,47 @@ async function unlink_group() {
                 label="Bot status"
                 bind:checked={enabled}
             />
+
+            <section class="space-y-3 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
+                <div class="space-y-1 text-start">
+                    <h3 class="text-sm font-semibold text-foreground">Media permissions</h3>
+                    <p class="text-sm text-muted-foreground">
+                        Choose which media types users can send to this bot.
+                    </p>
+                </div>
+                <div class="space-y-2">
+                    <SwitchRow
+                        id="media-photos-toggle"
+                        description={allow_photo_messages ? 'Allowed' : 'Blocked'}
+                        label="Photos"
+                        bind:checked={allow_photo_messages}
+                    />
+                    <SwitchRow
+                        id="media-videos-toggle"
+                        description={allow_video_messages ? 'Allowed' : 'Blocked'}
+                        label="Videos"
+                        bind:checked={allow_video_messages}
+                    />
+                    <SwitchRow
+                        id="media-voice-toggle"
+                        description={allow_voice_messages ? 'Allowed' : 'Blocked'}
+                        label="Voice messages"
+                        bind:checked={allow_voice_messages}
+                    />
+                    <SwitchRow
+                        id="media-documents-toggle"
+                        description={allow_document_messages ? 'Allowed' : 'Blocked'}
+                        label="Files"
+                        bind:checked={allow_document_messages}
+                    />
+                    <SwitchRow
+                        id="media-stickers-toggle"
+                        description={allow_sticker_messages ? 'Allowed' : 'Blocked'}
+                        label="Stickers"
+                        bind:checked={allow_sticker_messages}
+                    />
+                </div>
+            </section>
 
             <section class="space-y-3 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
                 <div class="space-y-1 text-start">

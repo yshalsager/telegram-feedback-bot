@@ -197,6 +197,26 @@ msgstr "Nothing to clear."
 msgid "Could not clear messages."
 msgstr "Could not clear messages."
 
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:190
+msgid "This bot does not accept photos."
+msgstr "This bot does not accept photos."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:191
+msgid "This bot does not accept videos."
+msgstr "This bot does not accept videos."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:192
+msgid "This bot does not accept voice messages."
+msgstr "This bot does not accept voice messages."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:193
+msgid "This bot does not accept documents."
+msgstr "This bot does not accept documents."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:194
+msgid "This bot does not accept stickers."
+msgstr "This bot does not accept stickers."
+
 #: feedback_bot/telegram/feedback_bot/modules/groups.py:33
 #, python-format
 msgid "%(bot_name)s will forward feedback to %(chat_name)s."

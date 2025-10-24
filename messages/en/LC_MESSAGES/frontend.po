@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-24T17:42:17.453Z\n"
+"PO-Revision-Date: 2025-10-24T18:15:06.137Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -144,6 +144,50 @@ msgstr "Feedback received message"
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to update bot"
 msgstr "Failed to update bot"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Media permissions"
+msgstr "Media permissions"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Choose which media types users can send to this bot."
+msgstr "Choose which media types users can send to this bot."
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Photos"
+msgstr "Photos"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Videos"
+msgstr "Videos"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Voice messages"
+msgstr "Voice messages"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Files"
+msgstr "Files"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Stickers"
+msgstr "Stickers"
+
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Allowed"
+msgstr "Allowed"
+
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Blocked"
+msgstr "Blocked"
 
 #. placeholder {0}: bot.username
 #: src/routes/bot/[uuid]/+page.svelte

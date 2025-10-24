@@ -70,6 +70,11 @@ class Bot(TimestampedModel):
     )
 
     enabled = models.BooleanField(default=not settings.TELEGRAM_NEW_BOT_ADMIN_APPROVAL)
+    allow_photo_messages = models.BooleanField(default=True)
+    allow_video_messages = models.BooleanField(default=True)
+    allow_voice_messages = models.BooleanField(default=True)
+    allow_document_messages = models.BooleanField(default=True)
+    allow_sticker_messages = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return f'@{self.username}'

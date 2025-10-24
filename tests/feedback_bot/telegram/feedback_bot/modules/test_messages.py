@@ -6,7 +6,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
-from feedback_bot.models import BannedUser, BotStats, FeedbackChat, MessageMapping
+from feedback_bot.models import BannedUser, Bot, BotStats, FeedbackChat, MessageMapping
 from feedback_bot.telegram.feedback_bot.modules import messages as messages_module
 from tests.feedback_bot.telegram.factories import build_message
 
@@ -92,6 +92,35 @@ async def test_forward_feedback_blocks_banned_user(monkeypatch, feedback_app):
     reply_mock.assert_not_awaited()
 
 
+async def test_forward_feedback_blocks_disallowed_media(monkeypatch, feedback_app):
+    _, bot_config = feedback_app
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+    await Bot.objects.filter(pk=bot_config.pk).aupdate(allow_photo_messages=False)
+    await bot_config.arefresh_from_db()
+
+    user_message = build_message(999, message_id=11, text='')
+    user_message._frozen = False
+    user_message.photo = [SimpleNamespace(file_id='ph-1')]
+    user_message._frozen = True
+
+    forward_mock = AsyncMock()
+    reply_mock = AsyncMock()
+    _patch_message_method(monkeypatch, 'forward', forward_mock)
+    _patch_message_method(monkeypatch, 'reply_text', reply_mock)
+
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id)
+    update = SimpleNamespace(effective_message=user_message)
+
+    await messages_module.forward_feedback(update, context)
+
+    assert forward_mock.await_count == 0
+    reply_mock.assert_awaited_once_with(
+        user_message, 'This bot does not accept photos.', reply_to_message_id=11
+    )
+    assert not await FeedbackChat.objects.filter(bot=bot_config).aexists()
+
+
 async def test_edit_forwarded_feedback_updates_owner_message(monkeypatch, feedback_app):
     _, bot_config = feedback_app
     await FeedbackChat.objects.filter(bot=bot_config).adelete()
@@ -134,6 +163,48 @@ async def test_edit_forwarded_feedback_updates_owner_message(monkeypatch, feedba
     assert payload['chat_id'] == -100222333
     assert payload['message_thread_id'] == 555
     assert forwarded.link in payload['text']
+
+
+async def test_edit_forwarded_feedback_blocks_disallowed_media(monkeypatch, feedback_app):
+    _, bot_config = feedback_app
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+    await Bot.objects.filter(pk=bot_config.pk).aupdate(allow_video_messages=False)
+    await bot_config.arefresh_from_db()
+
+    feedback_chat, _ = await FeedbackChat.objects.aget_or_create(
+        bot=bot_config,
+        user_telegram_id=999,
+        defaults={'username': ''},
+    )
+
+    await MessageMapping.objects.aupdate_or_create(
+        bot=bot_config,
+        user_message_id=11,
+        defaults={'user_chat': feedback_chat, 'owner_message_id': 22},
+    )
+
+    edited_payload = build_message(999, message_id=11, text='')
+    edited_payload._frozen = False
+    edited_payload.video = SimpleNamespace(file_id='vid-1')
+    edited_payload._frozen = True
+
+    forward_mock = AsyncMock()
+    reply_mock = AsyncMock()
+    _patch_message_method(monkeypatch, 'forward', forward_mock)
+    _patch_message_method(monkeypatch, 'reply_text', reply_mock)
+
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id)
+    update = SimpleNamespace(effective_message=edited_payload)
+
+    await messages_module.edit_forwarded_feedback(update, context)
+
+    assert forward_mock.await_count == 0
+    reply_mock.assert_awaited_once_with(
+        edited_payload, 'This bot does not accept videos.', reply_to_message_id=11
+    )
+    mapping = await MessageMapping.objects.aget(bot=bot_config, user_message_id=11)
+    assert mapping.owner_message_id == 22
 
 
 async def test_reply_to_feedback_copies_message(monkeypatch, feedback_app):

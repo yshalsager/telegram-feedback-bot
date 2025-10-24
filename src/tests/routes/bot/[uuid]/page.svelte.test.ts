@@ -79,6 +79,11 @@ type Bot = {
     start_message: string
     feedback_received_message: string
     enabled: boolean
+    allow_photo_messages: boolean
+    allow_video_messages: boolean
+    allow_voice_messages: boolean
+    allow_document_messages: boolean
+    allow_sticker_messages: boolean
     forward_chat_id: number | null
     created_at: string
     updated_at: string
@@ -94,6 +99,11 @@ const baseBot: Bot = {
     start_message: 'Welcome!',
     feedback_received_message: 'Thanks for sharing',
     enabled: true,
+    allow_photo_messages: true,
+    allow_video_messages: true,
+    allow_voice_messages: true,
+    allow_document_messages: true,
+    allow_sticker_messages: true,
     forward_chat_id: null,
     created_at: new Date('2024-01-01').toISOString(),
     updated_at: new Date('2024-01-02').toISOString()
@@ -155,7 +165,12 @@ describe('+page.svelte', () => {
             expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
                 start_message: 'New welcome message',
                 feedback_received_message: 'Updated reply',
-                enabled: updatedBot.enabled
+                enabled: updatedBot.enabled,
+                allow_photo_messages: updatedBot.allow_photo_messages,
+                allow_video_messages: updatedBot.allow_video_messages,
+                allow_voice_messages: updatedBot.allow_voice_messages,
+                allow_document_messages: updatedBot.allow_document_messages,
+                allow_sticker_messages: updatedBot.allow_sticker_messages
             })
         })
 
@@ -192,12 +207,57 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                allow_photo_messages: baseBot.allow_photo_messages,
+                allow_video_messages: baseBot.allow_video_messages,
+                allow_voice_messages: baseBot.allow_voice_messages,
+                allow_document_messages: baseBot.allow_document_messages,
+                allow_sticker_messages: baseBot.allow_sticker_messages,
                 bot_token: rotatedToken
             })
         })
 
         expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
         expect(tokenInput.value).toBe('')
+        expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
+    })
+
+    it('updates media permissions when toggles change', async () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+
+        const toggledBot: Bot = {
+            ...baseBot,
+            allow_voice_messages: false
+        }
+
+        updateBotMock.mockResolvedValue({uuid: baseBot.uuid})
+        mapBotResponseMock.mockReturnValue(toggledBot)
+
+        const user = userEvent.setup()
+        render(BotPage)
+
+        const voiceToggle = screen.getByRole('switch', {name: 'Voice messages'})
+        await user.click(voiceToggle)
+
+        const saveButton = screen.getByRole('button', {name: 'Save'})
+        await user.click(saveButton)
+
+        await waitFor(() => {
+            expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
+                start_message: baseBot.start_message,
+                feedback_received_message: baseBot.feedback_received_message,
+                enabled: baseBot.enabled,
+                allow_photo_messages: baseBot.allow_photo_messages,
+                allow_video_messages: baseBot.allow_video_messages,
+                allow_voice_messages: false,
+                allow_document_messages: baseBot.allow_document_messages,
+                allow_sticker_messages: baseBot.allow_sticker_messages
+            })
+        })
+
+        expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
         expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
     })
 

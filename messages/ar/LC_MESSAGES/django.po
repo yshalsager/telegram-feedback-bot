@@ -199,6 +199,26 @@ msgstr "لا يوجد ما يمكن إزالته."
 msgid "Could not clear messages."
 msgstr "تعذّر إزالة الرسائل."
 
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:190
+msgid "This bot does not accept photos."
+msgstr "هذا البوت لا يقبل الصور."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:191
+msgid "This bot does not accept videos."
+msgstr "هذا البوت لا يقبل الفيديوهات."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:192
+msgid "This bot does not accept voice messages."
+msgstr "هذا البوت لا يقبل الرسائل الصوتية."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:193
+msgid "This bot does not accept documents."
+msgstr "هذا البوت لا يقبل الملفات."
+
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:194
+msgid "This bot does not accept stickers."
+msgstr "هذا البوت لا يقبل الملصقات."
+
 #: feedback_bot/telegram/feedback_bot/modules/groups.py:33
 #, python-format
 msgid "%(bot_name)s will forward feedback to %(chat_name)s."

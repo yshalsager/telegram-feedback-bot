@@ -186,6 +186,22 @@ def _build_input_media(message: Message):
     return None
 
 
+MEDIA_BLOCK_RULES = (
+    ('photo', 'allow_photo_messages', _('This bot does not accept photos.')),
+    ('video', 'allow_video_messages', _('This bot does not accept videos.')),
+    ('voice', 'allow_voice_messages', _('This bot does not accept voice messages.')),
+    ('document', 'allow_document_messages', _('This bot does not accept documents.')),
+    ('sticker', 'allow_sticker_messages', _('This bot does not accept stickers.')),
+)
+
+
+def _media_block_message(bot_config: Bot, message: Message) -> str | None:
+    for attribute, flag, text in MEDIA_BLOCK_RULES:
+        if getattr(message, attribute, None) and not getattr(bot_config, flag, True):
+            return text
+    return None
+
+
 async def _send_intro_message(
     context: ContextTypes.DEFAULT_TYPE, destination_chat_id: int, message: Message
 ) -> None:
@@ -227,6 +243,11 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     if message.chat_id == destination_chat_id and message.from_user.id == bot_config.owner_id:
         return
 
+    block_text = _media_block_message(bot_config, message)
+    if block_text:
+        await message.reply_text(block_text, reply_to_message_id=message.message_id)
+        return
+
     feedback_chat, created = await ensure_feedback_chat(
         bot_config, message.from_user.id, message.from_user.username
     )
@@ -266,6 +287,11 @@ async def edit_forwarded_feedback(update: Update, context: ContextTypes.DEFAULT_
 
     destination_chat_id = bot_config.forward_chat_id or bot_config.owner_id
     if destination_chat_id is None:
+        return
+
+    block_text = _media_block_message(bot_config, message)
+    if block_text:
+        await message.reply_text(block_text, reply_to_message_id=message.message_id)
         return
 
     feedback_chat = mapping.user_chat
