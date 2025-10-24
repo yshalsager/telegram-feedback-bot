@@ -229,6 +229,10 @@ msgstr "سيرسل %(bot_name)s التغذية الراجعة إلى %(chat_name
 msgid "%(bot_name)s has been unlinked from %(chat_title)s."
 msgstr "تم فك ارتباط %(bot_name)s من %(chat_title)s."
 
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:268
+msgid "Too many messages. Please wait {seconds} seconds before sending again."
+msgstr "الرسائل كثيرة جداً. يرجى الانتظار {seconds} ثانية قبل المحاولة مرة أخرى."
+
 #: feedback_bot/telegram/feedback_bot/modules/messages.py:249
 msgid "Thanks for your feedback!"
 msgstr "شكرًا على ملاحظاتك!"

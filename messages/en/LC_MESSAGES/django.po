@@ -227,6 +227,10 @@ msgstr "%(bot_name)s will forward feedback to %(chat_name)s."
 msgid "%(bot_name)s has been unlinked from %(chat_title)s."
 msgstr "%(bot_name)s has been unlinked from %(chat_title)s."
 
+#: feedback_bot/telegram/feedback_bot/modules/messages.py:268
+msgid "Too many messages. Please wait {seconds} seconds before sending again."
+msgstr "Too many messages. Please wait {seconds} seconds before sending again."
+
 #: feedback_bot/telegram/feedback_bot/modules/messages.py:249
 msgid "Thanks for your feedback!"
 msgstr "Thanks for your feedback!"

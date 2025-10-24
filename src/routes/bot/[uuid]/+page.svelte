@@ -36,6 +36,8 @@ let allow_video_messages = $state(true)
 let allow_voice_messages = $state(true)
 let allow_document_messages = $state(true)
 let allow_sticker_messages = $state(true)
+let antiflood_enabled = $state(false)
+let antiflood_seconds = $state(60)
 let pendingToken = $state('')
 let loadError = $state<string | null>(null)
 let stats = $state<BotStats | null>(null)
@@ -54,6 +56,8 @@ const hasChanges = $derived(
                 allow_voice_messages !== bot.allow_voice_messages ||
                 allow_document_messages !== bot.allow_document_messages ||
                 allow_sticker_messages !== bot.allow_sticker_messages ||
+                antiflood_enabled !== bot.antiflood_enabled ||
+                antiflood_seconds !== bot.antiflood_seconds ||
                 trimmedPendingToken !== '')
     )
 )
@@ -95,6 +99,8 @@ if (data) {
         allow_voice_messages = data.bot.allow_voice_messages
         allow_document_messages = data.bot.allow_document_messages
         allow_sticker_messages = data.bot.allow_sticker_messages
+        antiflood_enabled = data.bot.antiflood_enabled
+        antiflood_seconds = data.bot.antiflood_seconds ?? 60
         pendingToken = ''
     } else {
         bot = null
@@ -106,6 +112,8 @@ if (data) {
         allow_voice_messages = true
         allow_document_messages = true
         allow_sticker_messages = true
+        antiflood_enabled = false
+        antiflood_seconds = 60
         pendingToken = ''
     }
 
@@ -116,6 +124,9 @@ if (data) {
 async function handleUpdateBot() {
     if (!bot) return
     disableSubmit = true
+    const normalizedCooldown = Number.isFinite(antiflood_seconds)
+        ? Math.max(Math.trunc(antiflood_seconds), 1)
+        : 60
     const response = (await update_bot(botUuid, {
         start_message: startMessage,
         feedback_received_message: feedbackReceivedMessage,
@@ -125,6 +136,8 @@ async function handleUpdateBot() {
         allow_voice_messages,
         allow_document_messages,
         allow_sticker_messages,
+        antiflood_enabled,
+        antiflood_seconds: normalizedCooldown,
         ...(trimmedPendingToken !== '' ? {bot_token: trimmedPendingToken} : {})
     })) as UpdateBotResponse
     if (response?.uuid === botUuid) {
@@ -138,6 +151,8 @@ async function handleUpdateBot() {
         allow_voice_messages = updated.allow_voice_messages
         allow_document_messages = updated.allow_document_messages
         allow_sticker_messages = updated.allow_sticker_messages
+        antiflood_enabled = updated.antiflood_enabled
+        antiflood_seconds = updated.antiflood_seconds
         pendingToken = ''
         showNotification('', '✅ Bot updated successfully')
     } else {
@@ -342,6 +357,40 @@ async function unlink_group() {
                 label="Bot status"
                 bind:checked={enabled}
             />
+
+            <div class="space-y-2">
+                <SwitchRow
+                    id="bot-antiflood-toggle"
+                    description={antiflood_enabled ? 'Enabled' : 'Disabled'}
+                    label="Anti-flood"
+                    bind:checked={antiflood_enabled}
+                />
+                <div class="space-y-1">
+                    <label
+                        class="block text-xs font-medium text-foreground"
+                        for="bot-antiflood-wait"
+                    >
+                        Anti-flood wait (seconds)
+                    </label>
+                    <Input
+                        id="bot-antiflood-wait"
+                        class="h-9"
+                        disabled={!antiflood_enabled}
+                        max="3600"
+                        min="1"
+                        step="1"
+                        type="number"
+                        bind:value={antiflood_seconds}
+                    />
+                    <p class="text-xs text-muted-foreground">
+                        When enabled, users can send one message every {Number.isFinite(
+                            antiflood_seconds
+                        )
+                            ? antiflood_seconds.toLocaleString()
+                            : '—'} seconds and receive a warning if throttled.
+                    </p>
+                </div>
+            </div>
 
             <section class="space-y-3 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
                 <div class="space-y-1 text-start">

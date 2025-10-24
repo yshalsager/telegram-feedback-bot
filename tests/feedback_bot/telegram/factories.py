@@ -27,8 +27,9 @@ def build_message(
     entities: list[MessageEntity] | None = None,
     is_bot: bool = False,
     username: str | None = None,
+    date: dt.datetime | None = None,
 ) -> Message:
-    now = dt.datetime(2025, 1, 1, tzinfo=dt.UTC)
+    now = date or dt.datetime(2025, 1, 1, tzinfo=dt.UTC)
     return Message(
         message_id=message_id,
         date=now,

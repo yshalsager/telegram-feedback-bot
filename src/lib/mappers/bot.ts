@@ -26,6 +26,14 @@ export function mapBotResponse(data: Record<string, unknown>, fallbackUuid: stri
             typeof data.allow_document_messages === 'boolean' ? data.allow_document_messages : true,
         allow_sticker_messages:
             typeof data.allow_sticker_messages === 'boolean' ? data.allow_sticker_messages : true,
+        antiflood_enabled:
+            typeof data.antiflood_enabled === 'boolean'
+                ? data.antiflood_enabled
+                : Boolean(data.antiflood_enabled),
+        antiflood_seconds:
+            typeof data.antiflood_seconds === 'number'
+                ? Math.max(data.antiflood_seconds, 1)
+                : Math.max(Number(data.antiflood_seconds ?? 60) || 60, 1),
         forward_chat_id:
             typeof data.forward_chat_id === 'number'
                 ? data.forward_chat_id

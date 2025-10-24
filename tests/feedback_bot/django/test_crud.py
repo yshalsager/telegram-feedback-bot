@@ -343,6 +343,8 @@ async def test_get_bot_config_returns_enabled_bot():
     assert config is not None
     assert config.token == 'CFG_TOKEN'  # noqa: S105
     assert config.forward_chat_id is None
+    assert config.antiflood_seconds == 60
+    assert config.antiflood_enabled is False
 
 
 @pytest.mark.django
@@ -395,12 +397,19 @@ async def test_update_bot_settings_applies_changes():
     updated = await crud.update_bot_settings(
         bot.uuid,
         owner.telegram_id,
-        {'start_message': 'new', 'allow_voice_messages': False},
+        {
+            'start_message': 'new',
+            'allow_voice_messages': False,
+            'antiflood_enabled': True,
+            'antiflood_seconds': 45,
+        },
     )
 
     assert updated is not None
     assert updated.start_message == 'new'
     assert updated.allow_voice_messages is False
+    assert updated.antiflood_enabled is True
+    assert updated.antiflood_seconds == 45
 
 
 @pytest.mark.django

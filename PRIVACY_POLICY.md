@@ -1,6 +1,6 @@
 # Privacy Policy
 
-_Last updated: 2025-07-24_
+_Last updated: 2025-10-24_
 
 ## Overview
 
@@ -20,6 +20,7 @@ Telegram Feedback Bots Builder is an open-source project you self-host to provis
 - Encrypted bot token (stored with Fernet encryption)
 - Generated bot UUID used for webhook URLs
 - Configurable start/feedback message templates
+- Anti-flood settings (toggle state and cooldown duration in seconds)
 - Media type flags for accepting/rejecting photos, videos, voice messages, documents, and stickers
 - Forwarding destination (owner chat or linked group)
 - Enabled/disabled status and timestamps
@@ -27,6 +28,7 @@ Telegram Feedback Bots Builder is an open-source project you self-host to provis
 ### Feedback Chats & Message Mappings
 
 - Per-user chat records: Telegram ID, username, forum topic/thread ID when a group is linked
+- Chat metadata timestamps (created/updated) and rate-limit markers (last message time, last warning time)
 - Message mappings: IDs of user messages and their forwarded/replied counterparts so responses reach the right recipient
 
 ### Usage Statistics

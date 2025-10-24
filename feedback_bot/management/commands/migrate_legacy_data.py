@@ -197,6 +197,8 @@ class Command(BaseCommand):
                 bot.enabled = bool(row['enabled'])
                 bot.start_message = start_message
                 bot.feedback_received_message = received_message
+                bot.antiflood_enabled = False
+                bot.antiflood_seconds = 60
                 bot.token = decrypt_legacy_token(row['token'])
                 bot.save()
                 bots[telegram_id] = bot

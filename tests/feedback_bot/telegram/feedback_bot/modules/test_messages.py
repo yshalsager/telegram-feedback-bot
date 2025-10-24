@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime as dt
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -54,6 +55,8 @@ async def test_forward_feedback_creates_mapping(monkeypatch, feedback_app):
 
     chat = await FeedbackChat.objects.aget(bot=bot_config, user_telegram_id=999)
     assert chat.topic_id is None
+    assert chat.last_feedback_at is not None
+    assert abs((chat.last_feedback_at - user_message.date).total_seconds()) < 1
 
     mapping = await MessageMapping.objects.aget(bot=bot_config, user_message_id=11)
     assert mapping.owner_message_id == 42
@@ -90,6 +93,88 @@ async def test_forward_feedback_blocks_banned_user(monkeypatch, feedback_app):
 
     assert forward_mock.await_count == 0
     reply_mock.assert_not_awaited()
+
+
+async def test_forward_feedback_throttles_when_antiflood_enabled(monkeypatch, feedback_app):
+    _, bot_config = feedback_app
+    await Bot.objects.filter(pk=bot_config.pk).aupdate(antiflood_enabled=True, antiflood_seconds=120)
+    await bot_config.arefresh_from_db()
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+
+    first_timestamp = dt.datetime(2025, 1, 1, 12, 0, tzinfo=dt.UTC)
+    first_message = build_message(999, message_id=11, text='hello', date=first_timestamp)
+    forwarded = SimpleNamespace(message_id=42, link=None)
+    forward_mock = AsyncMock(return_value=forwarded)
+    reply_mock = AsyncMock()
+    _patch_message_method(monkeypatch, 'forward', forward_mock)
+    _patch_message_method(monkeypatch, 'reply_text', reply_mock)
+
+    context = _build_context(bot_config, bot_id=bot_config.telegram_id)
+    update = SimpleNamespace(effective_message=first_message)
+
+    await messages_module.forward_feedback(update, context)
+
+    assert forward_mock.await_count == 1
+    assert reply_mock.await_count == 1
+    assert reply_mock.await_args_list[0].args[1] == 'Thanks'
+
+    second_message = build_message(
+        999,
+        message_id=12,
+        text='again',
+        date=first_timestamp + dt.timedelta(seconds=30),
+    )
+    throttled_update = SimpleNamespace(effective_message=second_message)
+
+    await messages_module.forward_feedback(throttled_update, context)
+
+    assert forward_mock.await_count == 1
+    assert reply_mock.await_count == 2
+    throttled_call = reply_mock.await_args_list[-1]
+    assert throttled_call.args[0] is second_message
+    assert (
+        throttled_call.args[1]
+        == 'Too many messages. Please wait 120 seconds before sending again.'
+    )
+    assert throttled_call.kwargs == {'reply_to_message_id': 12}
+
+    chat_after_warning = await FeedbackChat.objects.aget(
+        bot=bot_config, user_telegram_id=999
+    )
+    assert chat_after_warning.last_warning_at is not None
+
+    third_message = build_message(
+        999,
+        message_id=13,
+        text='still again',
+        date=first_timestamp + dt.timedelta(seconds=40),
+    )
+    third_update = SimpleNamespace(effective_message=third_message)
+
+    await messages_module.forward_feedback(third_update, context)
+
+    assert forward_mock.await_count == 1
+    assert reply_mock.await_count == 2
+
+    fourth_message = build_message(
+        999,
+        message_id=14,
+        text='after wait',
+        date=first_timestamp + dt.timedelta(seconds=130),
+    )
+    fourth_update = SimpleNamespace(effective_message=fourth_message)
+
+    await messages_module.forward_feedback(fourth_update, context)
+
+    assert forward_mock.await_count == 2
+    assert reply_mock.await_count == 3
+    assert reply_mock.await_args_list[-1].args[1] == 'Thanks'
+
+    chat_after_reset = await FeedbackChat.objects.aget(
+        bot=bot_config, user_telegram_id=999
+    )
+    assert chat_after_reset.last_warning_at is None
 
 
 async def test_forward_feedback_blocks_disallowed_media(monkeypatch, feedback_app):

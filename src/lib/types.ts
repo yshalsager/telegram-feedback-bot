@@ -13,6 +13,8 @@ export type Bot = {
     allow_voice_messages: boolean
     allow_document_messages: boolean
     allow_sticker_messages: boolean
+    antiflood_enabled: boolean
+    antiflood_seconds: number
     forward_chat_id: number | null
     created_at: string
     updated_at: string

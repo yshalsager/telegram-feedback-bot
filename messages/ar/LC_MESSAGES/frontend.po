@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-24T18:15:06.138Z\n"
+"PO-Revision-Date: 2025-10-24T19:17:58.667Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -236,9 +236,11 @@ msgid "Bot status"
 msgstr "حالة البوت"
 
 #: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
 msgid "Enabled"
 msgstr "مفعل"
 
+#: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Disabled"
 msgstr "معطل"
@@ -531,3 +533,16 @@ msgstr "أدخل رمزاً جديداً لاستبداله"
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Leave empty to keep the current token. Updating rotates it immediately."
 msgstr "اتركه فارغاً للاحتفاظ بالرمز الحالي. سيجري الاستبدال فور التحديث."
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Anti-flood"
+msgstr "مكافحة الرسائل المزعجة"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Anti-flood wait (seconds)"
+msgstr "مدة الانتظار (ثوانٍ) لمكافحة الرسائل المزعجة"
+
+#. placeholder {0}: Number.isFinite(antiflood_seconds) ? antiflood_seconds.toLocaleString() : '—'
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
+msgstr "عند التفعيل، يمكن للمستخدمين إرسال رسالة واحدة كل {0} ثانية ويتلقون تنبيهاً عند التقييد."

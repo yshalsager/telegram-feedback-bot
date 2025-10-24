@@ -84,6 +84,8 @@ type Bot = {
     allow_voice_messages: boolean
     allow_document_messages: boolean
     allow_sticker_messages: boolean
+    antiflood_enabled: boolean
+    antiflood_seconds: number
     forward_chat_id: number | null
     created_at: string
     updated_at: string
@@ -104,6 +106,8 @@ const baseBot: Bot = {
     allow_voice_messages: true,
     allow_document_messages: true,
     allow_sticker_messages: true,
+    antiflood_enabled: false,
+    antiflood_seconds: 60,
     forward_chat_id: null,
     created_at: new Date('2024-01-01').toISOString(),
     updated_at: new Date('2024-01-02').toISOString()
@@ -170,7 +174,9 @@ describe('+page.svelte', () => {
                 allow_video_messages: updatedBot.allow_video_messages,
                 allow_voice_messages: updatedBot.allow_voice_messages,
                 allow_document_messages: updatedBot.allow_document_messages,
-                allow_sticker_messages: updatedBot.allow_sticker_messages
+                allow_sticker_messages: updatedBot.allow_sticker_messages,
+                antiflood_enabled: updatedBot.antiflood_enabled,
+                antiflood_seconds: updatedBot.antiflood_seconds
             })
         })
 
@@ -212,6 +218,8 @@ describe('+page.svelte', () => {
                 allow_voice_messages: baseBot.allow_voice_messages,
                 allow_document_messages: baseBot.allow_document_messages,
                 allow_sticker_messages: baseBot.allow_sticker_messages,
+                antiflood_seconds: baseBot.antiflood_seconds,
+                antiflood_enabled: baseBot.antiflood_enabled,
                 bot_token: rotatedToken
             })
         })
@@ -253,7 +261,99 @@ describe('+page.svelte', () => {
                 allow_video_messages: baseBot.allow_video_messages,
                 allow_voice_messages: false,
                 allow_document_messages: baseBot.allow_document_messages,
-                allow_sticker_messages: baseBot.allow_sticker_messages
+                allow_sticker_messages: baseBot.allow_sticker_messages,
+                antiflood_seconds: baseBot.antiflood_seconds,
+                antiflood_enabled: baseBot.antiflood_enabled
+            })
+        })
+
+        expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
+        expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
+    })
+
+    it('updates antiflood setting when toggled', async () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+
+        const antifloodBot: Bot = {
+            ...baseBot,
+            antiflood_enabled: true
+        }
+
+        updateBotMock.mockResolvedValue({uuid: baseBot.uuid})
+        mapBotResponseMock.mockReturnValue(antifloodBot)
+
+        const user = userEvent.setup()
+        render(BotPage)
+
+        const antifloodToggle = screen.getByRole('switch', {name: 'Anti-flood'})
+        await user.click(antifloodToggle)
+
+        const saveButton = screen.getByRole('button', {name: 'Save'})
+        await user.click(saveButton)
+
+        await waitFor(() => {
+            expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
+                start_message: baseBot.start_message,
+                feedback_received_message: baseBot.feedback_received_message,
+                enabled: baseBot.enabled,
+                allow_photo_messages: baseBot.allow_photo_messages,
+                allow_video_messages: baseBot.allow_video_messages,
+                allow_voice_messages: baseBot.allow_voice_messages,
+                allow_document_messages: baseBot.allow_document_messages,
+                allow_sticker_messages: baseBot.allow_sticker_messages,
+                antiflood_seconds: baseBot.antiflood_seconds,
+                antiflood_enabled: true
+            })
+        })
+
+        expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
+        expect(showNotificationMock).toHaveBeenCalledWith('', '✅ Bot updated successfully')
+    })
+
+    it('updates antiflood cooldown value', async () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+
+        const antifloodBot: Bot = {
+            ...baseBot,
+            antiflood_enabled: true,
+            antiflood_seconds: 90
+        }
+
+        updateBotMock.mockResolvedValue({uuid: baseBot.uuid})
+        mapBotResponseMock.mockReturnValue(antifloodBot)
+
+        const user = userEvent.setup()
+        render(BotPage)
+
+        const antifloodToggle = screen.getByRole('switch', {name: 'Anti-flood'})
+        await user.click(antifloodToggle)
+
+        const cooldownInput = screen.getByLabelText('Anti-flood wait (seconds)') as HTMLInputElement
+        expect(cooldownInput).toBeInstanceOf(HTMLInputElement)
+        await user.clear(cooldownInput)
+        await user.type(cooldownInput, '90')
+
+        const saveButton = screen.getByRole('button', {name: 'Save'})
+        await user.click(saveButton)
+
+        await waitFor(() => {
+            expect(updateBotMock).toHaveBeenCalledWith(baseBot.uuid, {
+                start_message: baseBot.start_message,
+                feedback_received_message: baseBot.feedback_received_message,
+                enabled: baseBot.enabled,
+                allow_photo_messages: baseBot.allow_photo_messages,
+                allow_video_messages: baseBot.allow_video_messages,
+                allow_voice_messages: baseBot.allow_voice_messages,
+                allow_document_messages: baseBot.allow_document_messages,
+                allow_sticker_messages: baseBot.allow_sticker_messages,
+                antiflood_enabled: true,
+                antiflood_seconds: 90
             })
         })
 

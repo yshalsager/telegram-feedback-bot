@@ -28,6 +28,8 @@ from feedback_bot.crud import (
     is_user_banned,
     save_incoming_mapping,
     save_outgoing_mapping,
+    set_feedback_chat_last_feedback,
+    set_feedback_chat_last_warning,
     set_feedback_chat_topic,
     update_incoming_mapping,
 )
@@ -253,6 +255,26 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     )
     if created and not bot_config.forward_chat_id:
         await _send_intro_message(context, destination_chat_id, message)
+
+    now = message.date or datetime.now(UTC)
+    now = now.replace(tzinfo=UTC) if now.tzinfo is None else now.astimezone(UTC)
+    cooldown_seconds = max(getattr(bot_config, 'antiflood_seconds', 60) or 60, 1)
+
+    if (
+        bot_config.antiflood_enabled
+        and feedback_chat.last_feedback_at
+        and (now - feedback_chat.last_feedback_at).total_seconds() < cooldown_seconds
+    ):
+        if (
+            feedback_chat.last_warning_at is None
+            or (now - feedback_chat.last_warning_at).total_seconds() >= cooldown_seconds
+        ):
+            text = _(
+                'Too many messages. Please wait {seconds} seconds before sending again.'
+            ).format(seconds=cooldown_seconds)
+            await message.reply_text(text, reply_to_message_id=message.message_id)
+            await set_feedback_chat_last_warning(feedback_chat, now)
+        return
     topic_id = await _ensure_topic(context, bot_config, message, feedback_chat)
 
     forwarded, topic_id = await _forward_with_topic_fallback(
@@ -265,6 +287,9 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     )
 
     await save_incoming_mapping(bot_config, feedback_chat, message.message_id, forwarded.message_id)
+    await set_feedback_chat_last_feedback(feedback_chat, now)
+    if feedback_chat.last_warning_at is not None:
+        await set_feedback_chat_last_warning(feedback_chat, None)
     await bump_incoming_messages(bot_config)
 
     text = bot_config.feedback_received_message or _('Thanks for your feedback!')

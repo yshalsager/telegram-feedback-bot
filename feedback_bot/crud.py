@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from datetime import datetime
 from typing import Any
 from uuid import UUID
 
@@ -29,6 +30,8 @@ BOT_MANAGEMENT_FIELDS = (
     'allow_voice_messages',
     'allow_document_messages',
     'allow_sticker_messages',
+    'antiflood_enabled',
+    'antiflood_seconds',
     'forward_chat_id',
     'owner__username',
     'owner__telegram_id',
@@ -157,6 +160,20 @@ async def ensure_feedback_chat(
 async def set_feedback_chat_topic(chat: FeedbackChat, topic_id: int | None) -> FeedbackChat:
     chat.topic_id = topic_id
     await chat.asave(update_fields=['topic_id'])
+    return chat
+
+
+async def set_feedback_chat_last_feedback(chat: FeedbackChat, timestamp: datetime) -> FeedbackChat:
+    chat.last_feedback_at = timestamp
+    await chat.asave(update_fields=['last_feedback_at'])
+    return chat
+
+
+async def set_feedback_chat_last_warning(
+    chat: FeedbackChat, timestamp: datetime | None
+) -> FeedbackChat:
+    chat.last_warning_at = timestamp
+    await chat.asave(update_fields=['last_warning_at'])
     return chat
 
 
@@ -305,6 +322,8 @@ async def get_bot_config(uuid: str) -> Bot:
             'allow_voice_messages',
             'allow_document_messages',
             'allow_sticker_messages',
+            'antiflood_enabled',
+            'antiflood_seconds',
             'forward_chat_id',
             '_token',
         )
@@ -370,6 +389,16 @@ async def update_bot_settings(bot_uuid: UUID | str, owner: int, data: dict[str, 
         raw_token = update_payload.pop('bot_token')
         if raw_token is not None:
             update_payload['_token'] = encrypt_token(raw_token)
+
+    if 'antiflood_seconds' in update_payload:
+        raw_value = update_payload['antiflood_seconds']
+        if raw_value is None:
+            update_payload['antiflood_seconds'] = 60
+        else:
+            try:
+                update_payload['antiflood_seconds'] = max(int(raw_value), 1)
+            except (TypeError, ValueError):
+                update_payload.pop('antiflood_seconds')
 
     if not update_payload:
         return None

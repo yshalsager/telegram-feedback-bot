@@ -70,6 +70,8 @@ class UpdateBotIn(Schema):
     allow_voice_messages: bool | None = Field(default=None)
     allow_document_messages: bool | None = Field(default=None)
     allow_sticker_messages: bool | None = Field(default=None)
+    antiflood_enabled: bool | None = Field(default=None)
+    antiflood_seconds: int | None = Field(default=None, ge=1, le=3600)
 
 
 class StatusMessage(Schema):
@@ -143,6 +145,8 @@ class BotOut(Schema):
     allow_voice_messages: bool
     allow_document_messages: bool
     allow_sticker_messages: bool
+    antiflood_enabled: bool
+    antiflood_seconds: int
     created_at: str = Field(..., alias='created_at.isoformat')
     updated_at: str = Field(..., alias='updated_at.isoformat')
 

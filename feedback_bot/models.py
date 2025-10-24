@@ -75,12 +75,14 @@ class Bot(TimestampedModel):
     allow_voice_messages = models.BooleanField(default=True)
     allow_document_messages = models.BooleanField(default=True)
     allow_sticker_messages = models.BooleanField(default=True)
+    antiflood_enabled = models.BooleanField(default=False)
+    antiflood_seconds = models.PositiveIntegerField(default=60)
 
     def __str__(self) -> str:
         return f'@{self.username}'
 
 
-class FeedbackChat(models.Model):
+class FeedbackChat(TimestampedModel):
     """
     Represents a unique user who has started interacting with a specific feedback Bot.
     This replaces the 'Chat' and 'Topic' models from telegram-feedback-bot's bot-specific DBs.
@@ -94,6 +96,8 @@ class FeedbackChat(models.Model):
         blank=True,
         help_text='The ID of the forum topic for this user in the forward_chat_id group.',
     )
+    last_feedback_at = models.DateTimeField(null=True, blank=True)
+    last_warning_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ('bot', 'user_telegram_id')

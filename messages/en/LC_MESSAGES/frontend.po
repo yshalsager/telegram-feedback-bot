@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-24T18:15:06.137Z\n"
+"PO-Revision-Date: 2025-10-24T19:17:58.666Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -213,9 +213,11 @@ msgid "Bot status"
 msgstr "Bot status"
 
 #: src/routes/bot/[uuid]/+page.svelte
+#: src/routes/bot/[uuid]/+page.svelte
 msgid "Enabled"
 msgstr "Enabled"
 
+#: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Disabled"
 msgstr "Disabled"
@@ -531,3 +533,16 @@ msgstr "Enter a new token to rotate"
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Leave empty to keep the current token. Updating rotates it immediately."
 msgstr "Leave empty to keep the current token. Updating rotates it immediately."
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Anti-flood"
+msgstr "Anti-flood"
+
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "Anti-flood wait (seconds)"
+msgstr "Anti-flood wait (seconds)"
+
+#. placeholder {0}: Number.isFinite(antiflood_seconds) ? antiflood_seconds.toLocaleString() : '—'
+#: src/routes/bot/[uuid]/+page.svelte
+msgid "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
+msgstr "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
