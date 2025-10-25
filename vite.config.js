@@ -41,7 +41,7 @@ export default defineConfig({
                 : [])
         ],
         fs: {
-            allow: ['./src']
+            allow: ['./src', './static']
         },
         port: process.env.VITE_PORT ? parseInt(process.env.VITE_PORT) : 5173,
         host: true,
