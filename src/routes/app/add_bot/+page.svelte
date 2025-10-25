@@ -4,14 +4,15 @@ import {resolve} from '$app/paths'
 import {Loader} from '@lucide/svelte'
 import type {EventPayload} from '@telegram-apps/sdk-svelte'
 import {on} from '@telegram-apps/sdk-svelte'
+import BotMessageField from '~/components/management/BotMessageField.svelte'
+import CommunicationModeSection from '~/components/management/CommunicationModeSection.svelte'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import {showNotification} from '~/lib/telegram.js'
 import {add_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
 import {Input} from '$lib/components/ui/input'
 import {Separator} from '$lib/components/ui/separator'
-import {Textarea} from '$lib/components/ui/textarea'
-import {formatCharacterCount} from '$lib/i18n'
+import type {CommunicationMode} from '$lib/constants/communication_mode'
 
 type AddBotResponse = {
     status?: string
@@ -26,7 +27,7 @@ let startMessage = $state(/* @wc-include */ 'Welcome to [name] bot. Please send 
 let feedbackReceivedMessage = $state(
     /* @wc-include */ 'Thank you for your feedback. We will get back to you soon.'
 )
-let communication_mode = $state('standard')
+let communication_mode = $state<CommunicationMode>('standard')
 let disableSubmit = $state(false)
 // Bot token regex validation
 const botTokenRegex = /^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$/
@@ -39,28 +40,6 @@ let isFormValid = $derived(
         startMessage.trim() !== '' &&
         feedbackReceivedMessage.trim() !== ''
 )
-
-const communication_mode_options: {
-    value: 'standard' | 'private' | 'anonymous'
-    title: string
-    description: string
-}[] = [
-    {
-        value: 'standard',
-        title: 'Standard',
-        description: 'Forward with usernames and profile links.'
-    },
-    {
-        value: 'private',
-        title: 'Private',
-        description: 'Shows public name only; profile links removed.'
-    },
-    {
-        value: 'anonymous',
-        title: 'Anonymous',
-        description: 'Replaces user identity with a request number.'
-    }
-]
 
 // Format character count with locale-specific number formatting
 const onBotSuccessfullyAdded = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
@@ -121,73 +100,21 @@ async function handleSaveBot() {
 
         <Separator class="my-6" />
 
-        <section class="space-y-2">
-            <label
-                class="mb-2 block text-start text-sm font-medium text-foreground"
-                for="start-message"
-            >
-                Start message
-            </label>
-            <Textarea
-                id="start-message"
-                class="min-h-[80px] w-full resize-none"
-                aria-required="true"
-                maxlength={4096}
-                required
-                bind:value={startMessage}
-            />
-            <p class="text-end text-xs text-muted-foreground">
-                {formatCharacterCount(startMessage.length)}
-            </p>
-        </section>
+        <BotMessageField
+            aria_required={true}
+            field_id="start-message"
+            label="Start message"
+            bind:value={startMessage}
+        />
 
-        <section class="space-y-2">
-            <label
-                class="mb-2 block text-start text-sm font-medium text-foreground"
-                for="feedback-message"
-            >
-                Feedback received message
-            </label>
-            <Textarea
-                id="feedback-message"
-                class="min-h-[80px] w-full resize-none"
-                aria-required="true"
-                maxlength={4096}
-                required
-                bind:value={feedbackReceivedMessage}
-            />
-            <p class="text-end text-xs text-muted-foreground">
-                {formatCharacterCount(feedbackReceivedMessage.length)}
-            </p>
-        </section>
+        <BotMessageField
+            aria_required={true}
+            field_id="feedback-message"
+            label="Feedback received message"
+            bind:value={feedbackReceivedMessage}
+        />
 
-        <section class="space-y-2">
-            <span class="block text-start text-sm font-semibold text-foreground">
-                Communication mode
-            </span>
-            <div class="space-y-2">
-                {#each communication_mode_options as option (option.value)}
-                    <label
-                        class="flex cursor-pointer items-start gap-3 rounded-lg border border-border bg-background px-3 py-2 text-sm"
-                    >
-                        <input
-                            name="communication-mode"
-                            class="mt-1 accent-[var(--tg-theme-button-color)]"
-                            checked={communication_mode === option.value}
-                            onchange={() => (communication_mode = option.value)}
-                            type="radio"
-                            value={option.value}
-                        />
-                        <span class="space-y-1">
-                            <span class="block font-medium text-foreground">{option.title}</span>
-                            <span class="block text-xs text-muted-foreground"
-                                >{option.description}</span
-                            >
-                        </span>
-                    </label>
-                {/each}
-            </div>
-        </section>
+        <CommunicationModeSection bind:value={communication_mode} />
 
         <div class="pt-4">
             <Button

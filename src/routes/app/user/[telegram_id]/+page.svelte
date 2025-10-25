@@ -12,6 +12,7 @@ import {Separator} from '$lib/components/ui/separator'
 import {locale, locales} from '$lib/i18n'
 import {mapUserResponse} from '$lib/mappers/user'
 import type {User} from '$lib/types.ts'
+import {normalize_username} from '$lib/utils'
 import type {PageData} from './$types'
 
 type UpdateUserResponse = {
@@ -37,10 +38,6 @@ let isAdmin = $state(false)
 let loadError = $state<string | null>(pageData?.errorMessage ?? null)
 let disableDelete = $state(false)
 
-function normalizeUsername(value: string) {
-    const trimmed = value.trim()
-    return trimmed.startsWith('@') ? trimmed.slice(1) : trimmed
-}
 const data = pageData
 
 if (data) {
@@ -68,7 +65,7 @@ if (data) {
 const hasChanges = $derived(
     Boolean(
         user &&
-            (normalizeUsername(username) !== (user.username ?? '') ||
+            (normalize_username(username) !== (user.username ?? '') ||
                 languageCode !== user.language_code ||
                 isWhitelisted !== user.is_whitelisted ||
                 isAdmin !== user.is_admin)
@@ -77,7 +74,7 @@ const hasChanges = $derived(
 
 async function handleUpdateUser() {
     if (!user) return
-    const normalizedUsername = normalizeUsername(username)
+    const normalizedUsername = normalize_username(username)
     const updates: Record<string, unknown> = {}
 
     if (normalizedUsername !== (user.username ?? '')) updates.username = normalizedUsername

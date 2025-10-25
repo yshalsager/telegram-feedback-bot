@@ -9,6 +9,7 @@ import {showNotification} from '~/lib/telegram.js'
 import {add_user} from '$lib/api.js'
 import {Input} from '$lib/components/ui/input'
 import {locale} from '$lib/i18n'
+import {normalize_username} from '$lib/utils'
 
 type AddUserResponse = {
     status?: string
@@ -38,9 +39,7 @@ const onUserSuccessfullyAdded = on('popup_closed', (payload: EventPayload<'popup
 async function handleSaveUser() {
     disableSubmit = true
     const trimmedId = telegramId.trim()
-    const normalizedUsername = username.trim().startsWith('@')
-        ? username.trim().slice(1)
-        : username.trim()
+    const normalizedUsername = normalize_username(username)
     const usernamePayload = normalizedUsername ? normalizedUsername : null
 
     const response = (await add_user(
