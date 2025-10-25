@@ -15,7 +15,8 @@ export default defineConfig({
         js: js({
             files: [
                 // 'src/**/+{page,layout}.{js,ts}',
-                'src/**/lib/i18n.{js,ts}'
+                'src/**/lib/i18n.{js,ts}',
+                'src/lib/constants/**/*.ts'
             ],
             catalog: './messages/{locale}/LC_MESSAGES/frontend',
             loaderPath: './src/lib/wuchale-loader.js'

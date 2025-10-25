@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-25T09:33:07.397Z\n"
+"PO-Revision-Date: 2025-10-25T18:20:55.703Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -41,74 +41,59 @@ msgid "Manage user @{0}"
 msgstr "Manage user @{0}"
 
 #: src/routes/app/settings/+page.svelte
-#: src/routes/settings/+page.svelte
 msgid "U"
 msgstr "U"
 
 #: src/routes/app/settings/+page.svelte
-#: src/routes/settings/+page.svelte
 msgid "Profile Picture"
 msgstr "Profile Picture"
 
-#: src/routes/add_user/+page.svelte
 #: src/routes/app/add_user/+page.svelte
 #: src/routes/app/settings/+page.svelte
-#: src/routes/settings/+page.svelte
 msgid "User ID"
 msgstr "User ID"
 
 #: src/routes/app/settings/+page.svelte
-#: src/routes/settings/+page.svelte
 msgid "N/A"
 msgstr "N/A"
 
 #: src/components/management/UserAccessForm.svelte
 #: src/routes/app/settings/+page.svelte
 #: src/routes/app/settings/+page.svelte
-#: src/routes/settings/+page.svelte
-#: src/routes/settings/+page.svelte
 msgid "Language"
 msgstr "Language"
 
 #: src/routes/app/settings/+page.svelte
-#: src/routes/settings/+page.svelte
 msgid "Unknown"
 msgstr "Unknown"
 
 #: src/routes/app/settings/+page.svelte
-#: src/routes/settings/+page.svelte
 msgid "Failed to set language"
 msgstr "Failed to set language"
 
 #: src/routes/app/settings/+page.svelte
-#: src/routes/settings/+page.svelte
 msgid "Please try again later"
 msgstr "Please try again later"
 
 #. placeholder {0}: identifier
 #. placeholder {0}: identifier
-#: src/routes/add_user/+page.svelte
 #: src/routes/app/add_user/+page.svelte
 msgid "Successfully updated access for {0}."
 msgstr "Successfully updated access for {0}."
 
-#: src/routes/add_user/+page.svelte
 #: src/routes/app/add_user/+page.svelte
 msgid "Failed to add user"
 msgstr "Failed to add user"
 
-#: src/routes/add_user/+page.svelte
 #: src/routes/app/add_user/+page.svelte
 msgid "Adding User interface"
 msgstr "Adding User interface"
 
-#: src/routes/add_user/+page.svelte
 #: src/routes/app/+page.svelte
 #: src/routes/app/add_user/+page.svelte
 msgid "Add new user"
 msgstr "Add new user"
 
-#: src/routes/add_user/+page.svelte
 #: src/routes/app/add_user/+page.svelte
 msgid "Enter a valid numeric Telegram user ID."
 msgstr "Enter a valid numeric Telegram user ID."
@@ -118,96 +103,75 @@ msgid "Optional. Enter the Telegram username without the @ symbol."
 msgstr "Optional. Enter the Telegram username without the @ symbol."
 
 #: src/components/management/UserAccessForm.svelte
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "Save"
 msgstr "Save"
 
 #. placeholder {0}: response.bot?.username || ''
 #. placeholder {0}: response.bot?.username || ''
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 msgid "Successfully added @{0} to your bots list. Please add to a group to work better."
 msgstr "Successfully added @{0} to your bots list. Please add to a group to work better."
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 msgid "Failed to add bot"
 msgstr "Failed to add bot"
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 msgid "Adding Bot interface"
 msgstr "Adding Bot interface"
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 msgid "Add new bot"
 msgstr "Add new bot"
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Bot token"
 msgstr "Bot token"
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Start message"
 msgstr "Start message"
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Feedback received message"
 msgstr "Feedback received message"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to update bot"
 msgstr "Failed to update bot"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Media permissions"
 msgstr "Media permissions"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Choose which media types users can send to this bot."
 msgstr "Choose which media types users can send to this bot."
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Photos"
 msgstr "Photos"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Videos"
 msgstr "Videos"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Voice messages"
 msgstr "Voice messages"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Files"
 msgstr "Files"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Stickers"
 msgstr "Stickers"
 
@@ -216,11 +180,6 @@ msgstr "Stickers"
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Allowed"
 msgstr "Allowed"
 
@@ -229,68 +188,50 @@ msgstr "Allowed"
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Blocked"
 msgstr "Blocked"
 
 #. placeholder {0}: bot.username
 #. placeholder {0}: bot.username
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Delete @{0}?"
 msgstr "Delete @{0}?"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to delete bot"
 msgstr "Failed to delete bot"
 
 #. placeholder {0}: bot.name
 #. placeholder {0}: bot.name
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Managing bot {0}"
 msgstr "Managing bot {0}"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Manage bot"
 msgstr "Manage bot"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Bot status"
 msgstr "Bot status"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Enabled"
 msgstr "Enabled"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Disabled"
 msgstr "Disabled"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "<0/> Delete bot"
 msgstr "<0/> Delete bot"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Bot not found"
 msgstr "Bot not found"
 
@@ -332,45 +273,36 @@ msgid "Click \"Add new user\" to get started."
 msgstr "Click \"Add new user\" to get started."
 
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "No changes to update."
 msgstr "No changes to update."
 
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "Failed to update user"
 msgstr "Failed to update user"
 
 #. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
 #. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "Managing user {0}"
 msgstr "Managing user {0}"
 
 #: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "Manage user"
 msgstr "Manage user"
 
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "Save changes"
 msgstr "Save changes"
 
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "User not found."
 msgstr "User not found."
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 msgid "Welcome to [name] bot. Please send your feedback."
 msgstr "Welcome to [name] bot. Please send your feedback."
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 msgid "Thank you for your feedback. We will get back to you soon."
 msgstr "Thank you for your feedback. We will get back to you soon."
@@ -383,54 +315,44 @@ msgid "{0}/{1} {2}"
 msgstr "{0}/{1} {2}"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Bot information"
 msgstr "Bot information"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Telegram ID"
 msgstr "Telegram ID"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Owner"
 msgstr "Owner"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Created"
 msgstr "Created"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Updated"
 msgstr "Updated"
 
-#: src/routes/add_bot/+page.svelte
 #: src/routes/app/add_bot/+page.svelte
 msgid "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
 msgstr "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to unlink bot from group"
 msgstr "Failed to unlink bot from group"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Forwarding destination"
 msgstr "Forwarding destination"
 
 #. placeholder {0}: bot.forward_chat_id.toLocaleString()
 #. placeholder {0}: bot.forward_chat_id.toLocaleString()
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Feedback is forwarded to chat ID {0}."
 msgstr "Feedback is forwarded to chat ID {0}."
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Unlink group"
 msgstr "Unlink group"
 
@@ -455,39 +377,32 @@ msgid "Grants builder admin permissions to this user."
 msgstr "Grants builder admin permissions to this user."
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."
 msgstr "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Bot stats"
 msgstr "Bot stats"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Incoming messages"
 msgstr "Incoming messages"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Outgoing messages"
 msgstr "Outgoing messages"
 
 #. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
 #. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "Delete {0}?"
 msgstr "Delete {0}?"
 
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "Failed to delete user"
 msgstr "Failed to delete user"
 
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "<0/> Delete user"
 msgstr "<0/> Delete user"
 
@@ -505,238 +420,169 @@ msgid "No users found matching \"{0}\""
 msgstr "No users found matching \"{0}\""
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Banned users"
 msgstr "Banned users"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Block or unblock people from sending feedback to this bot."
 msgstr "Block or unblock people from sending feedback to this bot."
 
 #: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Manage banned users"
 msgstr "Manage banned users"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Unable to load banned users"
 msgstr "Unable to load banned users"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "User banned"
 msgstr "User banned"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Failed to ban user"
 msgstr "Failed to ban user"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "User updated"
 msgstr "User updated"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "ℹ️"
 msgstr "ℹ️"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Failed to unban user"
 msgstr "Failed to unban user"
 
 #. placeholder {0}: bot.name
 #. placeholder {0}: bot.name
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Managing banned users for {0}"
 msgstr "Managing banned users for {0}"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Back to bot management"
 msgstr "Back to bot management"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Ban a user"
 msgstr "Ban a user"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Enter a Telegram user ID to prevent them from sending feedback through this bot."
 msgstr "Enter a Telegram user ID to prevent them from sending feedback through this bot."
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Telegram user ID"
 msgstr "Telegram user ID"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Ban user"
 msgstr "Ban user"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Enter a valid numeric user ID."
 msgstr "Enter a valid numeric user ID."
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Currently banned"
 msgstr "Currently banned"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Try reloading this page or banning a user to refresh the list."
 msgstr "Try reloading this page or banning a user to refresh the list."
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "No banned users yet."
 msgstr "No banned users yet."
 
 #. placeholder {0}: formatTimestamp(entry.created_at)
 #. placeholder {0}: formatTimestamp(entry.created_at)
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Banned {0}"
 msgstr "Banned {0}"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Unban"
 msgstr "Unban"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Return to bot settings"
 msgstr "Return to bot settings"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Ban reason"
 msgstr "Ban reason"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Reason (optional)"
 msgstr "Reason (optional)"
 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Not provided"
 msgstr "Not provided"
 
 #. placeholder {0}: entry.reason && entry.reason.trim() !== '' ? entry.reason : 'Not provided'
 #. placeholder {0}: entry.reason && entry.reason.trim() !== '' ? entry.reason : 'Not provided'
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
-#: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Reason: {0}"
 msgstr "Reason: {0}"
 
 #. placeholder {0}: user.telegram_id.toLocaleString()
 #. placeholder {0}: user.telegram_id.toLocaleString()
 #: src/routes/app/user/[telegram_id]/+page.svelte
-#: src/routes/user/[telegram_id]/+page.svelte
 msgid "ID: {0}"
 msgstr "ID: {0}"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Enter a new token to rotate"
 msgstr "Enter a new token to rotate"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Leave empty to keep the current token. Updating rotates it immediately."
 msgstr "Leave empty to keep the current token. Updating rotates it immediately."
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Anti-flood"
 msgstr "Anti-flood"
 
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "Anti-flood wait (seconds)"
 msgstr "Anti-flood wait (seconds)"
 
 #. placeholder {0}: Number.isFinite( antiflood_seconds ) ? antiflood_seconds.toLocaleString() : '—'
 #. placeholder {0}: Number.isFinite( antiflood_seconds ) ? antiflood_seconds.toLocaleString() : '—'
 #: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
 msgid "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
 msgstr "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
 
-#: src/routes/add_bot/+page.svelte
-#: src/routes/app/add_bot/+page.svelte
-#: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
+#: src/components/management/CommunicationModeSection.svelte
 msgid "Communication mode"
 msgstr "Communication mode"
 
-#: src/routes/add_bot/+page.svelte
-#: src/routes/app/add_bot/+page.svelte
-#: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-msgid "Standard"
-msgstr "Standard"
+#: src/lib/constants/communication_mode.ts
+msgid "standard"
+msgstr "standard"
 
-#: src/routes/add_bot/+page.svelte
-#: src/routes/app/add_bot/+page.svelte
-#: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
+#: src/lib/constants/communication_mode.ts
 msgid "Forward with usernames and profile links."
 msgstr "Forward with usernames and profile links."
 
-#: src/routes/add_bot/+page.svelte
-#: src/routes/app/add_bot/+page.svelte
-#: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-msgid "Private"
-msgstr "Private"
+#: src/lib/constants/communication_mode.ts
+msgid "private"
+msgstr "private"
 
-#: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-msgid "Show only the public name to moderators."
-msgstr "Show only the public name to moderators."
+#: src/lib/constants/communication_mode.ts
+msgid "Show only the public name; profile links removed."
+msgstr "Show only the public name; profile links removed."
 
-#: src/routes/add_bot/+page.svelte
-#: src/routes/app/add_bot/+page.svelte
-#: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
-msgid "Anonymous"
-msgstr "Anonymous"
+#: src/lib/constants/communication_mode.ts
+msgid "anonymous"
+msgstr "anonymous"
 
-#: src/routes/add_bot/+page.svelte
-#: src/routes/app/add_bot/+page.svelte
-msgid "Shows public name only; profile links removed."
-msgstr "Shows public name only; profile links removed."
-
-#: src/routes/add_bot/+page.svelte
-#: src/routes/app/add_bot/+page.svelte
-msgid "Replaces user identity with a request number."
-msgstr "Replaces user identity with a request number."
-
-#: src/routes/app/bot/[uuid]/+page.svelte
-#: src/routes/bot/[uuid]/+page.svelte
+#: src/lib/constants/communication_mode.ts
 msgid "Replace identity with a request number."
 msgstr "Replace identity with a request number."
-
-#: src/routes/+page.svelte
-msgid "Landing page placeholder"
-msgstr "Landing page placeholder"
-
-#: src/routes/+page.svelte
-msgid "This is the landing page placeholder."
-msgstr "This is the landing page placeholder."
