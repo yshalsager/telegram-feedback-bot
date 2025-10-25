@@ -109,4 +109,5 @@ src/lib/paraglide
 project.inlang/cache/
 
 # others
+artifacts/
 tmp_*
