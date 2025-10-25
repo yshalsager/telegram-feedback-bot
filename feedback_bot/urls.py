@@ -22,6 +22,11 @@ if not settings.DEBUG:
             BuildAssetView.as_view(asset_name='robots.txt', content_type='text/plain'),
             name='mini_app_robots',
         ),
+        path(
+            'screenshots/<path:asset>',
+            BuildAssetView.as_view(asset_name='screenshots', content_type='image/png'),
+            name='screenshots',
+        ),
         path('', MiniAppView.as_view(), name='landing'),
         re_path(r'^app(?:/.*)?$', MiniAppView.as_view(), name='mini_app'),
     ]
