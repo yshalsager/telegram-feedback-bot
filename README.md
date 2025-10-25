@@ -91,10 +91,9 @@ Dates accept `YYYY-MM-DD` or ISO datetimes. `active_within` is expressed in days
     POSTGRES_PASSWORD="super-secret"
     DJANGO_ALLOWED_HOSTS="localhost 127.0.0.1"
     TELEGRAM_NEW_BOT_ADMIN_APPROVAL=true
-    ``
-    Set `TELEGRAM_BUILDER_BOT_WEBHOOK_URL` to the public HTTPS origin serving Granian. Leave `DJANGO_USE_SQLITE=true` if you prefer SQLite for local experiments.
-
     ```
+
+    Set `TELEGRAM_BUILDER_BOT_WEBHOOK_URL` to the public HTTPS origin serving Granian. Leave `DJANGO_USE_SQLITE=true` if you prefer SQLite for local experiments.
 
 4. **Install dependencies**
 
