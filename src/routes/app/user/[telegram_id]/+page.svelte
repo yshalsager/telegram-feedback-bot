@@ -128,7 +128,7 @@ async function handleDeleteUser() {
     if (response?.status === 'success') {
         showNotification('', '✅ User deleted successfully')
         disableDelete = false
-        await goto(resolve('/'))
+        await goto(resolve('/app'))
         return
     }
 

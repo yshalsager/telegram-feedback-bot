@@ -64,7 +64,7 @@ const communication_mode_options: {
 
 // Format character count with locale-specific number formatting
 const onBotSuccessfullyAdded = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
-    if (payload.button_id === 'bot_successfully_added_close') goto(resolve('/'))
+    if (payload.button_id === 'bot_successfully_added_close') goto(resolve('/app'))
     onBotSuccessfullyAdded()
 })
 

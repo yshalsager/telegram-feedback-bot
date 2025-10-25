@@ -91,7 +91,7 @@ let disableDelete = $state(false)
 let unlink_in_progress = $state(false)
 
 const onBotDeleted = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
-    if (payload.button_id === 'bot_deleted_success_close') goto(resolve('/'))
+    if (payload.button_id === 'bot_deleted_success_close') goto(resolve('/app'))
     onBotDeleted()
 })
 
@@ -267,7 +267,7 @@ async function unlink_group() {
                         {#if bot?.owner_telegram_id}
                             <a
                                 class="font-medium text-[var(--tg-theme-button-color)] underline"
-                                href={resolve(`/user/${bot?.owner_telegram_id}`)}
+                                href={resolve(`/app/user/${bot?.owner_telegram_id}`)}
                             >
                                 {bot?.owner_username
                                     ? `@${bot.owner_username}`
@@ -524,7 +524,7 @@ async function unlink_group() {
                 </div>
                 <Button
                     class="h-10 w-full text-base font-medium"
-                    onclick={() => goto(resolve(`/bot/${botUuid}/banned`))}
+                    onclick={() => goto(resolve(`/app/bot/${botUuid}/banned`))}
                     variant="secondary"
                 >
                     Manage banned users

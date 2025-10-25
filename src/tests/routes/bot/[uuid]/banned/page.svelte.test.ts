@@ -1,7 +1,7 @@
 import {render, screen, waitFor} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import BannedPage from '~/routes/bot/[uuid]/banned/+page.svelte'
+import BannedPage from '~/routes/app/bot/[uuid]/banned/+page.svelte'
 
 const gotoMock = vi.hoisted(() => vi.fn())
 const resolveMock = vi.hoisted(() => vi.fn((path: string) => path))

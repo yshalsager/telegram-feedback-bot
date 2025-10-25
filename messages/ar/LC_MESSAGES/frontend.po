@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-24T21:48:25.913Z\n"
+"PO-Revision-Date: 2025-10-25T09:33:07.535Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -12,36 +12,38 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
 "MIME-Version: 1.0\n"
 
+#: src/routes/app/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 msgid "U"
 msgstr "م"
 
+#: src/routes/app/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 msgid "N/A"
 msgstr "غير معروف"
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "Bot management interface"
 msgstr "واجهة إدارة البوتات"
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "Bot Logo"
 msgstr "شعار البوت"
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "My bots"
 msgstr "بوتاتي"
 
 #. placeholder {0}: searchQuery
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "No bots found matching \"{0}\""
 msgstr "لا يوجد بوتات تطابق \"{0}\""
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "Click \"Create a New Bot\" to get started."
 msgstr "انقر \"إنشاء بوت جديد\" للبدء."
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "User Management"
 msgstr "إدارة المستخدمين"
 
@@ -57,89 +59,105 @@ msgid "Manage user @{0}"
 msgstr "إدارة المستخدم @{0}"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Adding Bot interface"
 msgstr "واجهة إضافة البوت"
 
-#: src/routes/+layout.svelte
-#: src/routes/+page.svelte
+#: src/routes/app/+layout.svelte
+#: src/routes/app/+page.svelte
 msgid "Feedback Bot Builder"
 msgstr "صانع بوتات التعليقات"
 
-#: src/routes/+layout.svelte
+#: src/routes/app/+layout.svelte
 msgid "Please open the app in Telegram"
 msgstr "يرجى فتح التطبيق في تليجرام"
 
-#: src/routes/+layout.svelte
+#: src/routes/app/+layout.svelte
 msgid "The app is not available in this browser. Please open it in Telegram."
 msgstr "التطبيق غير متاح في هذا المتصفح. يرجى فتحه في تليجرام."
 
-#: src/routes/+layout.svelte
+#: src/routes/app/+layout.svelte
 msgid "Invalid session"
 msgstr "جلسة المستخدم غير صالحة"
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "You don't have any bots yet. Please add one."
 msgstr "ليس لديك أي بوت بعد. يرجى إضافة واحد."
 
-#: src/routes/+page.svelte
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Add new bot"
 msgstr "إضافة بوت جديد"
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "You don't have any users yet."
 msgstr "ليس لديك أي مستخدمين بعد."
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "Click \"Add new user\" to get started."
 msgstr "انقر \"إضافة مستخدم جديد\" للبدء."
 
-#: src/routes/+page.svelte
 #: src/routes/add_user/+page.svelte
+#: src/routes/app/+page.svelte
+#: src/routes/app/add_user/+page.svelte
 msgid "Add new user"
 msgstr "إضافة مستخدم جديد"
 
+#: src/routes/app/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 msgid "Profile Picture"
 msgstr "صورة المستخدم"
 
 #: src/routes/add_user/+page.svelte
+#: src/routes/app/add_user/+page.svelte
+#: src/routes/app/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 msgid "User ID"
 msgstr "معرف المستخدم"
 
 #: src/components/management/UserAccessForm.svelte
+#: src/routes/app/settings/+page.svelte
+#: src/routes/app/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 msgid "Language"
 msgstr "اللغة"
 
+#: src/routes/app/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 msgid "Unknown"
 msgstr "غير معروف"
 
+#: src/routes/app/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 msgid "Failed to set language"
 msgstr "تعذر تغيير اللغة"
 
+#: src/routes/app/settings/+page.svelte
 #: src/routes/settings/+page.svelte
 msgid "Please try again later"
 msgstr "حاول مرة أخرى لاحقاً"
 
 #. placeholder {0}: identifier
+#. placeholder {0}: identifier
 #: src/routes/add_user/+page.svelte
+#: src/routes/app/add_user/+page.svelte
 msgid "Successfully updated access for {0}."
 msgstr "تم تحديث صلاحيات {0} بنجاح."
 
 #: src/routes/add_user/+page.svelte
+#: src/routes/app/add_user/+page.svelte
 msgid "Failed to add user"
 msgstr "فشل إضافة المستخدم"
 
 #: src/routes/add_user/+page.svelte
+#: src/routes/app/add_user/+page.svelte
 msgid "Adding User interface"
 msgstr "واجهة إضافة المستخدم"
 
 #: src/routes/add_user/+page.svelte
+#: src/routes/app/add_user/+page.svelte
 msgid "Enter a valid numeric Telegram user ID."
 msgstr "أدخل معرف مستخدم تيليجرام مكونًا من أرقام فقط."
 
@@ -149,43 +167,59 @@ msgstr "اختياري. أدخل اسم مستخدم تيليجرام بدون �
 
 #: src/components/management/UserAccessForm.svelte
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "Save"
 msgstr "حفظ"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to update bot"
 msgstr "فشل تحديث البوت"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Media permissions"
 msgstr "أذونات الوسائط"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Choose which media types users can send to this bot."
 msgstr "اختر أنواع الوسائط التي يُسمح للمستخدمين بإرسالها لهذا البوت."
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Photos"
 msgstr "الصور"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Videos"
 msgstr "الفيديوهات"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Voice messages"
 msgstr "الرسائل الصوتية"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Files"
 msgstr "الملفات"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Stickers"
 msgstr "الملصقات"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
@@ -194,6 +228,11 @@ msgstr "الملصقات"
 msgid "Allowed"
 msgstr "مسموح"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
@@ -203,102 +242,136 @@ msgid "Blocked"
 msgstr "محظور"
 
 #. placeholder {0}: bot.username
+#. placeholder {0}: bot.username
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Delete @{0}?"
 msgstr "حذف @{0}؟"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to delete bot"
 msgstr "فشل حذف البوت"
 
 #. placeholder {0}: bot.name
+#. placeholder {0}: bot.name
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Managing bot {0}"
 msgstr "إدارة البوت {0}"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Manage bot"
 msgstr "إدارة البوت"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Start message"
 msgstr "رسالة البداية"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Feedback received message"
 msgstr "رسالة التعليقات المستقبلة"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Bot status"
 msgstr "حالة البوت"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Enabled"
 msgstr "مفعل"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Disabled"
 msgstr "معطل"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "<0/> Delete bot"
 msgstr "<0/> حذف البوت"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Bot not found"
 msgstr "البوت غير موجود"
 
 #. placeholder {0}: response.bot?.username || ''
+#. placeholder {0}: response.bot?.username || ''
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Successfully added @{0} to your bots list. Please add to a group to work better."
 msgstr "أضيف بوت @{0} بنجاح. من فضلك أضفه إلى مجموعة ليعمل بشكل أفضل."
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Failed to add bot"
 msgstr "فشل إضافة البوت"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Bot token"
 msgstr "الرمز الخاص بالبوت"
 
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "No changes to update."
 msgstr "لا شيء لتحديثه"
 
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "Failed to update user"
 msgstr "فشل تحديث المستخدم"
 
 #. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
+#. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "Managing user {0}"
 msgstr "إدارة المستخدم {0}"
 
+#: src/routes/app/user/[telegram_id]/+page.svelte
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "Manage user"
 msgstr "إدارة المستخدم"
 
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "Save changes"
 msgstr "حفظ التغييرات"
 
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "User not found."
 msgstr "المستخدم غير موجود"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Welcome to [name] bot. Please send your feedback."
 msgstr "مرحبا بك في بوت [name] اترك رسالتك وسنجيبك في أسرع وقت إن شاء الله."
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Thank you for your feedback. We will get back to you soon."
 msgstr "شكرا لك على رسالتك. سنرد عليك قريبًا إن شاء الله."
 
@@ -309,43 +382,54 @@ msgstr "شكرا لك على رسالتك. سنرد عليك قريبًا إن �
 msgid "{0}/{1} {2}"
 msgstr "{0}/{1} أحرف"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Bot information"
 msgstr "معلومات البوت"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Telegram ID"
 msgstr "معرف تليجرام"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Owner"
 msgstr "المالك"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Created"
 msgstr "أنشيء في"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Updated"
 msgstr "آخر تعديل"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Bot token must be in format: numbers:letters (8-10 digits : 35 characters)"
 msgstr "الرمز الخاص بالبوت يجب أن يكون بالشكل التالي: الأرقام:الأحرف (8-10 أرقام : 35 أحرف)"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Failed to unlink bot from group"
 msgstr "فشل فك ارتباط البوت من المجموعة"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Forwarding destination"
 msgstr "وجهة إعادة التوجيه"
 
 #. placeholder {0}: bot.forward_chat_id.toLocaleString()
+#. placeholder {0}: bot.forward_chat_id.toLocaleString()
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Feedback is forwarded to chat ID {0}."
 msgstr "يُعاد توجيه التعليقات إلى المحادثة ذات المعرف {0}."
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Unlink group"
 msgstr "فك ارتباط المجموعة"
@@ -370,220 +454,289 @@ msgstr "صلاحيات المشرف"
 msgid "Grants builder admin permissions to this user."
 msgstr "يمنح هذا المستخدم صلاحيات مشرف الباني."
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."
 msgstr "أضف هذا البوت إلى مجموعة لربطه تلقائيًا، وإلا فسترسل الرسائل إلى مالك البوت."
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Bot stats"
 msgstr "إحصائيات البوت"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Incoming messages"
 msgstr "الرسائل الواردة"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Outgoing messages"
 msgstr "الرسائل الصادرة"
 
 #. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
+#. placeholder {0}: user.username ? `@${user.username}` : user.telegram_id
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "Delete {0}?"
 msgstr "حذف {0}؟"
 
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "Failed to delete user"
 msgstr "تعذر حذف المستخدم"
 
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "<0/> Delete user"
 msgstr "<0/> حذف المستخدم"
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "Search bots or users"
 msgstr "ابحث عن بوتات أو مستخدمين"
 
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "Search bots or users..."
 msgstr "ابحث عن بوتات أو مستخدمين..."
 
 #. placeholder {0}: searchQuery
-#: src/routes/+page.svelte
+#: src/routes/app/+page.svelte
 msgid "No users found matching \"{0}\""
 msgstr "لا يوجد مستخدمون يطابقون \"{0}\""
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Banned users"
 msgstr "المستخدمون المحظورون"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Block or unblock people from sending feedback to this bot."
 msgstr "احظر أو أزل الحظر عن الأشخاص لمنعهم من إرسال الملاحظات إلى هذا البوت."
 
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Manage banned users"
 msgstr "إدارة المستخدمين المحظورين"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Unable to load banned users"
 msgstr "تعذر تحميل المستخدمين المحظورين"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "User banned"
 msgstr "حظر المستخدم"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Failed to ban user"
 msgstr "تعذر حظر المستخدم"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "User updated"
 msgstr "حدث المستخدم"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "ℹ️"
 msgstr "ℹ️"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Failed to unban user"
 msgstr "تعذر إلغاء حظر المستخدم"
 
 #. placeholder {0}: bot.name
+#. placeholder {0}: bot.name
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Managing banned users for {0}"
 msgstr "إدارة المستخدمين المحظورين للبوت {0}"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Back to bot management"
 msgstr "العودة إلى إدارة البوت"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Ban a user"
 msgstr "حظر مستخدم"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Enter a Telegram user ID to prevent them from sending feedback through this bot."
 msgstr "أدخل معرف مستخدم تيليجرام لمنعه من إرسال الملاحظات عبر هذا البوت."
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Telegram user ID"
 msgstr "معرف مستخدم تيليجرام"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Ban user"
 msgstr "حظر المستخدم"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Enter a valid numeric user ID."
 msgstr "أدخل معرف مستخدم رقميًا صالحًا."
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Currently banned"
 msgstr "المحظورون حاليًا"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Try reloading this page or banning a user to refresh the list."
 msgstr "جرّب إعادة تحميل هذه الصفحة أو حظر مستخدم لتحديث القائمة."
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "No banned users yet."
 msgstr "لا يوجد مستخدمون محظورون بعد."
 
 #. placeholder {0}: formatTimestamp(entry.created_at)
+#. placeholder {0}: formatTimestamp(entry.created_at)
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Banned {0}"
 msgstr "حظر {0}"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Unban"
 msgstr "إلغاء الحظر"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Return to bot settings"
 msgstr "العودة إلى إعدادات البوت"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Ban reason"
 msgstr "سبب الحظر"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Reason (optional)"
 msgstr "السبب (اختياري)"
 
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Not provided"
 msgstr "غير متوفر"
 
 #. placeholder {0}: entry.reason && entry.reason.trim() !== '' ? entry.reason : 'Not provided'
+#. placeholder {0}: entry.reason && entry.reason.trim() !== '' ? entry.reason : 'Not provided'
+#: src/routes/app/bot/[uuid]/banned/+page.svelte
 #: src/routes/bot/[uuid]/banned/+page.svelte
 msgid "Reason: {0}"
 msgstr "السبب: {0}"
 
 #. placeholder {0}: user.telegram_id.toLocaleString()
+#. placeholder {0}: user.telegram_id.toLocaleString()
+#: src/routes/app/user/[telegram_id]/+page.svelte
 #: src/routes/user/[telegram_id]/+page.svelte
 msgid "ID: {0}"
 msgstr "المعرف: {0}"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Enter a new token to rotate"
 msgstr "أدخل رمزاً جديداً لاستبداله"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Leave empty to keep the current token. Updating rotates it immediately."
 msgstr "اتركه فارغاً للاحتفاظ بالرمز الحالي. سيجري الاستبدال فور التحديث."
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Anti-flood"
 msgstr "مكافحة الرسائل المزعجة"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Anti-flood wait (seconds)"
 msgstr "مدة الانتظار (ثوانٍ) لمكافحة الرسائل المزعجة"
 
 #. placeholder {0}: Number.isFinite( antiflood_seconds ) ? antiflood_seconds.toLocaleString() : '—'
+#. placeholder {0}: Number.isFinite( antiflood_seconds ) ? antiflood_seconds.toLocaleString() : '—'
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
 msgstr "عند التفعيل، يمكن للمستخدمين إرسال رسالة واحدة كل {0} ثانية ويتلقون تنبيهاً عند التقييد."
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Communication mode"
 msgstr "وضع التواصل"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Standard"
 msgstr "عادي"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Forward with usernames and profile links."
 msgstr "إعادة التوجيه مع أسماء المستخدمين وروابط الملفات الشخصية."
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Private"
 msgstr "خاص"
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Show only the public name to moderators."
 msgstr "اعرض الاسم العام فقط للمشرفين."
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Anonymous"
 msgstr "مجهول"
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Shows public name only; profile links removed."
 msgstr "يعرض الاسم العام فقط؛ دون روابط الملف الشخصي."
 
 #: src/routes/add_bot/+page.svelte
+#: src/routes/app/add_bot/+page.svelte
 msgid "Replaces user identity with a request number."
 msgstr "يستبدل هوية المستخدم برقم طلب."
 
+#: src/routes/app/bot/[uuid]/+page.svelte
 #: src/routes/bot/[uuid]/+page.svelte
 msgid "Replace identity with a request number."
 msgstr "يستبدل هوية المستخدم برقم طلب."
+
+#: src/routes/+page.svelte
+msgid "Landing page placeholder"
+msgstr ""
+
+#: src/routes/+page.svelte
+msgid "This is the landing page placeholder."
+msgstr ""

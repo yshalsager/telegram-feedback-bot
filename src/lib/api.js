@@ -212,9 +212,11 @@ export async function list_banned_users(uuid) {
  * Ban a user from a bot
  * @param {string} uuid - The UUID of the bot
  * @param {number} user_telegram_id - The Telegram user ID to ban
+ * @param {string | undefined} reason - Optional ban reason
  * @returns {Promise<object>} - The response data
  */
 export async function ban_user(uuid, user_telegram_id, reason) {
+    /** @type {{user_telegram_id: number; reason?: string}} */
     const payload = {user_telegram_id}
     if (typeof reason === 'string' && reason.trim() !== '') {
         payload.reason = reason.trim()

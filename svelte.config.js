@@ -13,10 +13,7 @@ const config = {
             $lib: './src/lib'
         },
         output: {
-            bundleStrategy: 'inline'
-        },
-        paths: {
-            base: '/app'
+            bundleStrategy: 'single'
         }
     }
 }

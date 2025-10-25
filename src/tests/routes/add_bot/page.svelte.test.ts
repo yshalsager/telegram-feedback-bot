@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import AddBotPage from '~/routes/add_bot/+page.svelte'
+import AddBotPage from '~/routes/app/add_bot/+page.svelte'
 
 const gotoMock = vi.hoisted(() => vi.fn())
 const onMock = vi.hoisted(() => vi.fn(() => vi.fn()))

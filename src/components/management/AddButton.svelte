@@ -44,14 +44,12 @@ const GRADIENTS = {
     }
 >
 
-type RouteTarget = Parameters<typeof resolve>[0]
-
 interface Props {
     label: string
     icon?: IconVariant
     variant?: GradientVariant
     onClick?: () => void
-    route?: RouteTarget
+    route?: string
 }
 
 let {label, icon = 'plus', variant = 'primary', onClick, route}: Props = $props()

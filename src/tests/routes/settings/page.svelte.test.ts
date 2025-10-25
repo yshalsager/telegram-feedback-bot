@@ -1,7 +1,7 @@
 import {render, screen, waitFor} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import SettingsPage from '~/routes/settings/+page.svelte'
+import SettingsPage from '~/routes/app/settings/+page.svelte'
 
 const setLanguageMock = vi.hoisted(() => vi.fn(async () => true))
 const showNotificationMock = vi.hoisted(() => vi.fn())

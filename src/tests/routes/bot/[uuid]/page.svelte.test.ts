@@ -1,7 +1,7 @@
 import {render, screen, waitFor} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import BotPage from '~/routes/bot/[uuid]/+page.svelte'
+import BotPage from '~/routes/app/bot/[uuid]/+page.svelte'
 
 const gotoMock = vi.hoisted(() => vi.fn())
 const onMock = vi.hoisted(() => vi.fn(() => vi.fn()))
@@ -497,7 +497,7 @@ describe('+page.svelte', () => {
         const manageBannedButton = screen.getByRole('button', {name: 'Manage banned users'})
         await user.click(manageBannedButton)
 
-        expect(gotoMock).toHaveBeenCalledWith(`/bot/${baseBot.uuid}/banned`)
+        expect(gotoMock).toHaveBeenCalledWith(`/app/bot/${baseBot.uuid}/banned`)
     })
 
     it('registers Telegram popup closed handler once', () => {

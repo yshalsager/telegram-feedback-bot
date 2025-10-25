@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/svelte'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import Page from '~/routes/+page.svelte'
+import Page from '~/routes/app/+page.svelte'
 
 const listBotsMock = vi.fn()
 const listUsersMock = vi.fn()
@@ -18,7 +18,7 @@ vi.mock('$app/paths', () => ({
     resolve: (path: string) => path
 }))
 
-describe('root +page.svelte', () => {
+describe('app +page.svelte', () => {
     beforeEach(() => {
         listBotsMock.mockResolvedValue([])
         listUsersMock.mockResolvedValue([])

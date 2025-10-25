@@ -34,7 +34,7 @@ export async function initSDK() {
         if (settingsButton.isSupported() && settingsButton.mount.isAvailable()) {
             settingsButton.mount()
             settingsButton.show()
-            settingsButton.onClick(() => goto(resolve('/settings')))
+            settingsButton.onClick(() => goto(resolve('/app/settings')))
         }
         if (backButton.isSupported() && backButton.mount.isAvailable()) {
             backButton.mount()

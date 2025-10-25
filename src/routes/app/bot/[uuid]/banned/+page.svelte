@@ -146,7 +146,7 @@ async function handleUnban(userId: number) {
                 </h2>
                 <a
                     class="text-sm font-medium text-[var(--tg-theme-button-color)] underline"
-                    href={resolve(`/bot/${botUuid}`)}
+                    href={resolve(`/app/bot/${botUuid}`)}
                 >
                     Back to bot management
                 </a>
@@ -252,7 +252,7 @@ async function handleUnban(userId: number) {
 
         {#snippet footer()}
             <div class="mx-auto mt-6 flex max-w-lg justify-center">
-                <Button onclick={() => goto(resolve(`/bot/${botUuid}`))} variant="ghost">
+                <Button onclick={() => goto(resolve(`/app/bot/${botUuid}`))} variant="ghost">
                     Return to bot settings
                 </Button>
             </div>

@@ -1,7 +1,7 @@
 import {render, screen, waitFor} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import UserPage from '~/routes/user/[telegram_id]/+page.svelte'
+import UserPage from '~/routes/app/user/[telegram_id]/+page.svelte'
 
 vi.mock('~/lib/i18n', () => {
     const localeStore = {
@@ -190,7 +190,7 @@ describe('user detail +page.svelte', () => {
         })
 
         expect(showNotificationMock).toHaveBeenCalledWith('', '✅ User deleted successfully')
-        expect(gotoMock).toHaveBeenCalledWith('/')
+        expect(gotoMock).toHaveBeenCalledWith('/app')
         expect(deleteButton).not.toBeDisabled()
 
         confirmSpy.mockRestore()

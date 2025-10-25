@@ -25,13 +25,13 @@ let languageCode = $state($locale)
 let isWhitelisted = $state(true)
 let isAdmin = $state(false)
 
-const isTelegramIdValid = $derived(telegramId.trim() !== '' && /^\d+$/.test(telegramId.trim()))
-const isFormValid = $derived(isTelegramIdValid)
+const isTelegramIdValid = $derived(telegramId.trim() === '' || /^\d+$/.test(telegramId.trim()))
+const isFormValid = $derived(isTelegramIdValid && telegramId.trim() !== '')
 
 let disableSubmit = $state(false)
 
 const onUserSuccessfullyAdded = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
-    if (payload.button_id === 'user_successfully_added_close') goto(resolve('/'))
+    if (payload.button_id === 'user_successfully_added_close') goto(resolve('/app'))
     onUserSuccessfullyAdded()
 })
 

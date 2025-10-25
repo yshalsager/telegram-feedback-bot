@@ -1,7 +1,7 @@
 import {render, screen} from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
-import AddUserPage from '~/routes/add_user/+page.svelte'
+import AddUserPage from '~/routes/app/add_user/+page.svelte'
 
 vi.mock('~/lib/i18n', () => {
     const localeStore = {
