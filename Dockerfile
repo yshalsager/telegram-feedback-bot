@@ -36,6 +36,7 @@ FROM python-base AS runtime
 ARG TELEGRAM_ENCRYPTION_KEY
 RUN useradd -m appuser
 WORKDIR /code
+RUN chown appuser:appuser /code
 ENV PATH=/code/.venv/bin:$PATH \
     UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
