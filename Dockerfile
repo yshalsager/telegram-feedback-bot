@@ -42,14 +42,14 @@ ENV PATH=/code/.venv/bin:$PATH \
     UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
     UV_PROJECT_ENVIRONMENT=/code/.venv
-COPY --from=python-builder --chown=appuser:appuser /code/.venv /code/.venv
-COPY --chown=appuser:appuser manage.py pyproject.toml uv.lock ./
-COPY --chown=appuser:appuser config ./config
-COPY --chown=appuser:appuser feedback_bot ./feedback_bot
-COPY --chown=appuser:appuser src ./src
-COPY --chown=appuser:appuser messages ./messages
-COPY --chown=appuser:appuser static ./static
-COPY --from=frontend-builder --chown=appuser:appuser /code/build ./build
+COPY --from=python-builder /code/.venv /code/.venv
+COPY manage.py pyproject.toml uv.lock ./
+COPY config ./config
+COPY feedback_bot ./feedback_bot
+COPY src ./src
+COPY messages ./messages
+COPY static ./static
+COPY --from=frontend-builder /code/build ./build
 RUN TELEGRAM_ENCRYPTION_KEY="${TELEGRAM_ENCRYPTION_KEY}" uv run manage.py compilemessages
 USER appuser
 EXPOSE 8001
