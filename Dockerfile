@@ -36,7 +36,6 @@ FROM python-base AS runtime
 ARG TELEGRAM_ENCRYPTION_KEY
 RUN useradd -m appuser
 WORKDIR /code
-RUN chown appuser:appuser /code
 ENV PATH=/code/.venv/bin:$PATH \
     UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
@@ -50,8 +49,8 @@ COPY feedback_bot ./feedback_bot
 COPY messages ./messages
 COPY static ./static
 COPY --from=frontend-builder /code/build ./build
-RUN TELEGRAM_ENCRYPTION_KEY="${TELEGRAM_ENCRYPTION_KEY}" uv run manage.py compilemessages
-RUN chown -R appuser:appuser /code
+RUN TELEGRAM_ENCRYPTION_KEY="${TELEGRAM_ENCRYPTION_KEY}" uv run manage.py compilemessages && rm -f /code/code.log
+RUN chown appuser:appuser /code
 USER appuser
 EXPOSE 8001
 CMD ["uv", "run", "granian", "--interface", "asgi", "config.asgi:application"]
