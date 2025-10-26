@@ -1,23 +1,22 @@
 export type CommunicationMode = 'standard' | 'private' | 'anonymous'
 
-// @wc-include
 export const communication_mode_options = (): {
     value: CommunicationMode
     title: string
     description: string
 }[] => [
     {
-        value: 'standard', // @wc-ignore
+        value: 'standard',
         title: 'Standard',
         description: 'Forward with usernames and profile links.'
     },
     {
-        value: 'private', // @wc-ignore
+        value: 'private',
         title: 'Private',
         description: 'Show only the public name; profile links removed.'
     },
     {
-        value: 'anonymous', // @wc-ignore
+        value: 'anonymous',
         title: 'Anonymous',
         description: 'Replace identity with a request number.'
     }

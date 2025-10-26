@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:36:29.837Z\n"
-"PO-Revision-Date: 2025-10-25T18:20:55.703Z\n"
+"PO-Revision-Date: 2025-10-26T19:08:29.627Z\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: \n"
@@ -564,25 +564,25 @@ msgid "Communication mode"
 msgstr "Communication mode"
 
 #: src/lib/constants/communication_mode.ts
-msgid "standard"
-msgstr "standard"
-
-#: src/lib/constants/communication_mode.ts
 msgid "Forward with usernames and profile links."
 msgstr "Forward with usernames and profile links."
-
-#: src/lib/constants/communication_mode.ts
-msgid "private"
-msgstr "private"
 
 #: src/lib/constants/communication_mode.ts
 msgid "Show only the public name; profile links removed."
 msgstr "Show only the public name; profile links removed."
 
 #: src/lib/constants/communication_mode.ts
-msgid "anonymous"
-msgstr "anonymous"
-
-#: src/lib/constants/communication_mode.ts
 msgid "Replace identity with a request number."
 msgstr "Replace identity with a request number."
+
+#: src/lib/constants/communication_mode.ts
+msgid "Standard"
+msgstr "Standard"
+
+#: src/lib/constants/communication_mode.ts
+msgid "Private"
+msgstr "Private"
+
+#: src/lib/constants/communication_mode.ts
+msgid "Anonymous"
+msgstr "Anonymous"

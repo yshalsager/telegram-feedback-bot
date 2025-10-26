@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-09-25T20:07:53.626Z\n"
-"PO-Revision-Date: 2025-10-25T18:20:55.705Z\n"
+"PO-Revision-Date: 2025-10-26T19:08:29.628Z\n"
 "Last-Translator: \n"
 "Language: ar\n"
 "Language-Team: \n"
@@ -564,25 +564,25 @@ msgid "Communication mode"
 msgstr "وضع التواصل"
 
 #: src/lib/constants/communication_mode.ts
-msgid "standard"
-msgstr "عادي"
-
-#: src/lib/constants/communication_mode.ts
 msgid "Forward with usernames and profile links."
 msgstr "إعادة التوجيه مع أسماء المستخدمين وروابط الملفات الشخصية."
-
-#: src/lib/constants/communication_mode.ts
-msgid "private"
-msgstr "خاص"
 
 #: src/lib/constants/communication_mode.ts
 msgid "Show only the public name; profile links removed."
 msgstr "عرض الاسم العام فقط؛ دون روابط الملف الشخصي."
 
 #: src/lib/constants/communication_mode.ts
-msgid "anonymous"
-msgstr "مجهول"
-
-#: src/lib/constants/communication_mode.ts
 msgid "Replace identity with a request number."
 msgstr "استبدال هوية المستخدم برقم طلب."
+
+#: src/lib/constants/communication_mode.ts
+msgid "Standard"
+msgstr "عادي"
+
+#: src/lib/constants/communication_mode.ts
+msgid "Private"
+msgstr "خاص"
+
+#: src/lib/constants/communication_mode.ts
+msgid "Anonymous"
+msgstr "مجهول"
