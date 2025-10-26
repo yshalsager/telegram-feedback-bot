@@ -30,6 +30,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+      args:
+        TELEGRAM_ENCRYPTION_KEY: ${TELEGRAM_ENCRYPTION_KEY}
     depends_on:
       db:
         condition: service_healthy
