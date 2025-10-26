@@ -41,6 +41,7 @@ ENV PATH=/code/.venv/bin:$PATH \
     UV_LINK_MODE=copy \
     UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
+    UV_NO_DEV=1 \
     UV_PROJECT_ENVIRONMENT=/code/.venv
 COPY --from=python-builder /code/.venv /code/.venv
 COPY manage.py pyproject.toml uv.lock ./
