@@ -46,7 +46,6 @@ services:
     ports:
       - '127.0.0.1:${GRANIAN_PORT:-8001}:${GRANIAN_PORT:-8001}'
     volumes:
-      - ./data:/code/data
       - /etc/localtime:/etc/localtime:ro
     command: >-
       sh -c "uv run python manage.py migrate &&
