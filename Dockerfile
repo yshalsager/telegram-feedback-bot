@@ -46,7 +46,6 @@ COPY --from=python-builder /code/.venv /code/.venv
 COPY manage.py pyproject.toml uv.lock ./
 COPY config ./config
 COPY feedback_bot ./feedback_bot
-COPY src ./src
 COPY messages ./messages
 COPY static ./static
 COPY --from=frontend-builder /code/build ./build
