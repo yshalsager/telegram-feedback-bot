@@ -38,7 +38,7 @@ ENV PATH=/code/.venv/bin:$PATH \
     UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never
 COPY --from=python-builder --chown=appuser:appuser /code/.venv /code/.venv
-COPY --chown=appuser:appuser manage.py pyproject.toml uv.lock alembic.ini ./
+COPY --chown=appuser:appuser manage.py pyproject.toml uv.lock ./
 COPY --chown=appuser:appuser config feedback_bot src messages static ./
 COPY --from=frontend-builder --chown=appuser:appuser /code/build ./build
 RUN TELEGRAM_BUILDER_BOT_ADMINS=0 TELEGRAM_BUILDER_BOT_TOKEN=dummy TELEGRAM_ENCRYPTION_KEY=dummy uv run python manage.py compilemessages
