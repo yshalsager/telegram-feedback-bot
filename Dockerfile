@@ -51,6 +51,7 @@ COPY messages ./messages
 COPY static ./static
 COPY --from=frontend-builder /code/build ./build
 RUN TELEGRAM_ENCRYPTION_KEY="${TELEGRAM_ENCRYPTION_KEY}" uv run manage.py compilemessages
+RUN chown -R appuser:appuser /code
 USER appuser
 EXPOSE 8001
 CMD ["uv", "run", "granian", "--interface", "asgi", "config.asgi:application"]
