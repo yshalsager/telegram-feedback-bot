@@ -60,6 +60,7 @@ ENV/
 env.bak/
 venv.bak/
 .mise.local.toml
+docker-compose.override.yml 
 
 # IDE
 .idea/
@@ -111,3 +112,4 @@ project.inlang/cache/
 # others
 artifacts/
 tmp_*
+ptb-webhook.lock
