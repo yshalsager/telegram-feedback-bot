@@ -1,4 +1,4 @@
-import {emitEvent, mockTelegramEnv, setDebug} from '@telegram-apps/sdk-svelte'
+import {emitEvent, mockTelegramEnv, setDebug} from '@tma.js/sdk-svelte'
 import {env} from '$env/dynamic/public'
 import eruda from 'eruda'
 

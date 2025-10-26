@@ -11,7 +11,7 @@ import {
     settingsButton,
     themeParams,
     viewport
-} from '@telegram-apps/sdk-svelte'
+} from '@tma.js/sdk-svelte'
 import {mockEnvInDev} from '$lib/telegram_debug.js'
 import {session} from './stores.svelte'
 
@@ -25,7 +25,7 @@ export async function initSDK() {
         }
         await miniApp.ready()
         if (miniApp.bindCssVars.isAvailable()) miniApp.bindCssVars()
-        if (themeParams.mountSync.isAvailable()) themeParams.mountSync()
+        if (themeParams.mount.isAvailable()) themeParams.mount()
         if (themeParams.bindCssVars.isAvailable()) themeParams.bindCssVars()
         if (viewport.mount.isAvailable()) viewport.mount()
         if (viewport.bindCssVars.isAvailable()) viewport.bindCssVars()
@@ -52,10 +52,10 @@ export async function initSDK() {
 /**
  * @typedef {Object} InitData
  * @property {string | undefined} queryId
- * @property {import('@telegram-apps/sdk-svelte').User | undefined} user
- * @property {import('@telegram-apps/sdk-svelte').User | undefined} receiver
- * @property {import('@telegram-apps/sdk-svelte').Chat | undefined} chat
- * @property {import('@telegram-apps/sdk-svelte').ChatType | undefined} chatType
+ * @property {import('@tma.js/sdk-svelte').User | undefined} user
+ * @property {import('@tma.js/sdk-svelte').User | undefined} receiver
+ * @property {import('@tma.js/sdk-svelte').Chat | undefined} chat
+ * @property {import('@tma.js/sdk-svelte').ChatType | undefined} chatType
  * @property {string | undefined} chatInstance
  * @property {string | undefined} startParam
  * @property {number | undefined} canSendAfter
@@ -93,7 +93,7 @@ export function getInitData() {
  * Show a notification in the mini app
  * @param {string} title
  * @param {string} message
- * @param {import('@telegram-apps/sdk-svelte').ShowPopupOptionsButton[]} [buttons] - Optional array of buttons. Defaults to [{type: 'close'}]
+ * @param {import('@tma.js/sdk-svelte').ShowOptionsButton[]} [buttons] - Optional array of buttons. Defaults to [{type: 'close'}]
  */
 export function showNotification(title, message, buttons = [{type: 'close'}]) {
     try {

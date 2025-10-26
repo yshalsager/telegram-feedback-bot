@@ -16,7 +16,7 @@ vi.mock('$app/paths', () => ({
     resolve: (path: string) => path
 }))
 
-vi.mock('@telegram-apps/sdk-svelte', () => ({
+vi.mock('@tma.js/sdk-svelte', () => ({
     on: onMock
 }))
 

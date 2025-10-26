@@ -1,8 +1,8 @@
 <script lang="ts">
 import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
-import type {EventPayload} from '@telegram-apps/sdk-svelte'
-import {on} from '@telegram-apps/sdk-svelte'
+import type {EventPayload} from '@tma.js/sdk-svelte'
+import {on} from '@tma.js/sdk-svelte'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import UserAccessForm from '~/components/management/UserAccessForm.svelte'
 import {showNotification} from '~/lib/telegram.js'
