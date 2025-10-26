@@ -5,11 +5,11 @@ import {communication_mode_options} from '$lib/constants/communication_mode'
 let {
     value = $bindable<CommunicationMode>('standard'),
     heading = 'Communication mode',
-    options = communication_mode_options
+    options = communication_mode_options()
 } = $props<{
     value?: CommunicationMode
     heading?: string
-    options?: typeof communication_mode_options
+    options?: ReturnType<typeof communication_mode_options>
 }>()
 </script>
 

@@ -1,11 +1,11 @@
 export type CommunicationMode = 'standard' | 'private' | 'anonymous'
 
 // @wc-include
-export const communication_mode_options: {
+export const communication_mode_options = (): {
     value: CommunicationMode
     title: string
     description: string
-}[] = [
+}[] => [
     {
         value: 'standard', // @wc-ignore
         title: 'Standard',
