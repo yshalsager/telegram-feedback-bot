@@ -61,7 +61,7 @@ importers:
         version: 0.14.8
       bits-ui:
         specifier: ^2.14.1
-        version: 2.14.3(@internationalized/date@3.10.0)(@sveltejs/kit@2.47.3(@sveltejs/vite-plugin-svelte@6.2.1(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(svelte@5.42.0)
+        version: 2.14.4(@internationalized/date@3.10.0)(@sveltejs/kit@2.47.3(@sveltejs/vite-plugin-svelte@6.2.1(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(svelte@5.42.0)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1093,8 +1093,8 @@ packages:
   bidi-js@1.0.3:
     resolution: {integrity: sha512-RKshQI1R3YQ+n9YJz2QQ147P66ELpa1FQEg20Dk8oW9t2KgLbpDLLp9aGZ7y8WHSshDknG0bknqGw5/tyCs5tw==}
 
-  bits-ui@2.14.3:
-    resolution: {integrity: sha512-Dkpenu6F5WUfdDJn5D8ALkTaAM+7sUCszKjzav5TWAzsq1fj2tcqKYJcUm82OS+JlgcolI7LOkrqIXzKnt56RA==}
+  bits-ui@2.14.4:
+    resolution: {integrity: sha512-W6kenhnbd/YVvur+DKkaVJ6GldE53eLewur5AhUCqslYQ0vjZr8eWlOfwZnMiPB+PF5HMVqf61vXBvmyrAmPWg==}
     engines: {node: '>=20'}
     peerDependencies:
       '@internationalized/date': ^3.8.1
@@ -1420,8 +1420,8 @@ packages:
     resolution: {integrity: sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==}
     engines: {node: '>=8'}
 
-  inline-style-parser@0.2.6:
-    resolution: {integrity: sha512-gtGXVaBdl5mAes3rPcMedEBm12ibjt1kDMFfheul1wUAOVEJW60voNdMVzVkfLN06O7ZaD/rxhfKgtlgtTbMjg==}
+  inline-style-parser@0.2.7:
+    resolution: {integrity: sha512-Nb2ctOyNR8DqQoR0OwRG95uNWIC0C1lCgf5Naz5H6Ji72KZ8OcFZLz2P5sNgwlyoJ8Yif11oMuYs5pBQa86csA==}
 
   is-extglob@2.1.1:
     resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
@@ -1950,8 +1950,8 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
-  style-to-object@1.0.12:
-    resolution: {integrity: sha512-ddJqYnoT4t97QvN2C95bCgt+m7AAgXjVnkk/jxAfmp7EAB8nnqqZYEbMd3em7/vEomDb2LAQKAy1RFfv41mdNw==}
+  style-to-object@1.0.14:
+    resolution: {integrity: sha512-LIN7rULI0jBscWQYaSswptyderlarFkjQ+t79nzty8tcIAceVomEVlLzH5VP4Cmsv6MtKhs7qaAiwlcp+Mgaxw==}
 
   supports-color@7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
@@ -3136,7 +3136,7 @@ snapshots:
     dependencies:
       require-from-string: 2.0.2
 
-  bits-ui@2.14.3(@internationalized/date@3.10.0)(@sveltejs/kit@2.47.3(@sveltejs/vite-plugin-svelte@6.2.1(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(svelte@5.42.0):
+  bits-ui@2.14.4(@internationalized/date@3.10.0)(@sveltejs/kit@2.47.3(@sveltejs/vite-plugin-svelte@6.2.1(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(svelte@5.42.0):
     dependencies:
       '@floating-ui/core': 1.7.3
       '@floating-ui/dom': 1.7.4
@@ -3484,7 +3484,7 @@ snapshots:
 
   indent-string@4.0.0: {}
 
-  inline-style-parser@0.2.6: {}
+  inline-style-parser@0.2.7: {}
 
   is-extglob@2.1.1: {}
 
@@ -3899,9 +3899,9 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  style-to-object@1.0.12:
+  style-to-object@1.0.14:
     dependencies:
-      inline-style-parser: 0.2.6
+      inline-style-parser: 0.2.7
 
   supports-color@7.2.0:
     dependencies:
@@ -3934,7 +3934,7 @@ snapshots:
     dependencies:
       clsx: 2.1.1
       runed: 0.35.1(@sveltejs/kit@2.47.3(@sveltejs/vite-plugin-svelte@6.2.1(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.42.0))(svelte@5.42.0)
-      style-to-object: 1.0.12
+      style-to-object: 1.0.14
       svelte: 5.42.0
     transitivePeerDependencies:
       - '@sveltejs/kit'
