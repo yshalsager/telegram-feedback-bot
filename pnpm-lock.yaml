@@ -49,7 +49,7 @@ importers:
         version: 14.6.1(@testing-library/dom@10.4.1)
       '@tma.js/sdk-svelte':
         specifier: ^1.0.8
-        version: 1.0.8(svelte@5.42.0)(typescript@5.9.3)
+        version: 1.0.9(svelte@5.42.0)(typescript@5.9.3)
       '@vitest/browser':
         specifier: ^4.0.3
         version: 4.0.3(rolldown-vite@7.1.20(esbuild@0.25.11)(jiti@2.6.1))(vitest@4.0.3(jiti@2.6.1)(jsdom@27.0.1(postcss@8.5.6))(lightningcss@1.30.2))
@@ -894,16 +894,16 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@tma.js/bridge@2.1.3':
-    resolution: {integrity: sha512-mJPdGP3AgQ10ovW2A/yKdLPqhMt1Mx/uHvXRz1qyyy9L6kQlCojx68ib1Km7jumKdYvljy3470Yhk18V65pcdw==}
+  '@tma.js/bridge@2.2.0':
+    resolution: {integrity: sha512-wzmnH5cROVZRJAH8o1fS8bKyuujDhQ7OuGTkIpcRA4ic0WSptTDR/wyK26hMIWoeMSNfUh+srzFm+mK7JYwC4g==}
 
-  '@tma.js/sdk-svelte@1.0.8':
-    resolution: {integrity: sha512-gHFqbSq34bP4pcKP4fi6DxJ5XgouvUSVAHWuQyvlU9i5g1VfnkX6C523fvQsMCtkroX6w6p+Oi9SwPxvv/Nmtg==}
+  '@tma.js/sdk-svelte@1.0.9':
+    resolution: {integrity: sha512-juN5a8YaarSdjDjlMo8lFxt0a39OLLpnhVqNZsCD1gtJSVNfq4+d9+uHOwXzj47U5Eq0TXFtYgvbmVSTvIOXPQ==}
     peerDependencies:
       svelte: ^5.2.3
 
-  '@tma.js/sdk@3.0.8':
-    resolution: {integrity: sha512-4tHISijTSKe6Oi/nw1OB/sQShuVOfCxmRZzFGvWkNPQRrQ0p6H8p4KTe83VB/0Zvas0jzIZ6cnKLas/0Sm8nFw==}
+  '@tma.js/sdk@3.1.0':
+    resolution: {integrity: sha512-cx93PleKyJuZokUp9EwtCX8Gd3eK01+XTdyOY6rPJiDlrCPdf/f49G0c154ibSHC4fk1VnH9pcxaBfKFEZpw2g==}
 
   '@tma.js/signals@1.0.1':
     resolution: {integrity: sha512-i2HUuwGqL4BmM5KAklAUhMhlEgUOF+F4nMHHS/zxrmD0upHE/0CiXCEdQxVeeOGN6e2RrKlonA40sDtR6OUDCw==}
@@ -2852,7 +2852,7 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.1
 
-  '@tma.js/bridge@2.1.3(typescript@5.9.3)':
+  '@tma.js/bridge@2.2.0(typescript@5.9.3)':
     dependencies:
       '@tma.js/signals': 1.0.1
       '@tma.js/toolkit': 1.0.2
@@ -2866,16 +2866,16 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@tma.js/sdk-svelte@1.0.8(svelte@5.42.0)(typescript@5.9.3)':
+  '@tma.js/sdk-svelte@1.0.9(svelte@5.42.0)(typescript@5.9.3)':
     dependencies:
-      '@tma.js/sdk': 3.0.8(typescript@5.9.3)
+      '@tma.js/sdk': 3.1.0(typescript@5.9.3)
       svelte: 5.42.0
     transitivePeerDependencies:
       - typescript
 
-  '@tma.js/sdk@3.0.8(typescript@5.9.3)':
+  '@tma.js/sdk@3.1.0(typescript@5.9.3)':
     dependencies:
-      '@tma.js/bridge': 2.1.3(typescript@5.9.3)
+      '@tma.js/bridge': 2.2.0(typescript@5.9.3)
       '@tma.js/signals': 1.0.1
       '@tma.js/toolkit': 1.0.2
       '@tma.js/transformers': 1.1.1(typescript@5.9.3)
