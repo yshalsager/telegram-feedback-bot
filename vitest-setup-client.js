@@ -5,7 +5,7 @@ import '@testing-library/jest-dom/vitest'
 import {cleanup} from '@testing-library/svelte'
 import {afterEach, beforeAll, vi} from 'vitest'
 import {loadLocale} from 'wuchale/load-utils'
-import '~/lib/wuchale-loader.svelte.js'
+import '~/locales/main.loader.svelte.js'
 
 // Ensure English catalog is available during component tests
 beforeAll(async () => {

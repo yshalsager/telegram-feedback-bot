@@ -1,7 +1,7 @@
 import {derived, get, writable} from 'svelte/store'
-import {locales as supportedLocales} from 'virtual:wuchale/locales'
 import {loadLocale} from 'wuchale/load-utils'
-import './wuchale-loader.svelte.js'
+import {locales as supportedLocales} from '~/locales/data.js'
+import '~/locales/main.loader.svelte.js'
 
 const STORAGE_KEY = 'telegram_feedback_bot.locale'
 const DEFAULT_LOCALE = supportedLocales[0] ?? 'en'

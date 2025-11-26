@@ -9,8 +9,7 @@ export default defineConfig({
     adapters: {
         main: svelte({
             files: ['./src/**/*.svelte', './src/**/*.svelte.{js,ts}'],
-            catalog: './messages/{locale}/LC_MESSAGES/frontend',
-            loaderPath: './src/lib/wuchale-loader.svelte.js'
+            loader: 'svelte'
         }),
         js: js({
             files: [
@@ -18,8 +17,7 @@ export default defineConfig({
                 'src/**/lib/i18n.{js,ts}',
                 'src/lib/constants/**/*.ts'
             ],
-            catalog: './messages/{locale}/LC_MESSAGES/frontend',
-            loaderPath: './src/lib/wuchale-loader.js'
+            loader: 'vite'
         })
     }
 })

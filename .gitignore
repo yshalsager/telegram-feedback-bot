@@ -105,9 +105,9 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# Paraglide
-src/lib/paraglide
-project.inlang/cache/
+# Wuchale
+src/locales/.wuchale
+src/locales/data.js
 
 # others
 artifacts/
