@@ -58,7 +58,7 @@ importers:
         version: 0.17.5
       '@wuchale/vite-plugin':
         specifier: ^0.15.3
-        version: 0.15.3
+        version: 0.15.4
       bits-ui:
         specifier: ^2.14.4
         version: 2.14.4(@internationalized/date@3.10.0)(@sveltejs/kit@2.49.2(@sveltejs/vite-plugin-svelte@6.2.1(rolldown-vite@7.2.8(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.45.2))(rolldown-vite@7.2.8(esbuild@0.25.11)(jiti@2.6.1))(svelte@5.45.2))(svelte@5.45.2)
@@ -1030,8 +1030,8 @@ packages:
   '@wuchale/svelte@0.17.5':
     resolution: {integrity: sha512-JaCUGuIMa4MFZBo9IC858kxy5HunKA/gFbzZ0Tyv2O2IAdvP6D8g4VWzWxtISLmr35DRN7MDomGoJws3U8f8QA==}
 
-  '@wuchale/vite-plugin@0.15.3':
-    resolution: {integrity: sha512-GtPT1gwAGJAb1oc7R5MuGyl1R8m50QdoqFiW/76g2e81d9iPUYNi/CTg8BEeg4WmQJ+91JRR//rwgEo+jG0fZQ==}
+  '@wuchale/vite-plugin@0.15.4':
+    resolution: {integrity: sha512-AiSp0jUCflPEygx8seLc5LE3tdnqOBbt3iX7UghGbX+UEsdUa+CaRVfG10Pd9OAuKVEOv87s8mmAINYOKVqO6w==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -1117,6 +1117,10 @@ packages:
   chokidar@4.0.3:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
     engines: {node: '>= 14.16.0'}
+
+  chokidar@5.0.0:
+    resolution: {integrity: sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==}
+    engines: {node: '>= 20.19.0'}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -1784,6 +1788,10 @@ packages:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
 
+  readdirp@5.0.0:
+    resolution: {integrity: sha512-9u/XQ1pvrQtYyMpZe7DXKv2p5CNvyVwzUB6uhLAnQwHMSgKMBR62lc7AHljaeteeHXn11XTAaLLUVZYVZyuRBQ==}
+    engines: {node: '>= 20.19.0'}
+
   redent@3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
@@ -2184,6 +2192,10 @@ packages:
 
   wuchale@0.18.5:
     resolution: {integrity: sha512-jCKAKIalzgQsIAC7HFKSHE1zGqTwN9K+44kJ32MNt3Vw9maJS3HBrI9DzER361d/iWApEqTG+SYTyDNGcXxS0A==}
+    hasBin: true
+
+  wuchale@0.18.7:
+    resolution: {integrity: sha512-3Z/tncy3/KVxekLo8G9PcHJnLDN2VSpHgS7fXOW3pDN3/ix1nR14TX8ml+sb16eLT8QqvyTdycd8wWs1NlwiVw==}
     hasBin: true
 
   xml-name-validator@5.0.0:
@@ -3033,9 +3045,9 @@ snapshots:
       svelte: 5.45.2
       wuchale: 0.18.5
 
-  '@wuchale/vite-plugin@0.15.3':
+  '@wuchale/vite-plugin@0.15.4':
     dependencies:
-      wuchale: 0.18.5
+      wuchale: 0.18.7
 
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
@@ -3116,6 +3128,10 @@ snapshots:
   chokidar@4.0.3:
     dependencies:
       readdirp: 4.1.2
+
+  chokidar@5.0.0:
+    dependencies:
+      readdirp: 5.0.0
 
   clsx@2.1.1: {}
 
@@ -3686,6 +3702,8 @@ snapshots:
 
   readdirp@4.1.2: {}
 
+  readdirp@5.0.0: {}
+
   redent@3.0.0:
     dependencies:
       indent-string: 4.0.0
@@ -4041,6 +4059,17 @@ snapshots:
       '@sveltejs/acorn-typescript': 1.0.6(acorn@8.15.0)
       acorn: 8.15.0
       chokidar: 4.0.3
+      magic-string: 0.30.21
+      path-to-regexp: 8.3.0
+      picomatch: 4.0.3
+      pofile: 1.1.4
+      tinyglobby: 0.2.15
+
+  wuchale@0.18.7:
+    dependencies:
+      '@sveltejs/acorn-typescript': 1.0.8(acorn@8.15.0)
+      acorn: 8.15.0
+      chokidar: 5.0.0
       magic-string: 0.30.21
       path-to-regexp: 8.3.0
       picomatch: 4.0.3
