@@ -55,7 +55,7 @@ importers:
         version: 4.0.14(rolldown-vite@7.2.8(esbuild@0.25.11)(jiti@2.6.1))(vitest@4.0.14(jiti@2.6.1)(jsdom@27.2.0(postcss@8.5.6))(lightningcss@1.30.2))
       '@wuchale/svelte':
         specifier: ^0.17.5
-        version: 0.17.5
+        version: 0.17.7
       '@wuchale/vite-plugin':
         specifier: ^0.15.3
         version: 0.15.4
@@ -1027,8 +1027,8 @@ packages:
   '@vitest/utils@4.0.14':
     resolution: {integrity: sha512-hLqXZKAWNg8pI+SQXyXxWCTOpA3MvsqcbVeNgSi8x/CSN2wi26dSzn1wrOhmCmFjEvN9p8/kLFRHa6PI8jHazw==}
 
-  '@wuchale/svelte@0.17.5':
-    resolution: {integrity: sha512-JaCUGuIMa4MFZBo9IC858kxy5HunKA/gFbzZ0Tyv2O2IAdvP6D8g4VWzWxtISLmr35DRN7MDomGoJws3U8f8QA==}
+  '@wuchale/svelte@0.17.7':
+    resolution: {integrity: sha512-Pmzm6kOi7URuDSlsCOQrJ21ida92Pr+MPJOj9nueep7ZGG4CDEV02/qsZAaQqKpx8qMTWuo1DRhDA0k+ZGyjew==}
 
   '@wuchale/vite-plugin@0.15.4':
     resolution: {integrity: sha512-AiSp0jUCflPEygx8seLc5LE3tdnqOBbt3iX7UghGbX+UEsdUa+CaRVfG10Pd9OAuKVEOv87s8mmAINYOKVqO6w==}
@@ -3040,10 +3040,10 @@ snapshots:
       '@vitest/pretty-format': 4.0.14
       tinyrainbow: 3.0.3
 
-  '@wuchale/svelte@0.17.5':
+  '@wuchale/svelte@0.17.7':
     dependencies:
       svelte: 5.45.2
-      wuchale: 0.18.5
+      wuchale: 0.18.7
 
   '@wuchale/vite-plugin@0.15.4':
     dependencies:
