@@ -133,7 +133,7 @@ importers:
         version: 2.0.1(svelte@5.46.0)(vitest@4.0.16(jiti@2.6.1)(jsdom@27.3.0)(lightningcss@1.30.2))
       wuchale:
         specifier: ^0.18.9
-        version: 0.18.9
+        version: 0.18.11
 
 packages:
 
@@ -2172,8 +2172,8 @@ packages:
       utf-8-validate:
         optional: true
 
-  wuchale@0.18.9:
-    resolution: {integrity: sha512-QBWnr5kgxuqP7lSZeDMIz/mnrE9sfmai9mTqnitEWRYd4RlarMPvorrluhFLoZ4GOw3564EUoTK8drlfeiJd0Q==}
+  wuchale@0.18.11:
+    resolution: {integrity: sha512-lJNnxSbEGg4vxzTOKaMnpGWdnzW2HrR93TmpmL9DPiSVXI+YS0rdsM7PnJcjzE5Rtu49HOznGRHYNpkT49A7AA==}
     hasBin: true
 
   xml-name-validator@5.0.0:
@@ -3012,11 +3012,11 @@ snapshots:
     dependencies:
       magic-string: 0.30.21
       svelte: 5.46.0
-      wuchale: 0.18.9
+      wuchale: 0.18.11
 
   '@wuchale/vite-plugin@0.15.6':
     dependencies:
-      wuchale: 0.18.9
+      wuchale: 0.18.11
 
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
@@ -4014,7 +4014,7 @@ snapshots:
 
   ws@8.18.3: {}
 
-  wuchale@0.18.9:
+  wuchale@0.18.11:
     dependencies:
       '@sveltejs/acorn-typescript': 1.0.8(acorn@8.15.0)
       acorn: 8.15.0
