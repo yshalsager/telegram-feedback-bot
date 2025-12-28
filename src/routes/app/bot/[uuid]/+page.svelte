@@ -50,18 +50,18 @@ const isFormValid = $derived(startMessage.trim() !== '' && feedbackReceivedMessa
 const hasChanges = $derived(
     Boolean(
         bot &&
-            (startMessage !== bot.start_message ||
-                feedbackReceivedMessage !== bot.feedback_received_message ||
-                enabled !== bot.enabled ||
-                communication_mode !== bot.communication_mode ||
-                allow_photo_messages !== bot.allow_photo_messages ||
-                allow_video_messages !== bot.allow_video_messages ||
-                allow_voice_messages !== bot.allow_voice_messages ||
-                allow_document_messages !== bot.allow_document_messages ||
-                allow_sticker_messages !== bot.allow_sticker_messages ||
-                antiflood_enabled !== bot.antiflood_enabled ||
-                antiflood_seconds !== bot.antiflood_seconds ||
-                trimmedPendingToken !== '')
+        (startMessage !== bot.start_message ||
+            feedbackReceivedMessage !== bot.feedback_received_message ||
+            enabled !== bot.enabled ||
+            communication_mode !== bot.communication_mode ||
+            allow_photo_messages !== bot.allow_photo_messages ||
+            allow_video_messages !== bot.allow_video_messages ||
+            allow_voice_messages !== bot.allow_voice_messages ||
+            allow_document_messages !== bot.allow_document_messages ||
+            allow_sticker_messages !== bot.allow_sticker_messages ||
+            antiflood_enabled !== bot.antiflood_enabled ||
+            antiflood_seconds !== bot.antiflood_seconds ||
+            trimmedPendingToken !== '')
     )
 )
 

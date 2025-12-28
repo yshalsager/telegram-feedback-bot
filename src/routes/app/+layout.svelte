@@ -47,10 +47,10 @@ async function initialize() {
     const validatedUser = validationBody?.user
     const isValidSession = Boolean(
         data &&
-            data.raw &&
-            validationResult?.ok &&
-            validationBody?.status === 'success' &&
-            validatedUser
+        data.raw &&
+        validationResult?.ok &&
+        validationBody?.status === 'success' &&
+        validatedUser
     )
 
     session.update(state => ({

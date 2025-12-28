@@ -65,10 +65,10 @@ if (data) {
 const hasChanges = $derived(
     Boolean(
         user &&
-            (normalize_username(username) !== (user.username ?? '') ||
-                languageCode !== user.language_code ||
-                isWhitelisted !== user.is_whitelisted ||
-                isAdmin !== user.is_admin)
+        (normalize_username(username) !== (user.username ?? '') ||
+            languageCode !== user.language_code ||
+            isWhitelisted !== user.is_whitelisted ||
+            isAdmin !== user.is_admin)
     )
 )
 
