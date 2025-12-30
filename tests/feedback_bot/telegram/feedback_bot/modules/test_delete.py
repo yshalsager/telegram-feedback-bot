@@ -10,7 +10,7 @@ from feedback_bot.models import FeedbackChat, MessageMapping
 from feedback_bot.telegram.feedback_bot.modules import delete as delete_module
 from tests.feedback_bot.telegram.factories import build_message
 
-from telegram.error import BadRequest
+from telegram.error import BadRequest, Forbidden
 
 pytestmark = [pytest.mark.asyncio, pytest.mark.django_db]
 
@@ -216,6 +216,51 @@ async def test_clear_feedback_removes_all_messages(feedback_app):
     actual_calls = [call.kwargs for call in delete_mock.await_args_list]
     assert actual_calls == expected_calls
 
+    remaining = await MessageMapping.objects.filter(bot=bot_config).acount()
+    assert remaining == 0
+
+
+async def test_clear_feedback_ignores_deactivated_user(feedback_app):
+    _, bot_config = feedback_app
+    await FeedbackChat.objects.filter(bot=bot_config).adelete()
+    await MessageMapping.objects.filter(bot=bot_config).adelete()
+    await _prepare_mapping(bot_config, 999, 77, 11)
+    await _prepare_mapping(bot_config, 999, 78, 12)
+
+    forwarded = build_message(
+        bot_config.telegram_id,
+        message_id=77,
+        chat_id=bot_config.owner_id,
+        chat_type='private',
+        is_bot=True,
+    )
+    command_message = build_message(
+        bot_config.owner_id,
+        message_id=99,
+        text='/clear',
+        chat_id=bot_config.owner_id,
+        chat_type='private',
+        reply_to=forwarded,
+    )
+    update = SimpleNamespace(
+        effective_message=command_message,
+        effective_user=command_message.from_user,
+    )
+
+    delete_mock = AsyncMock(
+        side_effect=[
+            True,
+            True,
+            Forbidden('Forbidden: user is deactivated'),
+            True,
+            True,
+        ]
+    )
+    context = _build_context(bot_config, delete_mock)
+
+    await delete_module.clear_feedback(update, context)
+
+    assert delete_mock.await_count == 5
     remaining = await MessageMapping.objects.filter(bot=bot_config).acount()
     assert remaining == 0
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from django.utils.translation import gettext as _
 from telegram import Update
-from telegram.error import BadRequest
+from telegram.error import BadRequest, Forbidden
 from telegram.ext import CommandHandler, ContextTypes
 
 from feedback_bot.crud import (
@@ -27,6 +27,9 @@ async def _delete_message(
     except BadRequest as exc:
         payload = exc.message.lower()
         return bool('message to delete not found' in payload or 'message not found' in payload)
+    except Forbidden as exc:
+        payload = exc.message.lower()
+        return bool('user is deactivated' in payload or 'bot was blocked by the user' in payload)
 
 
 async def delete_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
