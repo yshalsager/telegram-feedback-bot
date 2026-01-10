@@ -108,6 +108,7 @@ vite.config.ts.timestamp-*
 # Wuchale
 src/locales/.wuchale
 src/locales/data.js
+src/locales/*.loader.*
 
 # others
 artifacts/
