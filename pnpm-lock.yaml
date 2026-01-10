@@ -49,7 +49,7 @@ importers:
         version: 14.6.1(@testing-library/dom@10.4.1)
       '@tma.js/sdk-svelte':
         specifier: ^1.0.11
-        version: 1.0.13(svelte@5.46.1)(typescript@5.9.3)
+        version: 1.0.15(svelte@5.46.1)(typescript@5.9.3)
       '@vitest/browser':
         specifier: ^4.0.16
         version: 4.0.16(rolldown-vite@7.3.0(jiti@2.6.1))(vitest@4.0.16(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2))
@@ -892,25 +892,25 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@tma.js/bridge@2.2.1':
-    resolution: {integrity: sha512-dQ093JJvnV1WG42R65Xw9loU4MXGe08Vi/OyibVQ51ZI1/4PZY9PT2n/EA70XkZHwXbIXUMQe4DrYoNk0RAhpg==}
+  '@tma.js/bridge@2.2.2':
+    resolution: {integrity: sha512-dL7iZzYP/VC4/qJYSXPI1GXLGP3gLTp10L7iGY6PcjB2F4xXS2JnHUoYvD2DgQG1ogjE93zWnVIMN7inx1v+Eg==}
 
-  '@tma.js/sdk-svelte@1.0.13':
-    resolution: {integrity: sha512-k/ix6E8XOTjc0/LRL8GuCgn4xYfR6NS9evfl+QnxYlq9axxE0ItMMhmD6oUHJ9BSHBCUJcKew82api8ABugghQ==}
+  '@tma.js/sdk-svelte@1.0.15':
+    resolution: {integrity: sha512-CEzyPtpTCWCskQuYj7fEI+/97nCDaXEsznb3RUb/IxQ6eEIjO9yMCw5+7/aHv+/JUM5/rdjSN6ycVA081Pmt9Q==}
     peerDependencies:
       svelte: ^5.2.3
 
-  '@tma.js/sdk@3.1.4':
-    resolution: {integrity: sha512-WiChKq/Z/682GSwQZOmI6sCuVd1YLivw3boqe3VsJ07Uxn8vh0FHB34G1RIl5frBNxB6KECOIti20eDbj312fQ==}
+  '@tma.js/sdk@3.1.6':
+    resolution: {integrity: sha512-NENkQa7G5N9kwbL20ErUMO9Fukxl9eVhcJ439PbCg2WYMk/x9oNbx2DhEzhX4xM718zSjYejmSj1oXCKk0PxYA==}
 
   '@tma.js/signals@1.0.1':
     resolution: {integrity: sha512-i2HUuwGqL4BmM5KAklAUhMhlEgUOF+F4nMHHS/zxrmD0upHE/0CiXCEdQxVeeOGN6e2RrKlonA40sDtR6OUDCw==}
 
-  '@tma.js/toolkit@1.0.3':
-    resolution: {integrity: sha512-BSQ5Iaf/9eH24o5KqifJ8J0yOXxlM/zBsUnswWycIvh5fTSprDv6G9vM4U3U3X46WXw+55ojvcmuiespABC9sQ==}
+  '@tma.js/toolkit@1.0.4':
+    resolution: {integrity: sha512-6CDlkgc+43WD2jy6jog3B50yt9t+/wRwrN25zOa4iSw4IzfqoFjaQcJzTupBYaRxz19C3Rrir7p0/qStS/Z8vw==}
 
-  '@tma.js/transformers@1.1.2':
-    resolution: {integrity: sha512-AhGVF5SARIxgIVMaLBwQVKRVi7OEGeA8ygXYE8BYRbXR4PNTlweW5eS+bNXFusKJHzpvPcWhtSHW6kx8GE1o7Q==}
+  '@tma.js/transformers@1.1.3':
+    resolution: {integrity: sha512-zRL+fdo/NBpGqCJfl8ItAvcJIFT5Zy6UOYJwQPmUV5/gTHgmSvmGlrP43PeVi9XZ7Ggf4xbO6LUa4ehxozhMTA==}
 
   '@tma.js/types@1.0.2':
     resolution: {integrity: sha512-qs4mi+U1xZmMQBdMhWAo1X4YqUJ/ae0y28s+GNCpQq58bsJo0h8rvyVOB1RwPvXogIY9+yribbZe6z3AIJmsAQ==}
@@ -2791,11 +2791,11 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.1
 
-  '@tma.js/bridge@2.2.1(typescript@5.9.3)':
+  '@tma.js/bridge@2.2.2(typescript@5.9.3)':
     dependencies:
       '@tma.js/signals': 1.0.1
-      '@tma.js/toolkit': 1.0.3
-      '@tma.js/transformers': 1.1.2(typescript@5.9.3)
+      '@tma.js/toolkit': 1.0.4
+      '@tma.js/transformers': 1.1.3(typescript@5.9.3)
       '@tma.js/types': 1.0.2
       better-promises: 1.0.0
       error-kid: 1.0.2
@@ -2805,19 +2805,19 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@tma.js/sdk-svelte@1.0.13(svelte@5.46.1)(typescript@5.9.3)':
+  '@tma.js/sdk-svelte@1.0.15(svelte@5.46.1)(typescript@5.9.3)':
     dependencies:
-      '@tma.js/sdk': 3.1.4(typescript@5.9.3)
+      '@tma.js/sdk': 3.1.6(typescript@5.9.3)
       svelte: 5.46.1
     transitivePeerDependencies:
       - typescript
 
-  '@tma.js/sdk@3.1.4(typescript@5.9.3)':
+  '@tma.js/sdk@3.1.6(typescript@5.9.3)':
     dependencies:
-      '@tma.js/bridge': 2.2.1(typescript@5.9.3)
+      '@tma.js/bridge': 2.2.2(typescript@5.9.3)
       '@tma.js/signals': 1.0.1
-      '@tma.js/toolkit': 1.0.3
-      '@tma.js/transformers': 1.1.2(typescript@5.9.3)
+      '@tma.js/toolkit': 1.0.4
+      '@tma.js/transformers': 1.1.3(typescript@5.9.3)
       '@tma.js/types': 1.0.2
       better-promises: 1.0.0
       error-kid: 1.0.2
@@ -2828,14 +2828,14 @@ snapshots:
 
   '@tma.js/signals@1.0.1': {}
 
-  '@tma.js/toolkit@1.0.3':
+  '@tma.js/toolkit@1.0.4':
     dependencies:
       better-promises: 1.0.0
       fp-ts: 2.16.11
 
-  '@tma.js/transformers@1.1.2(typescript@5.9.3)':
+  '@tma.js/transformers@1.1.3(typescript@5.9.3)':
     dependencies:
-      '@tma.js/toolkit': 1.0.3
+      '@tma.js/toolkit': 1.0.4
       '@tma.js/types': 1.0.2
       fp-ts: 2.16.11
       valibot: 1.2.0(typescript@5.9.3)
