@@ -124,7 +124,7 @@ importers:
         version: rolldown-vite@7.3.1(jiti@2.6.1)
       vite-plugin-domain:
         specifier: ^2.0.0
-        version: 2.0.0(rolldown-vite@7.3.1(jiti@2.6.1))
+        version: 2.0.2(rolldown-vite@7.3.1(jiti@2.6.1))
       vitest:
         specifier: ^4.0.16
         version: 4.0.16(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)
@@ -192,6 +192,12 @@ packages:
   '@babel/types@7.28.5':
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
+
+  '@clack/core@1.0.0-alpha.7':
+    resolution: {integrity: sha512-3vdh6Ar09D14rVxJZIm3VQJkU+ZOKKT5I5cC0cOVazy70CNyYYjiwRj9unwalhESndgxx6bGc/m6Hhs4EKF5XQ==}
+
+  '@clack/prompts@1.0.0-alpha.9':
+    resolution: {integrity: sha512-sKs0UjiHFWvry4SiRfBi5Qnj0C/6AYx8aKkFPZQSuUZXgAram25ZDmhQmP7vj1aFyLpfHWtLQjWvOvcat0TOLg==}
 
   '@csstools/color-helpers@5.1.0':
     resolution: {integrity: sha512-S11EXWJyy0Mz5SYvRmY8nJYTFFd1LCNV+7cXyAgQtOOuzb4EsgfqDufL+9esx72/eLhsRdGZwaldu/h+E4t4BA==}
@@ -1899,6 +1905,9 @@ packages:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
 
+  sisteransi@1.0.5:
+    resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -2053,9 +2062,10 @@ packages:
       typescript:
         optional: true
 
-  vite-plugin-domain@2.0.0:
-    resolution: {integrity: sha512-PVvHNeGWnNgppltMbsChI1de+4EqB1NHGro5xm3jDtT/ZF1bhy2xs6ARl87+vNBFI1BPitJpINLM5sdR+e+3kg==}
+  vite-plugin-domain@2.0.2:
+    resolution: {integrity: sha512-YtuRLCv5rRvxonM4IUDJWtz6ItORnWfEX9P/rv914r9VnNjI/54lCLx8MQmEBa172CH30600wi0vsyimuhM+UA==}
     engines: {node: '>=18'}
+    hasBin: true
     peerDependencies:
       vite: '>=4'
 
@@ -2283,6 +2293,17 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
+
+  '@clack/core@1.0.0-alpha.7':
+    dependencies:
+      picocolors: 1.1.1
+      sisteransi: 1.0.5
+
+  '@clack/prompts@1.0.0-alpha.9':
+    dependencies:
+      '@clack/core': 1.0.0-alpha.7
+      picocolors: 1.1.1
+      sisteransi: 1.0.5
 
   '@csstools/color-helpers@5.1.0': {}
 
@@ -3802,6 +3823,8 @@ snapshots:
       mrmime: 2.0.1
       totalist: 3.0.1
 
+  sisteransi@1.0.5: {}
+
   source-map-js@1.2.1: {}
 
   stackback@0.0.2: {}
@@ -3950,8 +3973,9 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
-  vite-plugin-domain@2.0.0(rolldown-vite@7.3.1(jiti@2.6.1)):
+  vite-plugin-domain@2.0.2(rolldown-vite@7.3.1(jiti@2.6.1)):
     dependencies:
+      '@clack/prompts': 1.0.0-alpha.9
       picocolors: 1.1.1
       vite: rolldown-vite@7.3.1(jiti@2.6.1)
 
