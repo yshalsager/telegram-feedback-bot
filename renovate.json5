@@ -1,6 +1,6 @@
 {
     $schema: "https://docs.renovatebot.com/renovate-schema.json",
-    extends: ["config:recommended", ":enablePreCommit", ":rebaseStalePrs"],
+    extends: ["config:recommended", ":enablePreCommit", ":rebaseStalePrs", "group:allNonMajor"],
     labels: ["dependencies"],
     schedule: ["before 5am on saturday"],
     lockFileMaintenance: {
