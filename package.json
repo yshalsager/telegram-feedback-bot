@@ -17,7 +17,7 @@
     },
     "devDependencies": {
         "@eslint/compat": "^2.0.1",
-        "@eslint/js": "^9.39.2",
+        "@eslint/js": "^10.0.0",
         "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
         "@internationalized/date": "^3.10.1",
         "@lucide/svelte": "^0.563.0",
@@ -36,7 +36,7 @@
         "bits-ui": "^2.15.4",
         "clsx": "^2.1.1",
         "eruda": "^3.4.3",
-        "eslint": "^9.39.2",
+        "eslint": "^10.0.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-svelte": "^3.14.0",
         "globals": "^17.0.0",
