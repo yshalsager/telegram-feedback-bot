@@ -32,7 +32,7 @@
         "@tma.js/sdk-svelte": "^1.0.15",
         "@vitest/browser": "^4.0.16",
         "@wuchale/svelte": "^0.18.1",
-        "@wuchale/vite-plugin": "^0.16.3",
+        "@wuchale/vite-plugin": "^0.17.0",
         "bits-ui": "^2.15.4",
         "clsx": "^2.1.1",
         "eruda": "^3.4.3",
@@ -57,7 +57,7 @@
         "vite-plugin-domain": "^2.0.0",
         "vitest": "^4.0.16",
         "vitest-browser-svelte": "^2.0.1",
-        "wuchale": "^0.19.4"
+        "wuchale": "^0.20.0"
     },
     "pnpm": {
         "overrides": {
