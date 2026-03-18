@@ -16,7 +16,7 @@ from telegram import (
 )
 from telegram.constants import ChatType, ParseMode
 from telegram.error import BadRequest, Forbidden
-from telegram.ext import ContextTypes, MessageHandler, filters
+from telegram.ext import ContextTypes, MessageHandler, MessageReactionHandler, filters
 
 from feedback_bot.crud import (
     bump_incoming_messages,
@@ -541,6 +541,45 @@ async def edit_reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_T
         await message.reply_text(_('Sent message updated'), reply_to_message_id=message.id)
 
 
+async def mirror_reaction(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    reaction_update = update.message_reaction
+    if reaction_update is None or context.bot is None:
+        return
+
+    bot_config: Bot = context.bot_data['bot_config']
+    destination_chat_id = bot_config.forward_chat_id or bot_config.owner_id
+    if destination_chat_id is None:
+        return
+
+    if reaction_update.chat.id == destination_chat_id:
+        mapping = await get_owner_message_mapping(bot_config, reaction_update.message_id)
+        if mapping is None:
+            return
+        target_chat_id = mapping.user_chat.user_telegram_id
+        target_message_id = mapping.user_message_id
+    elif reaction_update.chat.type == ChatType.PRIVATE and reaction_update.user is not None:
+        mapping = await get_user_message_mapping(
+            bot_config, reaction_update.user.id, reaction_update.message_id
+        )
+        if mapping is None:
+            return
+        target_chat_id = destination_chat_id
+        target_message_id = mapping.owner_message_id
+    else:
+        return
+
+    reaction = [reaction_update.new_reaction[0]] if reaction_update.new_reaction else None
+
+    try:
+        await context.bot.set_message_reaction(
+            chat_id=target_chat_id,
+            message_id=target_message_id,
+            reaction=reaction,
+        )
+    except BadRequest, Forbidden:
+        return
+
+
 HANDLERS = [
     (
         MessageHandler(
@@ -563,5 +602,9 @@ HANDLERS = [
     MessageHandler(
         filters.UpdateType.EDITED_MESSAGE & filters.ChatType.PRIVATE & ~filters.COMMAND,
         edit_forwarded_feedback,
+    ),
+    MessageReactionHandler(
+        mirror_reaction,
+        message_reaction_types=MessageReactionHandler.MESSAGE_REACTION_UPDATED,
     ),
 ]
