@@ -94,7 +94,8 @@ describe('add_bot +page.svelte', () => {
             validToken,
             expect.stringContaining('Welcome'),
             expect.stringContaining('Thank you'),
-            'standard'
+            'standard',
+            false
         )
         expect(showNotificationMock).toHaveBeenCalledWith('', expect.stringContaining('@new_bot'), [
             {id: 'bot_successfully_added_close', type: 'close'}
@@ -120,7 +121,32 @@ describe('add_bot +page.svelte', () => {
             validToken,
             expect.any(String),
             expect.any(String),
-            'anonymous'
+            'anonymous',
+            false
+        )
+    })
+
+    it('sends use_topics when toggle is enabled', async () => {
+        const user = userEvent.setup()
+        render(AddBotPage)
+
+        const validToken = `12345678:${'A'.repeat(35)}`
+        const tokenInput = screen.getByLabelText('Bot token') as HTMLInputElement
+        const topicsToggle = screen.getByRole('switch', {
+            name: 'Use topics when no group is linked'
+        })
+        const saveButton = screen.getByRole('button', {name: 'Save'})
+
+        await user.type(tokenInput, validToken)
+        await user.click(topicsToggle)
+        await user.click(saveButton)
+
+        await expect(addBotMock).toHaveBeenCalledWith(
+            validToken,
+            expect.any(String),
+            expect.any(String),
+            'standard',
+            true
         )
     })
 })

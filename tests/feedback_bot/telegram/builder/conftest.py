@@ -28,7 +28,8 @@ async def ptb_app(monkeypatch) -> Application:
     """
 
     async def fake_initialize(self):  # type: ignore[no-redef]
-        self._initialized = True
+        self._requests_initialized = True
+        self._bot_initialized = True
         # Provide a username so CommandHandler can parse commands like '/start@username'
         self._bot_user = build_user(999, first_name='TestBot', is_bot=True, username='testbot')
 
@@ -55,7 +56,7 @@ def make_command_update(ptb_app: Application) -> Callable[[int, str], Update]:
     """
 
     def _make(user_id: int, text: str) -> Update:
-        first_token = text.split()[0]
+        first_token = text.split(maxsplit=1)[0]
         entity = MessageEntity(type='bot_command', offset=0, length=len(first_token))
         msg = build_message(user_id, text=text, entities=[entity])
         upd = build_update(msg)

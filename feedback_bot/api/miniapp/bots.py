@@ -54,6 +54,10 @@ class AddBotIn(Schema):
         default=BotModel.CommunicationMode.STANDARD,
         description='Mode controlling what user information is shown to moderators',
     )
+    use_topics: bool = Field(
+        default=False,
+        description='When enabled without a linked group, route each user into a separate owner-chat topic',
+    )
 
 
 class UpdateBotIn(Schema):
@@ -77,6 +81,7 @@ class UpdateBotIn(Schema):
     antiflood_enabled: bool | None = Field(default=None)
     antiflood_seconds: int | None = Field(default=None, ge=1, le=3600)
     communication_mode: Literal[*BotModel.CommunicationMode.values] | None = Field(default=None)
+    use_topics: bool | None = Field(default=None)
 
 
 class StatusMessage(Schema):
@@ -150,6 +155,7 @@ class BotOut(Schema):
     allow_voice_messages: bool
     allow_document_messages: bool
     allow_sticker_messages: bool
+    use_topics: bool
     antiflood_enabled: bool
     antiflood_seconds: int
     communication_mode: Literal[*BotModel.CommunicationMode.values]
@@ -223,6 +229,7 @@ async def add_bot(  # noqa: PLR0911
         payload.start_message,
         payload.feedback_received_message,
         communication_mode=communication_mode,
+        use_topics=payload.use_topics,
     )
 
     if not bot:

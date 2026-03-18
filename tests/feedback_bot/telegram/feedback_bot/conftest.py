@@ -59,6 +59,8 @@ async def feedback_app(monkeypatch, db) -> tuple[Application, Bot]:
             updates['feedback_received_message'] = 'Thanks'
         if bot_config.start_message != 'Hi':
             updates['start_message'] = 'Hi'
+        if bot_config.forward_chat_id is not None:
+            updates['forward_chat_id'] = None
         if bot_config.communication_mode != Bot.CommunicationMode.STANDARD:
             updates['communication_mode'] = Bot.CommunicationMode.STANDARD
         if updates:
@@ -72,13 +74,14 @@ async def feedback_app(monkeypatch, db) -> tuple[Application, Bot]:
     await BotStats.objects.filter(bot=bot_config).adelete()
 
     async def fake_initialize(self):  # type: ignore[no-redef]
-        self._initialized = True
         self._bot_user = build_user(
             bot_config.telegram_id,
             first_name=bot_config.name,
             is_bot=True,
             username=bot_config.username,
         )
+        self._bot_initialized = True
+        self._requests_initialized = True
 
     monkeypatch.setattr(ExtBot, 'initialize', fake_initialize)
 

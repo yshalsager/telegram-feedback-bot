@@ -37,6 +37,7 @@ let allow_video_messages = $state(true)
 let allow_voice_messages = $state(true)
 let allow_document_messages = $state(true)
 let allow_sticker_messages = $state(true)
+let use_topics = $state(false)
 let communication_mode = $state<CommunicationMode>('standard')
 let antiflood_enabled = $state(false)
 let antiflood_seconds = $state(60)
@@ -59,6 +60,7 @@ const hasChanges = $derived(
             allow_voice_messages !== bot.allow_voice_messages ||
             allow_document_messages !== bot.allow_document_messages ||
             allow_sticker_messages !== bot.allow_sticker_messages ||
+            use_topics !== bot.use_topics ||
             antiflood_enabled !== bot.antiflood_enabled ||
             antiflood_seconds !== bot.antiflood_seconds ||
             trimmedPendingToken !== '')
@@ -102,6 +104,7 @@ if (data) {
         allow_voice_messages = data.bot.allow_voice_messages
         allow_document_messages = data.bot.allow_document_messages
         allow_sticker_messages = data.bot.allow_sticker_messages
+        use_topics = data.bot.use_topics
         communication_mode = data.bot.communication_mode
         antiflood_enabled = data.bot.antiflood_enabled
         antiflood_seconds = data.bot.antiflood_seconds ?? 60
@@ -116,6 +119,7 @@ if (data) {
         allow_voice_messages = true
         allow_document_messages = true
         allow_sticker_messages = true
+        use_topics = false
         communication_mode = 'standard'
         antiflood_enabled = false
         antiflood_seconds = 60
@@ -141,6 +145,7 @@ async function handleUpdateBot() {
         allow_voice_messages,
         allow_document_messages,
         allow_sticker_messages,
+        use_topics,
         communication_mode,
         antiflood_enabled,
         antiflood_seconds: normalizedCooldown,
@@ -157,6 +162,7 @@ async function handleUpdateBot() {
         allow_voice_messages = updated.allow_voice_messages
         allow_document_messages = updated.allow_document_messages
         allow_sticker_messages = updated.allow_sticker_messages
+        use_topics = updated.use_topics
         communication_mode = updated.communication_mode
         antiflood_enabled = updated.antiflood_enabled
         antiflood_seconds = updated.antiflood_seconds
@@ -331,6 +337,12 @@ async function unlink_group() {
             </section>
 
             <CommunicationModeSection bind:value={communication_mode} />
+            <SwitchRow
+                id="use-topics-toggle"
+                description={use_topics ? 'Enabled' : 'Disabled'}
+                label="Use topics when no group is linked"
+                bind:checked={use_topics}
+            />
 
             <Separator class="my-4" />
 
@@ -422,7 +434,9 @@ async function unlink_group() {
                     <p class="text-sm text-muted-foreground">
                         {bot?.forward_chat_id !== null && bot?.forward_chat_id !== undefined
                             ? `Feedback is forwarded to chat ID ${bot.forward_chat_id.toLocaleString()}.`
-                            : 'Add this bot to a group to link it automatically, otherwise it sends messages to bot owner.'}
+                            : use_topics
+                              ? 'No group linked. Feedback is sent to owner chat topics (one thread per user).'
+                              : 'No group linked. Feedback is sent directly to owner chat.'}
                     </p>
                 </div>
                 {#if bot?.forward_chat_id !== null && bot?.forward_chat_id !== undefined}

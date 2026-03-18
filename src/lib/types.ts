@@ -13,6 +13,7 @@ export type Bot = {
     allow_voice_messages: boolean
     allow_document_messages: boolean
     allow_sticker_messages: boolean
+    use_topics: boolean
     antiflood_enabled: boolean
     antiflood_seconds: number
     communication_mode: 'standard' | 'private' | 'anonymous'

@@ -108,6 +108,7 @@ async def test_create_bot_persists_and_returns_decrypted_token():
     assert isinstance(bot, Bot)
     assert bot.owner_id == owner.telegram_id
     assert bot.token == 'TEST_TOKEN'  # noqa: S105
+    assert bot.use_topics is False
 
     keys = await crud.get_bots_keys()
     assert [(str(uuid), token) for uuid, token in keys] == [(str(bot.uuid), 'TEST_TOKEN')]
@@ -693,7 +694,7 @@ async def test_mapping_helpers_create_and_fetch_records():
     assert mapping is not None
     assert mapping.owner_message_id == 22
 
-    await crud.update_incoming_mapping(bot, user_message_id=11, owner_message_id=33)
+    await crud.save_incoming_mapping(bot, chat, user_message_id=11, owner_message_id=33)
     mapping = await crud.get_user_message_mapping(bot, 300, 11)
     assert mapping.owner_message_id == 33
 

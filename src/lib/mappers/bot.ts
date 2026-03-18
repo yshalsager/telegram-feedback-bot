@@ -26,6 +26,7 @@ export function mapBotResponse(data: Record<string, unknown>, fallbackUuid: stri
             typeof data.allow_document_messages === 'boolean' ? data.allow_document_messages : true,
         allow_sticker_messages:
             typeof data.allow_sticker_messages === 'boolean' ? data.allow_sticker_messages : true,
+        use_topics: typeof data.use_topics === 'boolean' ? data.use_topics : false,
         antiflood_enabled:
             typeof data.antiflood_enabled === 'boolean'
                 ? data.antiflood_enabled

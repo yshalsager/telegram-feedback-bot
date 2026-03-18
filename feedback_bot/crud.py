@@ -30,6 +30,7 @@ BOT_MANAGEMENT_FIELDS = (
     'allow_voice_messages',
     'allow_document_messages',
     'allow_sticker_messages',
+    'use_topics',
     'antiflood_enabled',
     'antiflood_seconds',
     'communication_mode',
@@ -178,12 +179,6 @@ async def set_feedback_chat_last_warning(
     return chat
 
 
-async def get_feedback_chat_by_topic(bot: Bot, topic_id: int) -> FeedbackChat | None:
-    return (
-        await FeedbackChat.objects.filter(bot=bot, topic_id=topic_id).select_related('bot').afirst()
-    )
-
-
 async def clear_feedback_chat_mappings(bot: Bot, chat: FeedbackChat) -> None:
     await MessageMapping.objects.filter(bot=bot, user_chat=chat).adelete()
 
@@ -217,12 +212,6 @@ async def save_incoming_mapping(
         bot=bot,
         user_message_id=user_message_id,
         defaults={'user_chat': chat, 'owner_message_id': owner_message_id},
-    )
-
-
-async def update_incoming_mapping(bot: Bot, user_message_id: int, owner_message_id: int) -> None:
-    await MessageMapping.objects.filter(bot=bot, user_message_id=user_message_id).aupdate(
-        owner_message_id=owner_message_id
     )
 
 
@@ -286,6 +275,7 @@ async def create_bot(
     feedback_received_message: str,
     *,
     communication_mode: str | None = None,
+    use_topics: bool = False,
 ) -> Bot:
     mode = communication_mode or Bot.CommunicationMode.STANDARD
     bot = await Bot.objects.acreate(
@@ -298,6 +288,7 @@ async def create_bot(
         start_message=start_message,
         feedback_received_message=feedback_received_message,
         communication_mode=mode,
+        use_topics=use_topics,
     )
     return bot
 
@@ -333,6 +324,7 @@ async def get_bot_config(uuid: str) -> Bot:
             'allow_voice_messages',
             'allow_document_messages',
             'allow_sticker_messages',
+            'use_topics',
             'antiflood_enabled',
             'antiflood_seconds',
             'forward_chat_id',
@@ -457,7 +449,7 @@ async def update_bot_settings(bot_uuid: UUID | str, owner: int, data: dict[str, 
         else:
             try:
                 update_payload['antiflood_seconds'] = max(int(raw_value), 1)
-            except (TypeError, ValueError):
+            except TypeError, ValueError:
                 update_payload.pop('antiflood_seconds')
 
     if not update_payload:

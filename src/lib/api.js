@@ -82,7 +82,8 @@ export async function add_bot(
     bot_token,
     start_message,
     feedback_received_message,
-    communication_mode = 'standard'
+    communication_mode = 'standard',
+    use_topics = false
 ) {
     const response = await fetch('/api/bot/', {
         method: 'POST',
@@ -91,7 +92,8 @@ export async function add_bot(
             bot_token,
             start_message,
             feedback_received_message,
-            communication_mode
+            communication_mode,
+            use_topics
         })
     })
     const data = await response.json()

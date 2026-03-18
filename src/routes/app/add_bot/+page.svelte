@@ -7,6 +7,7 @@ import {on} from '@tma.js/sdk-svelte'
 import BotMessageField from '~/components/management/BotMessageField.svelte'
 import CommunicationModeSection from '~/components/management/CommunicationModeSection.svelte'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
+import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
 import {add_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
@@ -28,6 +29,7 @@ let feedbackReceivedMessage = $state(
     /* @wc-include */ 'Thank you for your feedback. We will get back to you soon.'
 )
 let communication_mode = $state<CommunicationMode>('standard')
+let use_topics = $state(false)
 let disableSubmit = $state(false)
 // Bot token regex validation
 const botTokenRegex = /^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$/
@@ -53,7 +55,8 @@ async function handleSaveBot() {
         botToken,
         startMessage,
         feedbackReceivedMessage,
-        communication_mode
+        communication_mode,
+        use_topics
     )) as AddBotResponse
     if (response?.status === 'success') {
         showNotification(
@@ -115,6 +118,12 @@ async function handleSaveBot() {
         />
 
         <CommunicationModeSection bind:value={communication_mode} />
+        <SwitchRow
+            id="use-topics-toggle"
+            description={use_topics ? 'Enabled' : 'Disabled'}
+            label="Use topics when no group is linked"
+            bind:checked={use_topics}
+        />
 
         <div class="pt-4">
             <Button

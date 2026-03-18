@@ -80,6 +80,7 @@ class Bot(TimestampedModel):
     allow_voice_messages = models.BooleanField(default=True)
     allow_document_messages = models.BooleanField(default=True)
     allow_sticker_messages = models.BooleanField(default=True)
+    use_topics = models.BooleanField(default=False)
     antiflood_enabled = models.BooleanField(default=False)
     antiflood_seconds = models.PositiveIntegerField(default=60)
     communication_mode = models.CharField(

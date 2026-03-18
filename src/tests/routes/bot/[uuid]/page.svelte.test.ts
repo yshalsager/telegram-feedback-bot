@@ -85,6 +85,7 @@ type Bot = {
     allow_voice_messages: boolean
     allow_document_messages: boolean
     allow_sticker_messages: boolean
+    use_topics: boolean
     antiflood_enabled: boolean
     antiflood_seconds: number
     forward_chat_id: number | null
@@ -108,6 +109,7 @@ const baseBot: Bot = {
     allow_voice_messages: true,
     allow_document_messages: true,
     allow_sticker_messages: true,
+    use_topics: false,
     antiflood_enabled: false,
     antiflood_seconds: 60,
     forward_chat_id: null,
@@ -173,6 +175,7 @@ describe('+page.svelte', () => {
                 start_message: 'New welcome message',
                 feedback_received_message: 'Updated reply',
                 enabled: updatedBot.enabled,
+                use_topics: updatedBot.use_topics,
                 communication_mode: updatedBot.communication_mode,
                 allow_photo_messages: updatedBot.allow_photo_messages,
                 allow_video_messages: updatedBot.allow_video_messages,
@@ -218,6 +221,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                use_topics: baseBot.use_topics,
                 communication_mode: baseBot.communication_mode,
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
@@ -263,6 +267,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                use_topics: baseBot.use_topics,
                 communication_mode: baseBot.communication_mode,
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
@@ -309,6 +314,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                use_topics: baseBot.use_topics,
                 communication_mode: 'private',
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
@@ -351,6 +357,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                use_topics: baseBot.use_topics,
                 communication_mode: baseBot.communication_mode,
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
@@ -400,6 +407,7 @@ describe('+page.svelte', () => {
                 start_message: baseBot.start_message,
                 feedback_received_message: baseBot.feedback_received_message,
                 enabled: baseBot.enabled,
+                use_topics: baseBot.use_topics,
                 communication_mode: baseBot.communication_mode,
                 allow_photo_messages: baseBot.allow_photo_messages,
                 allow_video_messages: baseBot.allow_video_messages,
@@ -446,6 +454,7 @@ describe('+page.svelte', () => {
                 start_message: anonymousBot.start_message,
                 feedback_received_message: anonymousBot.feedback_received_message,
                 enabled: anonymousBot.enabled,
+                use_topics: anonymousBot.use_topics,
                 communication_mode: 'standard',
                 allow_photo_messages: anonymousBot.allow_photo_messages,
                 allow_video_messages: anonymousBot.allow_video_messages,

@@ -152,16 +152,18 @@ async def test_list_and_update_bot(miniapp_client, monkeypatch):
     update_response = await client.put(
         f'/bot/{uuid_str}/',
         headers=headers,
-        json={'start_message': 'updated text'},
+        json={'start_message': 'updated text', 'use_topics': True},
     )
 
     assert update_response.status_code == 200
     updated_payload = update_response.json()
     assert updated_payload['start_message'] == 'updated text'
+    assert updated_payload['use_topics'] is True
 
     updated = await crud.get_bot(UUID(uuid_str), auth_state['user']['id'])
     assert updated is not None
     assert updated.start_message == 'updated text'
+    assert updated.use_topics is True
 
 
 @pytest.mark.api

@@ -15,7 +15,7 @@ from telegram import (
     Update,
 )
 from telegram.constants import ChatType, ParseMode
-from telegram.error import BadRequest
+from telegram.error import BadRequest, Forbidden
 from telegram.ext import ContextTypes, MessageHandler, filters
 
 from feedback_bot.crud import (
@@ -23,7 +23,6 @@ from feedback_bot.crud import (
     bump_outgoing_messages,
     clear_feedback_chat_mappings,
     ensure_feedback_chat,
-    get_feedback_chat_by_topic,
     get_owner_message_mapping,
     get_user_message_mapping,
     is_user_banned,
@@ -32,9 +31,35 @@ from feedback_bot.crud import (
     set_feedback_chat_last_feedback,
     set_feedback_chat_last_warning,
     set_feedback_chat_topic,
-    update_incoming_mapping,
+    update_bot_settings,
 )
 from feedback_bot.models import Bot, FeedbackChat, MessageMapping
+
+
+def _is_owner_chat_topic_mode(bot_config: Bot) -> bool:
+    return bot_config.use_topics and not bot_config.forward_chat_id
+
+
+def _topic_destination_chat_id(bot_config: Bot) -> int | None:
+    return bot_config.forward_chat_id or (
+        bot_config.owner_id if _is_owner_chat_topic_mode(bot_config) else None
+    )
+
+
+def _is_topic_creation_blocked(error: BadRequest | Forbidden) -> bool:
+    payload = error.message.lower()
+    return any(
+        phrase in payload
+        for phrase in (
+            'the chat is not a forum',
+            'the chat is not a supergroup forum',
+            'not enough rights to create a topic',
+        )
+    )
+
+
+def _is_message_not_forwardable(error: BadRequest) -> bool:
+    return "can't be forwarded" in error.message.lower()
 
 
 async def _create_topic(
@@ -43,26 +68,33 @@ async def _create_topic(
     message: Message,
     feedback_chat: FeedbackChat,
 ) -> int | None:
-    if not bot_config.forward_chat_id:
+    topic_chat_id = _topic_destination_chat_id(bot_config)
+    if topic_chat_id is None:
         return None
 
     title = _topic_title(bot_config, message, feedback_chat)[:64] or f'#{feedback_chat.id}'
-    topic = await context.bot.create_forum_topic(
-        chat_id=bot_config.forward_chat_id,
-        name=title,
-    )
+    try:
+        topic = await context.bot.create_forum_topic(chat_id=topic_chat_id, name=title)
+    except (BadRequest, Forbidden) as exc:
+        if _is_owner_chat_topic_mode(bot_config) and _is_topic_creation_blocked(exc):
+            bot_config.use_topics = False
+            await update_bot_settings(bot_config.uuid, bot_config.owner_id, {'use_topics': False})
+            if feedback_chat.topic_id is not None:
+                await set_feedback_chat_topic(feedback_chat, None)
+            return None
+        raise
 
     await _send_intro_message(
         context,
         bot_config,
-        bot_config.forward_chat_id,
+        topic_chat_id,
         message,
         feedback_chat,
         thread_id=topic.message_thread_id,
     )
 
     await set_feedback_chat_topic(feedback_chat, topic.message_thread_id)
-    return feedback_chat.topic_id
+    return topic.message_thread_id
 
 
 async def _ensure_topic(
@@ -71,7 +103,7 @@ async def _ensure_topic(
     message: Message,
     feedback_chat: FeedbackChat,
 ) -> int | None:
-    if not bot_config.forward_chat_id:
+    if _topic_destination_chat_id(bot_config) is None:
         return None
 
     if feedback_chat.topic_id:
@@ -81,12 +113,30 @@ async def _ensure_topic(
 
 
 async def _deliver_incoming_message(
+    context: ContextTypes.DEFAULT_TYPE,
+    bot_config: Bot,
     message: Message,
     destination_chat_id: int,
     topic_id: int | None,
     use_copy: bool,
 ):
-    kwargs: dict[str, object] = {'chat_id': destination_chat_id}
+    if topic_id is not None and _is_owner_chat_topic_mode(bot_config):
+        kwargs: dict[str, object] = {
+            'chat_id': destination_chat_id,
+            'from_chat_id': message.chat_id,
+            'message_id': message.message_id,
+            'message_thread_id': topic_id,
+        }
+        if use_copy:
+            return await context.bot.copy_message(**kwargs)
+        try:
+            return await context.bot.forward_message(**kwargs)
+        except BadRequest as exc:
+            if _is_message_not_forwardable(exc):
+                return await context.bot.copy_message(**kwargs)
+            raise
+
+    kwargs = {'chat_id': destination_chat_id}
     if topic_id is not None:
         kwargs['message_thread_id'] = topic_id
     if use_copy:
@@ -105,24 +155,38 @@ async def _forward_with_topic_fallback(
     use_copy = _should_copy_incoming(bot_config)
     try:
         forwarded = await _deliver_incoming_message(
-            message, destination_chat_id, topic_id, use_copy
+            context,
+            bot_config,
+            message,
+            destination_chat_id,
+            topic_id,
+            use_copy,
         )
         return forwarded, topic_id
     except BadRequest as exc:  # pragma: no cover - topic recreation path
-        if not bot_config.forward_chat_id or not _is_topic_missing(exc):
+        if not _is_topic_missing(exc):
+            raise
+        topic_chat_id = _topic_destination_chat_id(bot_config)
+        if topic_chat_id is None or destination_chat_id != topic_chat_id:
             raise
         await clear_feedback_chat_mappings(bot_config, feedback_chat)
         await set_feedback_chat_topic(feedback_chat, None)
         new_topic = await _create_topic(context, bot_config, message, feedback_chat)
         forwarded = await _deliver_incoming_message(
-            message, destination_chat_id, new_topic, use_copy
+            context,
+            bot_config,
+            message,
+            destination_chat_id,
+            new_topic,
+            use_copy,
         )
         return forwarded, new_topic
 
 
 def _is_topic_missing(error: BadRequest) -> bool:
     payload = error.message.lower()
-    return 'thread' in payload and ('deleted' in payload or 'not found' in payload)
+    has_topic_reference = 'thread' in payload or 'topic' in payload
+    return has_topic_reference and ('deleted' in payload or 'not found' in payload)
 
 
 def _should_process_reply(bot_config: Bot, message: Message, bot_user_id: int) -> bool:
@@ -131,14 +195,7 @@ def _should_process_reply(bot_config: Bot, message: Message, bot_user_id: int) -
         return False
     replied = message.reply_to_message
     if not replied:
-        mode = _communication_mode(bot_config)
-        if mode not in {Bot.CommunicationMode.PRIVATE, Bot.CommunicationMode.ANONYMOUS}:
-            return False
-        return bool(
-            bot_config.forward_chat_id
-            and message.chat_id == bot_config.forward_chat_id
-            and message.message_thread_id is not None
-        )
+        return False
     if (
         replied.forward_origin
         or getattr(replied, 'forward_from', None)
@@ -305,9 +362,11 @@ async def _send_intro_message(
     await context.bot.send_message(**kwargs)
 
 
-async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:  # noqa: C901, PLR0911
     message = update.effective_message
     if not message or not message.from_user:
+        return
+    if context.bot and message.from_user.id == context.bot.id:
         return
 
     bot_config: Bot = context.bot_data['bot_config']
@@ -330,14 +389,6 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     feedback_chat, created = await ensure_feedback_chat(
         bot_config, message.from_user.id, message.from_user.username
     )
-    if created and not bot_config.forward_chat_id:
-        await _send_intro_message(
-            context,
-            bot_config,
-            destination_chat_id,
-            message,
-            feedback_chat,
-        )
 
     now = message.date or datetime.now(UTC)
     now = now.replace(tzinfo=UTC) if now.tzinfo is None else now.astimezone(UTC)
@@ -359,6 +410,14 @@ async def forward_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             await set_feedback_chat_last_warning(feedback_chat, now)
         return
     topic_id = await _ensure_topic(context, bot_config, message, feedback_chat)
+    if created and not bot_config.forward_chat_id and topic_id is None:
+        await _send_intro_message(
+            context,
+            bot_config,
+            destination_chat_id,
+            message,
+            feedback_chat,
+        )
 
     forwarded, topic_id = await _forward_with_topic_fallback(
         context,
@@ -414,7 +473,7 @@ async def edit_forwarded_feedback(update: Update, context: ContextTypes.DEFAULT_
         topic_id,
     )
 
-    await update_incoming_mapping(bot_config, message.message_id, forwarded.message_id)
+    await save_incoming_mapping(bot_config, feedback_chat, message.message_id, forwarded.message_id)
 
     message_kwargs: dict[str, object] = {
         'chat_id': destination_chat_id,
@@ -445,27 +504,12 @@ async def reply_to_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     if not _should_process_reply(bot_config, message, context.bot.id):
         return
 
-    mapping: MessageMapping | None = None
-    feedback_chat: FeedbackChat | None = None
-    reply_to: int | None = None
+    mapping = await get_owner_message_mapping(bot_config, message.reply_to_message.message_id)
+    if mapping is None:
+        return
 
-    if message.reply_to_message:
-        mapping = await get_owner_message_mapping(bot_config, message.reply_to_message.message_id)
-
-    if mapping:
-        feedback_chat = mapping.user_chat
-        reply_to = mapping.user_message_id if mapping.user_message_id else None
-    else:
-        mode = _communication_mode(bot_config)
-        if (
-            mode in {Bot.CommunicationMode.PRIVATE, Bot.CommunicationMode.ANONYMOUS}
-            and bot_config.forward_chat_id
-            and message.chat_id == bot_config.forward_chat_id
-            and message.message_thread_id is not None
-        ):
-            feedback_chat = await get_feedback_chat_by_topic(bot_config, message.message_thread_id)
-        if feedback_chat is None:
-            return
+    feedback_chat = mapping.user_chat
+    reply_to = mapping.user_message_id or None
 
     target_chat_id = feedback_chat.user_telegram_id
 
