@@ -33,8 +33,8 @@ A self-hosted toolkit for provisioning and operating Telegram feedback bots. The
 
 ### Feedback Bots
 
-- Route every user conversation into its own forum topic (or the owner chat) for clean threading.
-- Forward edits, mirror replies back to the user, and automatically acknowledge receipt with an emoji.
+- Route each user conversation into its own topic in linked forum groups, or into owner-chat topics when no group is linked.
+- Forward edits, mirror replies back to users, and sync emoji reactions bidirectionally between forwarded and original messages (best-effort).
 - Politely decline disallowed media with a localized reply while leaving text enabled.
 - Provide owner tooling: `/broadcast`, `/ban`, `/unban`, `/banned`, `/delete` (reply to remove a single pair), and `/clear` (reply to drop that message and everything after it in the thread), plus `/start` for users. Broadcasts can reuse the same filters as the builder bot.
 

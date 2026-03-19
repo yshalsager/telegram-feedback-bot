@@ -107,8 +107,8 @@ const toolkit: ToolkitItem[] = [
         title: 'Feedback bots',
         summary: 'Forward messages, mirror replies, and keep users in the loop automatically.',
         points: [
-            'Use topics or direct chats to keep conversations tidy',
-            'Send polite auto-replies and reflect edits both ways',
+            'Route each user into dedicated topics in forum groups or owner-chat topics',
+            'Send polite auto-replies, reflect edits both ways, and mirror emoji reactions bidirectionally',
             'Handle loads efficiently using Telegram webhooks instead of polling',
             'Ban or unblock users when moderation is needed'
         ]
