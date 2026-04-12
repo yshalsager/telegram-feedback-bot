@@ -60,7 +60,10 @@
     },
     "pnpm": {
         "overrides": {
-            "cookie": "^1.0.0"
+            "cookie": "^1.0.0",
+            "brace-expansion": "5.0.5",
+            "yaml": "1.10.3",
+            "picomatch": "4.0.4"
         },
         "onlyBuiltDependencies": [
             "@tailwindcss/oxide",
