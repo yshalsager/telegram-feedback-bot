@@ -1,9 +1,9 @@
 import path from 'path'
 import {sveltekit} from '@sveltejs/kit/vite'
 import tailwindcss from '@tailwindcss/vite'
-import {wuchale} from '@wuchale/vite-plugin'
 import {defineConfig} from 'vite'
 import domain from 'vite-plugin-domain'
+import {wuchale} from 'wuchale/vite'
 
 const wuchalePlugin = wuchale()
 
