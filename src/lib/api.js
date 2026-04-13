@@ -173,6 +173,21 @@ export async function update_bot(uuid, payload) {
 }
 
 /**
+ * Transfer bot ownership to another existing user
+ * @param {string} uuid - The UUID of the bot
+ * @param {number} owner_telegram_id - Telegram ID of the new owner
+ * @returns {Promise<object>} - The response data
+ */
+export async function transfer_bot_owner(uuid, owner_telegram_id) {
+    const response = await fetch(`/api/bot/${uuid}/transfer_owner/`, {
+        method: 'POST',
+        headers: get_authorization_headers(),
+        body: JSON.stringify({owner_telegram_id})
+    })
+    return response.json()
+}
+
+/**
  * Unlink a bot from its forwarding chat
  * @param {string} uuid - The UUID of the bot
  * @returns {Promise<object>} - The response data

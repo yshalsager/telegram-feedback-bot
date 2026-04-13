@@ -59,6 +59,14 @@ msgstr "يتطلب تفعيل هذا البوت موافقة المشرف."
 msgid "no_fields_to_update"
 msgstr "لا توجد بيانات لتحديثها."
 
+#: feedback_bot/api/miniapp/bots.py:501
+msgid "bot_owner_unchanged"
+msgstr "البوت مملوك لهذا المستخدم بالفعل."
+
+#: feedback_bot/api/miniapp/bots.py:508
+msgid "target_owner_not_whitelisted"
+msgstr "يجب أن يكون المالك الجديد ضمن القائمة المسموح لها."
+
 #: feedback_bot/api/miniapp/bots.py:502
 msgid "bot_deleted"
 msgstr "حذف البوت بنجاح."

@@ -813,6 +813,335 @@ async def test_admin_can_toggle_foreign_bot(miniapp_client, monkeypatch, setting
 @pytest.mark.django
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.asyncio
+async def test_admin_can_transfer_bot_owner(miniapp_client):
+    client, auth_state, headers = miniapp_client
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'admin_user',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    target_owner_id = 2001
+    await crud.upsert_user(
+        {
+            'id': target_owner_id,
+            'username': 'new_owner',
+            'is_whitelisted': True,
+            'is_admin': False,
+        }
+    )
+
+    bot = await crud.create_bot(
+        telegram_id=989898,
+        bot_token=BOT_TOKEN,
+        username='transfer_target',
+        name='Transfer Target',
+        owner=auth_state['user']['id'],
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    response = await client.post(
+        f'/bot/{bot.uuid}/transfer_owner/',
+        headers=headers,
+        json={'owner_telegram_id': target_owner_id},
+    )
+
+    assert response.status_code == 200, response.json()
+    payload = response.json()
+    assert payload['owner_telegram_id'] == target_owner_id
+    assert payload['owner_username'] == 'new_owner'
+
+    updated = await crud.get_bot(bot.uuid, auth_state['user']['id'])
+    assert updated is not None
+    assert updated.owner.telegram_id == target_owner_id
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_admin_can_transfer_foreign_bot(miniapp_client):
+    client, auth_state, headers = miniapp_client
+
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'admin_user',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    foreign_owner_id = 2002
+    target_owner_id = 2003
+    await crud.upsert_user(
+        {
+            'id': foreign_owner_id,
+            'username': 'foreign_owner',
+            'is_whitelisted': True,
+            'is_admin': False,
+        }
+    )
+    await crud.upsert_user(
+        {
+            'id': target_owner_id,
+            'username': 'target_owner',
+            'is_whitelisted': True,
+            'is_admin': False,
+        }
+    )
+
+    bot = await crud.create_bot(
+        telegram_id=767676,
+        bot_token=BOT_TOKEN,
+        username='foreign_owner_bot',
+        name='Foreign Owner Bot',
+        owner=foreign_owner_id,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    response = await client.post(
+        f'/bot/{bot.uuid}/transfer_owner/',
+        headers=headers,
+        json={'owner_telegram_id': target_owner_id},
+    )
+
+    assert response.status_code == 200, response.json()
+    updated = await crud.get_bot(bot.uuid, auth_state['user']['id'])
+    assert updated is not None
+    assert updated.owner.telegram_id == target_owner_id
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_transfer_owner_requires_admin(miniapp_client):
+    client, auth_state, headers = miniapp_client
+    auth_state['user'] = {
+        'id': 3001,
+        'username': 'owner_user',
+        'language_code': 'en',
+        'is_admin': False,
+    }
+
+    await crud.upsert_user(
+        {
+            'id': 3001,
+            'username': 'owner_user',
+            'is_whitelisted': True,
+            'is_admin': False,
+        }
+    )
+    await crud.upsert_user(
+        {
+            'id': 3002,
+            'username': 'target_owner',
+            'is_whitelisted': True,
+            'is_admin': False,
+        }
+    )
+
+    bot = await crud.create_bot(
+        telegram_id=565656,
+        bot_token=BOT_TOKEN,
+        username='owned_bot',
+        name='Owned Bot',
+        owner=3001,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    response = await client.post(
+        f'/bot/{bot.uuid}/transfer_owner/',
+        headers=headers,
+        json={'owner_telegram_id': 3002},
+    )
+
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload['status'] == 'error'
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_transfer_owner_requires_builder_admin_id(miniapp_client):
+    client, auth_state, headers = miniapp_client
+    actor_id = 3003
+    auth_state['user'] = {
+        'id': actor_id,
+        'username': 'local_admin',
+        'language_code': 'en',
+        'is_admin': True,
+    }
+
+    await crud.upsert_user(
+        {
+            'id': actor_id,
+            'username': 'local_admin',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+    await crud.upsert_user(
+        {
+            'id': 3004,
+            'username': 'target_owner',
+            'is_whitelisted': True,
+            'is_admin': False,
+        }
+    )
+
+    bot = await crud.create_bot(
+        telegram_id=575757,
+        bot_token=BOT_TOKEN,
+        username='local_admin_bot',
+        name='Local Admin Bot',
+        owner=actor_id,
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    response = await client.post(
+        f'/bot/{bot.uuid}/transfer_owner/',
+        headers=headers,
+        json={'owner_telegram_id': 3004},
+    )
+
+    assert response.status_code == 403
+    payload = response.json()
+    assert payload['status'] == 'error'
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_transfer_owner_missing_target_user_returns_404(miniapp_client):
+    client, auth_state, headers = miniapp_client
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'admin_user',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    bot = await crud.create_bot(
+        telegram_id=545454,
+        bot_token=BOT_TOKEN,
+        username='missing_target_owner',
+        name='Missing Target Owner',
+        owner=auth_state['user']['id'],
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    response = await client.post(
+        f'/bot/{bot.uuid}/transfer_owner/',
+        headers=headers,
+        json={'owner_telegram_id': 999999999},
+    )
+
+    assert response.status_code == 404
+    payload = response.json()
+    assert payload['status'] == 'error'
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_transfer_owner_rejects_non_whitelisted_target(miniapp_client):
+    client, auth_state, headers = miniapp_client
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'admin_user',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    target_owner_id = 4002
+    await crud.upsert_user(
+        {
+            'id': target_owner_id,
+            'username': 'target_owner',
+            'is_whitelisted': False,
+            'is_admin': False,
+        }
+    )
+
+    bot = await crud.create_bot(
+        telegram_id=434343,
+        bot_token=BOT_TOKEN,
+        username='whitelist_check_bot',
+        name='Whitelist Check Bot',
+        owner=auth_state['user']['id'],
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    response = await client.post(
+        f'/bot/{bot.uuid}/transfer_owner/',
+        headers=headers,
+        json={'owner_telegram_id': target_owner_id},
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload['status'] == 'error'
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_transfer_owner_rejects_same_owner(miniapp_client):
+    client, auth_state, headers = miniapp_client
+    await crud.upsert_user(
+        {
+            'id': auth_state['user']['id'],
+            'username': 'admin_user',
+            'is_whitelisted': True,
+            'is_admin': True,
+        }
+    )
+
+    bot = await crud.create_bot(
+        telegram_id=414141,
+        bot_token=BOT_TOKEN,
+        username='same_owner_bot',
+        name='Same Owner Bot',
+        owner=auth_state['user']['id'],
+        start_message='start',
+        feedback_received_message='received',
+    )
+
+    response = await client.post(
+        f'/bot/{bot.uuid}/transfer_owner/',
+        headers=headers,
+        json={'owner_telegram_id': auth_state['user']['id']},
+    )
+
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload['status'] == 'error'
+
+
+@pytest.mark.api
+@pytest.mark.django
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
 async def test_bot_stats_endpoint_returns_counts(miniapp_client, monkeypatch):
     client, auth_state, headers = miniapp_client
     await crud.upsert_user(

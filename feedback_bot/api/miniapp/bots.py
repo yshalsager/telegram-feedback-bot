@@ -21,6 +21,7 @@ from feedback_bot.crud import (
     get_bot_stats,
     get_bot_token,
     get_bots,
+    get_user,
     lift_user_ban,
     list_banned_users,
     update_bot_settings,
@@ -82,6 +83,10 @@ class UpdateBotIn(Schema):
     antiflood_seconds: int | None = Field(default=None, ge=1, le=3600)
     communication_mode: Literal[*BotModel.CommunicationMode.values] | None = Field(default=None)
     use_topics: bool | None = Field(default=None)
+
+
+class TransferBotOwnerIn(Schema):
+    owner_telegram_id: int = Field(..., ge=1, description='Telegram user ID of the new owner')
 
 
 class StatusMessage(Schema):
@@ -473,6 +478,47 @@ async def update_bot(  # noqa: PLR0911
         return enabled_sync_error
 
     return 200, bot
+
+
+@router.post(
+    '/bot/{bot_uuid}/transfer_owner/',
+    response={200: BotOut, 400: StatusMessage, 403: StatusMessage, 404: StatusMessage},
+    url_name='transfer_bot_owner',
+)
+@with_locale
+async def transfer_bot_owner(  # noqa: PLR0911
+    request: HttpRequest, bot_uuid: UUID, payload: TransferBotOwnerIn
+) -> tuple[int, BotModel | dict[str, str]]:
+    user_data = request.auth
+    actor_id = user_data['id']
+
+    if actor_id not in settings.TELEGRAM_BUILDER_BOT_ADMINS:
+        return 403, {'status': 'error', 'message': str(_('not_authorized'))}
+
+    bot = await get_bot(bot_uuid, actor_id)
+    if not bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    current_owner_id = bot.owner.telegram_id if bot.owner else bot.owner_id
+    if current_owner_id == payload.owner_telegram_id:
+        return 400, {'status': 'error', 'message': str(_('bot_owner_unchanged'))}
+
+    target_owner = await get_user(payload.owner_telegram_id)
+    if not target_owner:
+        return 404, {'status': 'error', 'message': str(_('user_not_found'))}
+
+    if not target_owner.is_whitelisted:
+        return 400, {'status': 'error', 'message': str(_('target_owner_not_whitelisted'))}
+
+    updated_bot = await update_bot_settings(
+        bot_uuid,
+        actor_id,
+        {'owner_id': payload.owner_telegram_id},
+    )
+    if not updated_bot:
+        return 404, {'status': 'error', 'message': str(_('bot_not_found'))}
+
+    return 200, updated_bot
 
 
 @router.delete(

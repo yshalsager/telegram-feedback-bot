@@ -10,12 +10,13 @@ import CommunicationModeSection from '~/components/management/CommunicationModeS
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
-import {delete_bot, unlink_bot_forward_chat, update_bot} from '$lib/api.js'
+import {delete_bot, transfer_bot_owner, unlink_bot_forward_chat, update_bot} from '$lib/api.js'
 import {Button} from '$lib/components/ui/button'
 import {Input} from '$lib/components/ui/input'
 import {Separator} from '$lib/components/ui/separator'
 import type {CommunicationMode} from '$lib/constants/communication_mode'
 import {mapBotResponse} from '$lib/mappers/bot'
+import {session} from '$lib/stores.svelte.js'
 import type {Bot, BotStats} from '$lib/types.ts'
 import type {PageData} from './$types'
 
@@ -45,8 +46,17 @@ let pendingToken = $state('')
 let loadError = $state<string | null>(null)
 let stats = $state<BotStats | null>(null)
 let statsError = $state<string | null>(null)
+let transferOwnerTelegramId = $state('')
 
 const trimmedPendingToken = $derived(pendingToken.trim())
+const trimmedTransferOwnerTelegramId = $derived(transferOwnerTelegramId.trim())
+const parsedTransferOwnerTelegramId = $derived(Number(trimmedTransferOwnerTelegramId))
+const isTransferTargetValid = $derived(
+    Number.isInteger(parsedTransferOwnerTelegramId) && parsedTransferOwnerTelegramId > 0
+)
+const isTransferTargetSameOwner = $derived(
+    Boolean(bot && isTransferTargetValid && parsedTransferOwnerTelegramId === bot.owner_telegram_id)
+)
 const isFormValid = $derived(startMessage.trim() !== '' && feedbackReceivedMessage.trim() !== '')
 const hasChanges = $derived(
     Boolean(
@@ -70,6 +80,7 @@ const hasChanges = $derived(
 let disableSubmit = $state(false)
 let disableDelete = $state(false)
 let unlink_in_progress = $state(false)
+let transfer_in_progress = $state(false)
 
 const onBotDeleted = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
     if (payload.button_id === 'bot_deleted_success_close') goto(resolve('/app'))
@@ -109,6 +120,7 @@ if (data) {
         antiflood_enabled = data.bot.antiflood_enabled
         antiflood_seconds = data.bot.antiflood_seconds ?? 60
         pendingToken = ''
+        transferOwnerTelegramId = ''
     } else {
         bot = null
         enabled = true
@@ -124,6 +136,7 @@ if (data) {
         antiflood_enabled = false
         antiflood_seconds = 60
         pendingToken = ''
+        transferOwnerTelegramId = ''
     }
 
     stats = data.stats ?? null
@@ -196,6 +209,43 @@ async function handleDeleteBot() {
         showNotification('', `❗ ${message}`)
     }
     disableDelete = false
+}
+
+async function handleTransferOwnership() {
+    if (!bot || !$session.isAdmin) return
+
+    if (!isTransferTargetValid) {
+        showNotification('', '❗ Enter a valid Telegram ID')
+        return
+    }
+
+    if (isTransferTargetSameOwner) {
+        showNotification('', '❗ This user is already the owner')
+        return
+    }
+
+    const targetOwnerId = parsedTransferOwnerTelegramId
+    if (typeof window !== 'undefined') {
+        const confirmed = window.confirm(
+            `Transfer @${bot.username} ownership to ${targetOwnerId.toLocaleString()}?`
+        )
+        if (!confirmed) return
+    }
+
+    transfer_in_progress = true
+    const response = (await transfer_bot_owner(botUuid, targetOwnerId)) as UpdateBotResponse
+
+    if (response?.uuid === botUuid) {
+        bot = mapBotResponse(response as Record<string, unknown>, botUuid)
+        transferOwnerTelegramId = ''
+        showNotification('', '✅ Ownership transferred successfully')
+    } else {
+        const message =
+            response && response.message ? String(response.message) : 'Failed to transfer ownership'
+        showNotification('', `❗ ${message}`)
+    }
+
+    transfer_in_progress = false
 }
 
 async function unlink_group() {
@@ -470,6 +520,44 @@ async function unlink_group() {
                     Manage banned users
                 </Button>
             </section>
+
+            {#if $session.isAdmin}
+                <section class="space-y-3 rounded-lg bg-secondary/20 px-4 py-4 text-sm">
+                    <div class="space-y-1 text-start">
+                        <h3 class="text-sm font-semibold text-foreground">Transfer ownership</h3>
+                        <p class="text-sm text-muted-foreground">
+                            Move this bot to another existing whitelisted user.
+                        </p>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block text-xs font-medium text-foreground" for="new-owner-id">
+                            New owner Telegram ID
+                        </label>
+                        <Input
+                            id="new-owner-id"
+                            inputmode="numeric"
+                            placeholder="Enter Telegram ID"
+                            type="text"
+                            bind:value={transferOwnerTelegramId}
+                        />
+                    </div>
+                    <Button
+                        class="h-10 w-full text-base font-medium"
+                        disabled={!bot ||
+                            transfer_in_progress ||
+                            !isTransferTargetValid ||
+                            isTransferTargetSameOwner}
+                        onclick={handleTransferOwnership}
+                        variant="secondary"
+                    >
+                        {#if transfer_in_progress}
+                            <Loader class="size-4 animate-spin" />
+                        {:else}
+                            Transfer ownership
+                        {/if}
+                    </Button>
+                </section>
+            {/if}
 
             <Separator class="my-4" />
 

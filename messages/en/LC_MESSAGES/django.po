@@ -59,6 +59,14 @@ msgstr "Admin approval required before enabling this bot"
 msgid "no_fields_to_update"
 msgstr "No fields to update"
 
+#: feedback_bot/api/miniapp/bots.py:501
+msgid "bot_owner_unchanged"
+msgstr "Bot already belongs to this owner."
+
+#: feedback_bot/api/miniapp/bots.py:508
+msgid "target_owner_not_whitelisted"
+msgstr "Target owner must be whitelisted."
+
 #: feedback_bot/api/miniapp/bots.py:502
 msgid "bot_deleted"
 msgstr "Bot deleted"

@@ -8,8 +8,33 @@ const onMock = vi.hoisted(() => vi.fn(() => vi.fn()))
 const showNotificationMock = vi.hoisted(() => vi.fn())
 const updateBotMock = vi.hoisted(() => vi.fn())
 const deleteBotMock = vi.hoisted(() => vi.fn())
+const transferBotOwnerMock = vi.hoisted(() => vi.fn())
+const unlinkBotForwardChatMock = vi.hoisted(() => vi.fn())
 const mapBotResponseMock = vi.hoisted(() => vi.fn())
 const rotatedToken = '23456789:bcdefghijklmnopqrstuvwxyzABCDE12345'
+const sessionMock = vi.hoisted(() => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const {writable} = require('svelte/store')
+    const initial = (isAdmin = true) => ({
+        loaded: true,
+        available: true,
+        isValid: true,
+        data: {raw: 'token', user: {id: 1}},
+        csrfToken: 'csrf',
+        isAdmin,
+        user: {id: 1, is_admin: isAdmin}
+    })
+    const store = writable(initial())
+    return {
+        store,
+        setAdmin(isAdmin: boolean) {
+            store.set(initial(isAdmin))
+        },
+        reset() {
+            store.set(initial())
+        }
+    }
+})
 
 function createPageState() {
     return {
@@ -58,11 +83,17 @@ vi.mock('~/lib/telegram.js', () => ({
 
 vi.mock('$lib/api.js', () => ({
     update_bot: (...args: unknown[]) => updateBotMock(...args),
-    delete_bot: (...args: unknown[]) => deleteBotMock(...args)
+    delete_bot: (...args: unknown[]) => deleteBotMock(...args),
+    transfer_bot_owner: (...args: unknown[]) => transferBotOwnerMock(...args),
+    unlink_bot_forward_chat: (...args: unknown[]) => unlinkBotForwardChatMock(...args)
 }))
 
 vi.mock('$lib/mappers/bot', () => ({
     mapBotResponse: (...args: unknown[]) => mapBotResponseMock(...args)
+}))
+
+vi.mock('$lib/stores.svelte.js', () => ({
+    session: sessionMock.store
 }))
 
 vi.mock('~/lib/i18n', () => ({
@@ -121,6 +152,7 @@ describe('+page.svelte', () => {
     beforeEach(() => {
         resetPageState()
         vi.clearAllMocks()
+        sessionMock.reset()
     })
 
     it('notifies and shows error message when bot data is missing', () => {
@@ -507,6 +539,81 @@ describe('+page.svelte', () => {
         await user.click(manageBannedButton)
 
         expect(gotoMock).toHaveBeenCalledWith(`/app/bot/${baseBot.uuid}/banned`)
+    })
+
+    it('shows transfer ownership controls for admins only', () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+        sessionMock.setAdmin(true)
+        const {unmount} = render(BotPage)
+
+        expect(screen.getByRole('button', {name: 'Transfer ownership'})).toBeInTheDocument()
+        unmount()
+
+        sessionMock.setAdmin(false)
+        render(BotPage)
+
+        expect(screen.queryByRole('button', {name: 'Transfer ownership'})).not.toBeInTheDocument()
+    })
+
+    it('transfers ownership and updates owner data on success', async () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+
+        const transferredBot: Bot = {
+            ...baseBot,
+            owner_username: 'new_owner',
+            owner_telegram_id: 999
+        }
+        transferBotOwnerMock.mockResolvedValue({uuid: baseBot.uuid})
+        mapBotResponseMock.mockReturnValue(transferredBot)
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+        const user = userEvent.setup()
+        render(BotPage)
+
+        const ownerInput = screen.getByLabelText('New owner Telegram ID') as HTMLInputElement
+        await user.clear(ownerInput)
+        await user.type(ownerInput, '999')
+        await user.click(screen.getByRole('button', {name: 'Transfer ownership'}))
+
+        await waitFor(() => {
+            expect(transferBotOwnerMock).toHaveBeenCalledWith(baseBot.uuid, 999)
+        })
+        expect(mapBotResponseMock).toHaveBeenCalledWith({uuid: baseBot.uuid}, baseBot.uuid)
+        expect(showNotificationMock).toHaveBeenCalledWith(
+            '',
+            '✅ Ownership transferred successfully'
+        )
+        expect(confirmSpy).toHaveBeenCalledTimes(1)
+
+        confirmSpy.mockRestore()
+    })
+
+    it('shows backend error when transfer ownership fails', async () => {
+        setPageState({
+            params: {uuid: baseBot.uuid},
+            data: {bot: baseBot, errorMessage: null}
+        })
+
+        transferBotOwnerMock.mockResolvedValue({status: 'error', message: 'Not authorized'})
+        const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true)
+        const user = userEvent.setup()
+        render(BotPage)
+
+        const ownerInput = screen.getByLabelText('New owner Telegram ID') as HTMLInputElement
+        await user.type(ownerInput, '999')
+        await user.click(screen.getByRole('button', {name: 'Transfer ownership'}))
+
+        await waitFor(() => {
+            expect(transferBotOwnerMock).toHaveBeenCalledWith(baseBot.uuid, 999)
+        })
+        expect(showNotificationMock).toHaveBeenCalledWith('', '❗ Not authorized')
+        confirmSpy.mockRestore()
     })
 
     it('registers Telegram popup closed handler once', () => {

@@ -266,7 +266,7 @@ msgstr "No changes to update."
 msgid "Failed to update user"
 msgstr "Failed to update user"
 
-#. 0: user.username ? `@${user.username}` : user.telegram_id
+#. 0: user.username ? `@${user.username}` 
 #: src/routes/app/user/[telegram_id]/+page.svelte
 msgid "Managing user {0}"
 msgstr "Managing user {0}"
@@ -373,7 +373,7 @@ msgstr "Incoming messages"
 msgid "Outgoing messages"
 msgstr "Outgoing messages"
 
-#. 0: user.username ? `@${user.username}` : user.telegram_id
+#. 0: user.username ? `@${user.username}` 
 #: src/routes/app/user/[telegram_id]/+page.svelte
 msgid "Delete {0}?"
 msgstr "Delete {0}?"
@@ -503,7 +503,7 @@ msgstr "Reason (optional)"
 msgid "Not provided"
 msgstr "Not provided"
 
-#. 0: entry.reason && entry.reason.trim() !== '' ? entry.reason : 'Not provided'
+#. 0: entry.reason && entry.reason.trim() !== '' ? entry.reason 
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
 msgid "Reason: {0}"
 msgstr "Reason: {0}"
@@ -529,7 +529,7 @@ msgstr "Anti-flood"
 msgid "Anti-flood wait (seconds)"
 msgstr "Anti-flood wait (seconds)"
 
-#. 0: Number.isFinite( antiflood_seconds ) ? antiflood_seconds.toLocaleString() : '—'
+#. 0: Number.isFinite( antiflood_seconds ) ? antiflood_seconds.toLocaleString() \\: '—'
 #: src/routes/app/bot/[uuid]/+page.svelte
 msgid "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
 msgstr "When enabled, users can send one message every {0} seconds and receive a warning if throttled."
@@ -574,3 +574,29 @@ msgstr "No group linked. Feedback is sent to owner chat topics (one thread per u
 #: src/routes/app/bot/[uuid]/+page.svelte
 msgid "No group linked. Feedback is sent directly to owner chat."
 msgstr "No group linked. Feedback is sent directly to owner chat."
+
+#. 0: bot.username; 1: targetOwnerId.toLocaleString()
+#: src/routes/app/bot/[uuid]/+page.svelte
+msgid "Transfer @{0} ownership to {1}?"
+msgstr "Transfer @{0} ownership to {1}?"
+
+#: src/routes/app/bot/[uuid]/+page.svelte
+msgid "Failed to transfer ownership"
+msgstr "Failed to transfer ownership"
+
+#: src/routes/app/bot/[uuid]/+page.svelte
+#: src/routes/app/bot/[uuid]/+page.svelte
+msgid "Transfer ownership"
+msgstr "Transfer ownership"
+
+#: src/routes/app/bot/[uuid]/+page.svelte
+msgid "Move this bot to another existing whitelisted user."
+msgstr "Move this bot to another existing whitelisted user."
+
+#: src/routes/app/bot/[uuid]/+page.svelte
+msgid "New owner Telegram ID"
+msgstr "New owner Telegram ID"
+
+#: src/routes/app/bot/[uuid]/+page.svelte
+msgid "Enter Telegram ID"
+msgstr "Enter Telegram ID"
