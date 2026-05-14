@@ -15,7 +15,7 @@ importers:
   .:
     devDependencies:
       '@eslint/compat':
-        specifier: ^2.0.5
+        specifier: ^2.1.0
         version: 2.1.0(eslint@10.3.0(jiti@2.7.0))
       '@eslint/js':
         specifier: ^10.0.1
@@ -24,25 +24,25 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1(prettier@3.8.3)
       '@internationalized/date':
-        specifier: ^3.12.0
+        specifier: ^3.12.1
         version: 3.12.1
       '@lucide/svelte':
-        specifier: ^1.8.0
+        specifier: ^1.14.0
         version: 1.14.0(svelte@5.55.5(@typescript-eslint/types@8.59.2))
       '@sveltejs/adapter-static':
         specifier: ^3.0.10
         version: 3.0.10(@sveltejs/kit@2.59.1(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4)))
       '@sveltejs/kit':
-        specifier: ^2.57.1
+        specifier: ^2.59.1
         version: 2.59.1(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4))
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^7.0.0
+        specifier: ^7.1.2
         version: 7.1.2(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4))
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.19(tailwindcss@4.3.0)
       '@tailwindcss/vite':
-        specifier: ^4.2.2
+        specifier: ^4.3.0
         version: 4.3.0(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4))
       '@testing-library/jest-dom':
         specifier: ^6.9.1
@@ -57,13 +57,13 @@ importers:
         specifier: ^1.0.19
         version: 1.0.19(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)
       '@vitest/browser':
-        specifier: ^4.1.4
+        specifier: ^4.1.5
         version: 4.1.5(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4))(vitest@4.1.5(jsdom@29.1.1)(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4)))
       '@wuchale/svelte':
-        specifier: ^0.19.3
+        specifier: ^0.19.4
         version: 0.19.4(@typescript-eslint/types@8.59.2)
       bits-ui:
-        specifier: ^2.17.3
+        specifier: ^2.18.1
         version: 2.18.1(@internationalized/date@3.12.1)(@sveltejs/kit@2.59.1(@sveltejs/vite-plugin-svelte@7.1.2(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4)))(svelte@5.55.5(@typescript-eslint/types@8.59.2))
       clsx:
         specifier: ^2.1.1
@@ -72,25 +72,25 @@ importers:
         specifier: ^3.4.3
         version: 3.4.3
       eslint:
-        specifier: ^10.2.0
+        specifier: ^10.3.0
         version: 10.3.0(jiti@2.7.0)
       eslint-config-prettier:
         specifier: ^10.1.8
         version: 10.1.8(eslint@10.3.0(jiti@2.7.0))
       eslint-plugin-svelte:
-        specifier: ^3.17.0
+        specifier: ^3.17.1
         version: 3.17.1(eslint@10.3.0(jiti@2.7.0))(svelte@5.55.5(@typescript-eslint/types@8.59.2))
       globals:
-        specifier: ^17.5.0
+        specifier: ^17.6.0
         version: 17.6.0
       jsdom:
-        specifier: ^29.0.2
+        specifier: ^29.1.1
         version: 29.1.1
       playwright:
         specifier: ^1.59.1
         version: 1.59.1
       prettier:
-        specifier: ^3.8.2
+        specifier: ^3.8.3
         version: 3.8.3
       prettier-plugin-svelte:
         specifier: ^3.5.1
@@ -99,10 +99,10 @@ importers:
         specifier: ^0.8.0
         version: 0.8.0(@ianvs/prettier-plugin-sort-imports@4.7.1(prettier@3.8.3))(prettier-plugin-svelte@3.5.1(prettier@3.8.3)(svelte@5.55.5(@typescript-eslint/types@8.59.2)))(prettier@3.8.3)
       svelte:
-        specifier: ^5.55.3
+        specifier: ^5.55.5
         version: 5.55.5(@typescript-eslint/types@8.59.2)
       svelte-check:
-        specifier: ^4.4.6
+        specifier: ^4.4.8
         version: 4.4.8(picomatch@4.0.4)(svelte@5.55.5(@typescript-eslint/types@8.59.2))(typescript@6.0.3)
       tailwind-merge:
         specifier: ^3.5.0
@@ -111,16 +111,16 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(tailwind-merge@3.5.0)(tailwindcss@4.3.0)
       tailwindcss:
-        specifier: ^4.2.2
+        specifier: ^4.3.0
         version: 4.3.0
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
       typescript:
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3
       typescript-eslint:
-        specifier: ^8.58.1
+        specifier: ^8.59.2
         version: 8.59.2(eslint@10.3.0(jiti@2.7.0))(typescript@6.0.3)
       vite:
         specifier: 8.0.11
@@ -129,13 +129,13 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4))
       vitest:
-        specifier: ^4.1.4
+        specifier: ^4.1.5
         version: 4.1.5(jsdom@29.1.1)(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4))
       vitest-browser-svelte:
-        specifier: ^2.1.0
+        specifier: ^2.1.1
         version: 2.1.1(svelte@5.55.5(@typescript-eslint/types@8.59.2))(vitest@4.1.5(jsdom@29.1.1)(vite@8.0.11(jiti@2.7.0)(yaml@2.8.4)))
       wuchale:
-        specifier: ^0.23.0
+        specifier: ^0.23.3
         version: 0.23.3
 
 packages:
@@ -933,8 +933,8 @@ packages:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
 
-  devalue@5.8.0:
-    resolution: {integrity: sha512-2zA9pFEsnp7vWBZbXF5JAgAq0fsUIt/1XPbRiAmRV3lp/2C3upzH+sADiyy66aFCihoLEsrQHxNM5w1gIDfsBg==}
+  devalue@5.8.1:
+    resolution: {integrity: sha512-4CXDYRBGqN+57wVJkuXBYmpAVUSg3L6JAQa/DFqm238G73E1wuyc/JhGQJzN7vUf/CMphYau2zXbfWzDR5aTEw==}
 
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
@@ -2196,7 +2196,7 @@ snapshots:
       '@types/cookie': 0.6.0
       acorn: 8.16.0
       cookie: 1.1.1
-      devalue: 5.8.0
+      devalue: 5.8.1
       esm-env: 1.2.2
       kleur: 4.1.5
       magic-string: 0.30.21
@@ -2673,7 +2673,7 @@ snapshots:
 
   detect-libc@2.1.2: {}
 
-  devalue@5.8.0: {}
+  devalue@5.8.1: {}
 
   dom-accessibility-api@0.5.16: {}
 
@@ -3252,7 +3252,7 @@ snapshots:
       aria-query: 5.3.1
       axobject-query: 4.1.0
       clsx: 2.1.1
-      devalue: 5.8.0
+      devalue: 5.8.1
       esm-env: 1.2.2
       esrap: 2.2.6(@typescript-eslint/types@8.59.2)
       is-reference: 3.0.3
