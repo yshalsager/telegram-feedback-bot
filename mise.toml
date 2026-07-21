@@ -100,5 +100,5 @@ VITE_PORT = 8000
 # Development mode
 PUBLIC_DEBUG = false
 
-[env.mise]
+[env._]
 file = '.env'
