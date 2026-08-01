@@ -57,17 +57,5 @@
         "vitest": "^4.1.4",
         "vitest-browser-svelte": "^3.0.0",
         "wuchale": "^0.25.0"
-    },
-    "pnpm": {
-        "overrides": {
-            "cookie": "^2.0.0",
-            "brace-expansion": "5.0.9",
-            "yaml": "2.9.0",
-            "picomatch": "4.0.5"
-        },
-        "onlyBuiltDependencies": [
-            "@tailwindcss/oxide",
-            "esbuild"
-        ]
     }
 }
