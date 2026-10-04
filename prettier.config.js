@@ -40,7 +40,7 @@ export default {
     importOrder: [
         '^(svelte|@sveltejs/kit|\\$app)',
         '<THIRD_PARTY_MODULES>',
-        '^(\\$lib|~)(/.*)?$',
+        '^(#lib|~)(/.*)?$',
         '^[./]'
     ],
     importOrderParserPlugins: ['svelte', 'typescript', 'decorators-legacy'],

@@ -3,32 +3,23 @@ import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
 import {page} from '$app/state'
 import {Loader, Trash2} from '@lucide/svelte'
+import {delete_user, update_user_detail} from '#lib/api.js'
+import {Button} from '#lib/components/ui/button/index.js'
+import {Separator} from '#lib/components/ui/separator/index.js'
+import {locale, locales} from '#lib/i18n.js'
+import {mapUserResponse} from '#lib/mappers/user.js'
+import type {User} from '#lib/types.ts'
+import {normalize_username} from '#lib/utils.js'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import UserAccessForm from '~/components/management/UserAccessForm.svelte'
 import {showNotification} from '~/lib/telegram.js'
-import {delete_user, update_user_detail} from '$lib/api.js'
-import {Button} from '$lib/components/ui/button'
-import {Separator} from '$lib/components/ui/separator'
-import {locale, locales} from '$lib/i18n'
-import {mapUserResponse} from '$lib/mappers/user'
-import type {User} from '$lib/types.ts'
-import {normalize_username} from '$lib/utils'
 import type {PageData} from './$types'
 
-type UpdateUserResponse = {
-    status?: string
-    user?: unknown
-    message?: unknown
-}
-
-type DeleteUserResponse = {
-    status?: string
-    message?: unknown
-}
+type UpdateUserResponse = {status?: string; user?: unknown; message?: unknown}
+type DeleteUserResponse = {status?: string; message?: unknown}
 
 const telegramId = $derived(Number(page.params.telegram_id ?? ''))
 const pageData = page.data as PageData | undefined
-
 let user = $state<User | null>(null)
 let disableSubmit = $state(false)
 let username = $state('')
@@ -37,12 +28,13 @@ let isWhitelisted = $state(true)
 let isAdmin = $state(false)
 let loadError = $state<string | null>(pageData?.errorMessage ?? null)
 let disableDelete = $state(false)
-
 const data = pageData
 
 if (data) {
     const initialError = data.errorMessage ?? null
+
     loadError = initialError
+
     if (initialError) {
         showNotification('', `❗ ${initialError}`)
     }
@@ -74,6 +66,7 @@ const hasChanges = $derived(
 
 async function handleUpdateUser() {
     if (!user) return
+
     const normalizedUsername = normalize_username(username)
     const updates: Record<string, unknown> = {}
 
@@ -120,12 +113,13 @@ async function handleDeleteUser() {
     }
 
     disableDelete = true
+
     const response = (await delete_user(telegramId)) as DeleteUserResponse
 
     if (response?.status === 'success') {
         showNotification('', '✅ User deleted successfully')
         disableDelete = false
-        await goto(resolve('/app'))
+        await goto(resolve('app'))
         return
     }
 

@@ -36,7 +36,9 @@ const updateUserDetailMock = vi.hoisted(() => vi.fn(async () => ({})))
 const mapUserResponseMock = vi.hoisted(() => vi.fn())
 const deleteUserMock = vi.hoisted(() => vi.fn(async () => ({})))
 const gotoMock = vi.hoisted(() => vi.fn())
-const resolveMock = vi.hoisted(() => vi.fn((path: string) => path))
+const resolveMock = vi.hoisted(() =>
+    vi.fn((path: string) => (path.startsWith('/') ? path : `/${path}`))
+)
 
 function createPageState() {
     return {
@@ -71,12 +73,12 @@ vi.mock('~/lib/telegram.js', () => ({
     showNotification: showNotificationMock
 }))
 
-vi.mock('$lib/api.js', () => ({
+vi.mock('#lib/api.js', () => ({
     update_user_detail: (...args: unknown[]) => updateUserDetailMock(...args),
     delete_user: (...args: unknown[]) => deleteUserMock(...args)
 }))
 
-vi.mock('$lib/mappers/user', () => ({
+vi.mock('#lib/mappers/user.js', () => ({
     mapUserResponse: (...args: unknown[]) => mapUserResponseMock(...args)
 }))
 
@@ -89,7 +91,7 @@ describe('user detail +page.svelte', () => {
         mapUserResponseMock.mockReset()
         gotoMock.mockReset()
         resolveMock.mockReset()
-        resolveMock.mockImplementation((path: string) => path)
+        resolveMock.mockImplementation((path: string) => (path.startsWith('/') ? path : `/${path}`))
     })
 
     it('shows error message when user data is missing', () => {

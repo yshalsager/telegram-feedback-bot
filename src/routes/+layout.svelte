@@ -1,7 +1,7 @@
 <script lang="ts">
 import '~/app.css'
 import {onMount} from 'svelte'
-import {initLocale} from '$lib/i18n'
+import {initLocale} from '#lib/i18n.js'
 
 let {children} = $props()
 

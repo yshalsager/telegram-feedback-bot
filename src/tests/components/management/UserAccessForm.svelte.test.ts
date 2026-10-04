@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import {describe, expect, it, vi} from 'vitest'
 import UserAccessForm from '~/components/management/UserAccessForm.svelte'
 
-vi.mock('$lib/i18n', () => ({
+vi.mock('#lib/i18n.js', () => ({
     availableLocales: readable([
         {locale: 'en', name: 'English'},
         {locale: 'ar', name: 'Arabic'}

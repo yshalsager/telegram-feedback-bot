@@ -1,5 +1,5 @@
 import {get} from 'svelte/store'
-import {session} from '$lib/stores.svelte.js'
+import {session} from '#lib/stores.svelte.js'
 
 /**
  * Get the CSRF token

@@ -3,14 +3,14 @@ import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
 import {page} from '$app/state'
 import {Loader} from '@lucide/svelte'
+import {ban_user, list_banned_users, unban_user} from '#lib/api.js'
+import {Button} from '#lib/components/ui/button/index.js'
+import {Input} from '#lib/components/ui/input/index.js'
+import {Separator} from '#lib/components/ui/separator/index.js'
+import {Textarea} from '#lib/components/ui/textarea/index.js'
+import type {BannedUser, Bot} from '#lib/types.ts'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import {showNotification} from '~/lib/telegram.js'
-import {ban_user, list_banned_users, unban_user} from '$lib/api.js'
-import {Button} from '$lib/components/ui/button'
-import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator'
-import {Textarea} from '$lib/components/ui/textarea'
-import type {BannedUser, Bot} from '$lib/types.ts'
 import type {PageData} from './$types'
 
 type BanResponse = {
@@ -29,7 +29,6 @@ type UnbanResponse = {
 
 const botUuid = $derived(page.params.uuid ?? '')
 const data = page.data as PageData | undefined
-
 let bot = $state<Bot | null>(data?.bot ?? null)
 let bannedUsers = $state<BannedUser[]>(data?.bannedUsers ?? [])
 let bannedError = $state<string | null>(data?.bannedError ?? null)
@@ -38,26 +37,26 @@ let newBanId = $state('')
 let newBanReason = $state('')
 let submitting = $state(false)
 let unbanTarget = $state<number | null>(null)
-
 const trimmedId = $derived(newBanId.trim())
 const isIdValid = $derived(trimmedId !== '' && /^\d+$/.test(trimmedId))
 
 function normalizeBannedUsers(payload: unknown): BannedUser[] {
     if (!Array.isArray(payload)) return []
+
     return payload
         .map(entry => {
             if (!entry || typeof entry !== 'object') return null
+
             const raw = entry as Record<string, unknown>
             const userId = Number(raw.user_telegram_id)
+
             if (!Number.isFinite(userId) || userId <= 0) return null
+
             const created_at = typeof raw.created_at === 'string' ? raw.created_at : ''
             const reasonRaw = raw.reason ?? null
             const reason = typeof reasonRaw === 'string' ? reasonRaw : null
-            return {
-                user_telegram_id: Math.trunc(userId),
-                created_at,
-                reason
-            }
+
+            return {user_telegram_id: Math.trunc(userId), created_at, reason}
         })
         .filter(Boolean) as BannedUser[]
 }
@@ -146,10 +145,9 @@ async function handleUnban(userId: number) {
                 </h2>
                 <a
                     class="text-sm font-medium text-[var(--tg-theme-button-color)] underline"
-                    href={resolve(`/app/bot/${botUuid}`)}
+                    href={resolve(`app/bot/${botUuid}`)}>Back to bot management</a
                 >
-                    Back to bot management
-                </a>
+
                 <p class="text-xs text-muted-foreground">@{bot.username}</p>
             </div>
         {/snippet}
@@ -252,9 +250,9 @@ async function handleUnban(userId: number) {
 
         {#snippet footer()}
             <div class="mx-auto mt-6 flex max-w-lg justify-center">
-                <Button onclick={() => goto(resolve(`/app/bot/${botUuid}`))} variant="ghost">
-                    Return to bot settings
-                </Button>
+                <Button onclick={() => goto(resolve(`app/bot/${botUuid}`))} variant="ghost"
+                    >Return to bot settings</Button
+                >
             </div>
         {/snippet}
     </SettingsPage>

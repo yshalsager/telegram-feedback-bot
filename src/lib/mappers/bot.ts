@@ -1,4 +1,4 @@
-import type {Bot} from '$lib/types'
+import type {Bot} from '#lib/types.js'
 
 export function mapBotResponse(data: Record<string, unknown>, fallbackUuid: string): Bot {
     const enabledValue = data.enabled

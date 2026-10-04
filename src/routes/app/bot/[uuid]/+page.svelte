@@ -5,30 +5,25 @@ import {page} from '$app/state'
 import {Loader, Trash2} from '@lucide/svelte'
 import type {EventPayload} from '@tma.js/sdk-svelte'
 import {on} from '@tma.js/sdk-svelte'
+import {delete_bot, transfer_bot_owner, unlink_bot_forward_chat, update_bot} from '#lib/api.js'
+import {Button} from '#lib/components/ui/button/index.js'
+import {Input} from '#lib/components/ui/input/index.js'
+import {Separator} from '#lib/components/ui/separator/index.js'
+import type {CommunicationMode} from '#lib/constants/communication_mode.js'
+import {mapBotResponse} from '#lib/mappers/bot.js'
+import {session} from '#lib/stores.svelte.js'
+import type {Bot, BotStats} from '#lib/types.ts'
 import BotMessageField from '~/components/management/BotMessageField.svelte'
 import CommunicationModeSection from '~/components/management/CommunicationModeSection.svelte'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
-import {delete_bot, transfer_bot_owner, unlink_bot_forward_chat, update_bot} from '$lib/api.js'
-import {Button} from '$lib/components/ui/button'
-import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator'
-import type {CommunicationMode} from '$lib/constants/communication_mode'
-import {mapBotResponse} from '$lib/mappers/bot'
-import {session} from '$lib/stores.svelte.js'
-import type {Bot, BotStats} from '$lib/types.ts'
 import type {PageData} from './$types'
 
-type UpdateBotResponse = {
-    uuid?: string
-    message?: unknown
-    [key: string]: unknown
-}
+type UpdateBotResponse = {uuid?: string; message?: unknown; [key: string]: unknown}
 
 const botUuid = $derived(page.params.uuid ?? '')
 const pageData = page.data as PageData | undefined
-
 let bot = $state<Bot | null>(null)
 let enabled = $state(true)
 let startMessage = $state('')
@@ -47,7 +42,6 @@ let loadError = $state<string | null>(null)
 let stats = $state<BotStats | null>(null)
 let statsError = $state<string | null>(null)
 let transferOwnerTelegramId = $state('')
-
 const trimmedPendingToken = $derived(pendingToken.trim())
 const trimmedTransferOwnerTelegramId = $derived(transferOwnerTelegramId.trim())
 const parsedTransferOwnerTelegramId = $derived(Number(trimmedTransferOwnerTelegramId))
@@ -76,14 +70,14 @@ const hasChanges = $derived(
             trimmedPendingToken !== '')
     )
 )
-
 let disableSubmit = $state(false)
 let disableDelete = $state(false)
 let unlink_in_progress = $state(false)
 let transfer_in_progress = $state(false)
 
 const onBotDeleted = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
-    if (payload.button_id === 'bot_deleted_success_close') goto(resolve('/app'))
+    if (payload.button_id === 'bot_deleted_success_close') goto(resolve('app'))
+
     onBotDeleted()
 })
 
@@ -145,10 +139,13 @@ if (data) {
 
 async function handleUpdateBot() {
     if (!bot) return
+
     disableSubmit = true
+
     const normalizedCooldown = Number.isFinite(antiflood_seconds)
         ? Math.max(Math.trunc(antiflood_seconds), 1)
         : 60
+
     const response = (await update_bot(botUuid, {
         start_message: startMessage,
         feedback_received_message: feedbackReceivedMessage,
@@ -233,6 +230,7 @@ async function handleTransferOwnership() {
     }
 
     transfer_in_progress = true
+
     const response = (await transfer_bot_owner(botUuid, targetOwnerId)) as UpdateBotResponse
 
     if (response?.uuid === botUuid) {
@@ -302,7 +300,7 @@ async function unlink_group() {
                         {#if bot?.owner_telegram_id}
                             <a
                                 class="font-medium text-[var(--tg-theme-button-color)] underline"
-                                href={resolve(`/app/user/${bot?.owner_telegram_id}`)}
+                                href={resolve(`app/user/${bot?.owner_telegram_id}`)}
                             >
                                 {bot?.owner_username
                                     ? `@${bot.owner_username}`
@@ -514,7 +512,7 @@ async function unlink_group() {
                 </div>
                 <Button
                     class="h-10 w-full text-base font-medium"
-                    onclick={() => goto(resolve(`/app/bot/${botUuid}/banned`))}
+                    onclick={() => goto(resolve(`app/bot/${botUuid}/banned`))}
                     variant="secondary"
                 >
                     Manage banned users

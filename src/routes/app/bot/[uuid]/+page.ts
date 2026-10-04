@@ -1,7 +1,7 @@
 import {error} from '@sveltejs/kit'
-import {get_bot, get_bot_stats} from '$lib/api.js'
-import {mapBotResponse} from '$lib/mappers/bot'
-import type {BotStats} from '$lib/types.ts'
+import {get_bot, get_bot_stats} from '#lib/api.js'
+import {mapBotResponse} from '#lib/mappers/bot.js'
+import type {BotStats} from '#lib/types.ts'
 import type {PageLoad} from './$types'
 
 export const load: PageLoad = async ({params}) => {

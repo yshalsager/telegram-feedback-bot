@@ -1,4 +1,4 @@
-import type {User} from '$lib/types'
+import type {User} from '#lib/types.js'
 
 export function mapUserResponse(
     data: Record<string, unknown>,

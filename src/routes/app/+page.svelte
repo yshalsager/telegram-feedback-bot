@@ -3,22 +3,20 @@ import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
 import {onMount} from 'svelte'
 import {Search} from '@lucide/svelte'
+import {list_bots, list_users} from '#lib/api.js'
+import {Input} from '#lib/components/ui/input/index.js'
+import {Separator} from '#lib/components/ui/separator/index.js'
+import {session} from '#lib/stores.svelte.js'
+import type {Bot, User} from '#lib/types.ts'
 import AddButton from '~/components/management/AddButton.svelte'
 import ListItem from '~/components/management/ListItem.svelte'
 import ManagementCard from '~/components/management/ManagementCard.svelte'
-import {list_bots, list_users} from '$lib/api.js'
-import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator'
-import {session} from '$lib/stores.svelte.js'
-import type {Bot, User} from '$lib/types.ts'
 
 let searchQuery = $state('')
 let bots = $state<Bot[]>([])
 let users = $state<User[]>([])
-
 const trimmedQuery = $derived(searchQuery.trim())
 const normalizedQuery = $derived(trimmedQuery.toLowerCase())
-
 let botsLoaded = false
 let usersLoaded = false
 
@@ -94,12 +92,12 @@ const filteredUsers = $derived(
 )
 
 function handleBotClick(item: Bot) {
-    goto(resolve(`/app/bot/${item.uuid}`))
+    goto(resolve(`app/bot/${item.uuid}`))
 }
 
 const handleUserClick: (item: Bot | User) => void = item => {
     if ('is_admin' in item) {
-        goto(resolve(`/app/user/${item.telegram_id}`))
+        goto(resolve(`app/user/${item.telegram_id}`))
     }
 }
 </script>
@@ -147,7 +145,7 @@ const handleUserClick: (item: Bot | User) => void = item => {
     >
         <!-- Create New Bot Button -->
         {#snippet cta()}
-            <AddButton icon="plus" label="Add new bot" route="/app/add_bot" variant="primary" />
+            <AddButton icon="plus" label="Add new bot" route="app/add_bot" variant="primary" />
         {/snippet}
 
         {#each filteredBots as bot (bot.telegram_id)}
@@ -174,7 +172,7 @@ const handleUserClick: (item: Bot | User) => void = item => {
                 <AddButton
                     icon="user-plus"
                     label="Add new user"
-                    route="/app/add_user"
+                    route="app/add_user"
                     variant="success"
                 />
             {/snippet}

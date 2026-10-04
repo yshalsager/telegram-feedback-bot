@@ -3,13 +3,13 @@ import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
 import type {EventPayload} from '@tma.js/sdk-svelte'
 import {on} from '@tma.js/sdk-svelte'
+import {add_user} from '#lib/api.js'
+import {Input} from '#lib/components/ui/input/index.js'
+import {locale} from '#lib/i18n.js'
+import {normalize_username} from '#lib/utils.js'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import UserAccessForm from '~/components/management/UserAccessForm.svelte'
 import {showNotification} from '~/lib/telegram.js'
-import {add_user} from '$lib/api.js'
-import {Input} from '$lib/components/ui/input'
-import {locale} from '$lib/i18n'
-import {normalize_username} from '$lib/utils'
 
 type AddUserResponse = {
     status?: string
@@ -25,23 +25,22 @@ let username = $state('')
 let languageCode = $state($locale)
 let isWhitelisted = $state(true)
 let isAdmin = $state(false)
-
 const isTelegramIdValid = $derived(telegramId.trim() === '' || /^\d+$/.test(telegramId.trim()))
 const isFormValid = $derived(isTelegramIdValid && telegramId.trim() !== '')
-
 let disableSubmit = $state(false)
 
 const onUserSuccessfullyAdded = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
-    if (payload.button_id === 'user_successfully_added_close') goto(resolve('/app'))
+    if (payload.button_id === 'user_successfully_added_close') goto(resolve('app'))
+
     onUserSuccessfullyAdded()
 })
 
 async function handleSaveUser() {
     disableSubmit = true
+
     const trimmedId = telegramId.trim()
     const normalizedUsername = normalize_username(username)
     const usernamePayload = normalizedUsername ? normalizedUsername : null
-
     const response = (await add_user(
         Number(trimmedId),
         usernamePayload,

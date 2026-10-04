@@ -1,11 +1,12 @@
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=2; plural=n == 1 ? 0 : 1;\n"
 "Source-Language: en\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6\n"
+"X-Plurals-Order: zero, one, two, few, many, other\n"
 
 #: src/routes/app/+layout.svelte
 #: src/routes/app/+page.svelte
@@ -266,7 +267,7 @@ msgstr "لا شيء لتحديثه"
 msgid "Failed to update user"
 msgstr "فشل تحديث المستخدم"
 
-#. 0: user.username ? `@${user.username}` 
+#. 0: user.username ? `@${user.username}` \\: user.telegram_id
 #: src/routes/app/user/[telegram_id]/+page.svelte
 msgid "Managing user {0}"
 msgstr "إدارة المستخدم {0}"
@@ -358,9 +359,6 @@ msgstr "صلاحيات المشرف"
 msgid "Grants builder admin permissions to this user."
 msgstr "يمنح هذا المستخدم صلاحيات مشرف الباني."
 
-#~ msgid "Add this bot to a group to link it automatically, otherwise it sends messages to bot owner."
-#~ msgstr "أضف هذا البوت إلى مجموعة لربطه تلقائيًا، وإلا فسترسل الرسائل إلى مالك البوت."
-
 #: src/routes/app/bot/[uuid]/+page.svelte
 msgid "Bot stats"
 msgstr "إحصائيات البوت"
@@ -373,7 +371,7 @@ msgstr "الرسائل الواردة"
 msgid "Outgoing messages"
 msgstr "الرسائل الصادرة"
 
-#. 0: user.username ? `@${user.username}` 
+#. 0: user.username ? `@${user.username}` \\: user.telegram_id
 #: src/routes/app/user/[telegram_id]/+page.svelte
 msgid "Delete {0}?"
 msgstr "حذف {0}؟"
@@ -503,7 +501,7 @@ msgstr "السبب (اختياري)"
 msgid "Not provided"
 msgstr "غير متوفر"
 
-#. 0: entry.reason && entry.reason.trim() !== '' ? entry.reason 
+#. 0: entry.reason && entry.reason.trim() !== '' ? entry.reason \\: 'Not provided'
 #: src/routes/app/bot/[uuid]/banned/+page.svelte
 msgid "Reason: {0}"
 msgstr "السبب: {0}"

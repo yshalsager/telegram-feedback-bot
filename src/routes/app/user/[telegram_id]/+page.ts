@@ -1,7 +1,7 @@
 import {error} from '@sveltejs/kit'
-import {get_user_detail} from '$lib/api.js'
-import {locales} from '$lib/i18n'
-import {mapUserResponse} from '$lib/mappers/user'
+import {get_user_detail} from '#lib/api.js'
+import {locales} from '#lib/i18n.js'
+import {mapUserResponse} from '#lib/mappers/user.js'
 import type {PageLoad} from './$types'
 
 export const load: PageLoad = async ({params}) => {

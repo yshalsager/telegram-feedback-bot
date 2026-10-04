@@ -1,7 +1,7 @@
 import {error} from '@sveltejs/kit'
-import {list_banned_users as fetch_banned_users, get_bot} from '$lib/api.js'
-import {mapBotResponse} from '$lib/mappers/bot'
-import type {BannedUser} from '$lib/types.ts'
+import {list_banned_users as fetch_banned_users, get_bot} from '#lib/api.js'
+import {mapBotResponse} from '#lib/mappers/bot.js'
+import type {BannedUser} from '#lib/types.ts'
 import type {PageLoad} from './$types'
 
 type BannedListResponse = {

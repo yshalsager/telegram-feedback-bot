@@ -19,5 +19,4 @@ let {
     )}
     data-slot={dataSlot}
     bind:value
-    {...restProps}
-></textarea>
+    {...restProps}></textarea>

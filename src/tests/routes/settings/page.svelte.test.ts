@@ -56,7 +56,7 @@ const sessionMock = vi.hoisted(() => {
     }
 })
 
-vi.mock('$lib/api.js', () => ({
+vi.mock('#lib/api.js', () => ({
     set_language: (...args: unknown[]) => setLanguageMock(...args)
 }))
 

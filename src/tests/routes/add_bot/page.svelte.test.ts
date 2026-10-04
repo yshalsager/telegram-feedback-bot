@@ -24,7 +24,7 @@ vi.mock('~/lib/telegram.js', () => ({
     showNotification: showNotificationMock
 }))
 
-vi.mock('$lib/api.js', () => ({
+vi.mock('#lib/api.js', () => ({
     add_bot: (...args: unknown[]) => addBotMock(...args)
 }))
 

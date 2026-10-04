@@ -1,6 +1,6 @@
 <script lang="ts">
-import type {CommunicationMode} from '$lib/constants/communication_mode'
-import {communication_mode_options} from '$lib/constants/communication_mode'
+import type {CommunicationMode} from '#lib/constants/communication_mode.js'
+import {communication_mode_options} from '#lib/constants/communication_mode.js'
 
 let {
     value = $bindable<CommunicationMode>('standard'),

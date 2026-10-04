@@ -1,10 +1,10 @@
 <script lang="ts">
 import type {Snippet} from 'svelte'
 import {Loader} from '@lucide/svelte'
-import {Button} from '$lib/components/ui/button'
-import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator'
-import {availableLocales} from '$lib/i18n'
+import {Button} from '#lib/components/ui/button/index.js'
+import {Input} from '#lib/components/ui/input/index.js'
+import {Separator} from '#lib/components/ui/separator/index.js'
+import {availableLocales} from '#lib/i18n.js'
 import SwitchRow from './SwitchRow.svelte'
 
 type Props = {

@@ -1,6 +1,6 @@
 <script lang="ts">
-import {Textarea} from '$lib/components/ui/textarea'
-import {formatCharacterCount} from '$lib/i18n'
+import {Textarea} from '#lib/components/ui/textarea/index.js'
+import {formatCharacterCount} from '#lib/i18n.js'
 
 let {
     field_id,

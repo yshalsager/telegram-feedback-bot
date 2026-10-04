@@ -1,5 +1,7 @@
 import path from 'path'
 import {sveltekit} from '@sveltejs/kit/vite'
+import adapter from '@sveltejs/adapter-static'
+import {vitePreprocess} from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
 import {defineConfig} from 'vite'
 import domain from 'vite-plugin-domain'
@@ -15,6 +17,7 @@ if (process.env.VITEST) {
                 typeof id === 'string'
                     ? id.replace('?er=', '?importer=').replace('?origin=', '?importer=')
                     : id
+
             return originalLoad(normalized)
         }
     }
@@ -24,7 +27,11 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         wuchalePlugin,
-        sveltekit(),
+        sveltekit({
+            preprocess: [vitePreprocess()],
+            adapter: adapter({fallback: 'index.html' /* Enable SPA routing */}),
+            output: {bundleStrategy: 'single'}
+        }),
         domain({nameSource: 'pkg', tld: 'localhost'})
     ],
     resolve: {

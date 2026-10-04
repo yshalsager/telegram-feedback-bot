@@ -1,8 +1,9 @@
 <script lang="ts">
 import {goto} from '$app/navigation'
 import {resolve} from '$app/paths'
+import type {Path} from '$app/types'
 import {Plus, UserPlus} from '@lucide/svelte'
-import {cn} from '$lib/utils.js'
+import {cn} from '#lib/utils.js'
 
 type IconVariant = 'plus' | 'user-plus'
 type GradientVariant = 'primary' | 'success'
@@ -49,7 +50,7 @@ interface Props {
     icon?: IconVariant
     variant?: GradientVariant
     onClick?: () => void
-    route?: string
+    route?: Path
 }
 
 let {label, icon = 'plus', variant = 'primary', onClick, route}: Props = $props()

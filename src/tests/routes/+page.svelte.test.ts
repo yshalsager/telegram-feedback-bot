@@ -5,7 +5,7 @@ import Page from '~/routes/app/+page.svelte'
 const listBotsMock = vi.fn()
 const listUsersMock = vi.fn()
 
-vi.mock('$lib/api.js', () => ({
+vi.mock('#lib/api.js', () => ({
     list_bots: (...args) => listBotsMock(...args),
     list_users: (...args) => listUsersMock(...args)
 }))

@@ -1,6 +1,6 @@
 <script lang="ts">
 import {ChevronRight} from '@lucide/svelte'
-import type {Bot, User} from '$lib/types.ts'
+import type {Bot, User} from '#lib/types.ts'
 
 interface Props {
     item: Bot | User
@@ -41,7 +41,7 @@ function pickAvatarClass(value: string): string {
 
 // Type guard to check if item is a Bot
 function isBot(item: Bot | User): item is Bot {
-    return type === 'bot'
+    return type === 'bot' && 'uuid' in item
 }
 
 // Generate avatar content based on type

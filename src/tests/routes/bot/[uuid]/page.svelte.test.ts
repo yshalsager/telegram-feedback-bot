@@ -70,7 +70,7 @@ vi.mock('$app/navigation', () => ({
 }))
 
 vi.mock('$app/paths', () => ({
-    resolve: (path: string) => path
+    resolve: (path: string) => (path.startsWith('/') ? path : `/${path}`)
 }))
 
 vi.mock('@tma.js/sdk-svelte', () => ({
@@ -81,18 +81,18 @@ vi.mock('~/lib/telegram.js', () => ({
     showNotification: showNotificationMock
 }))
 
-vi.mock('$lib/api.js', () => ({
+vi.mock('#lib/api.js', () => ({
     update_bot: (...args: unknown[]) => updateBotMock(...args),
     delete_bot: (...args: unknown[]) => deleteBotMock(...args),
     transfer_bot_owner: (...args: unknown[]) => transferBotOwnerMock(...args),
     unlink_bot_forward_chat: (...args: unknown[]) => unlinkBotForwardChatMock(...args)
 }))
 
-vi.mock('$lib/mappers/bot', () => ({
+vi.mock('#lib/mappers/bot.js', () => ({
     mapBotResponse: (...args: unknown[]) => mapBotResponseMock(...args)
 }))
 
-vi.mock('$lib/stores.svelte.js', () => ({
+vi.mock('#lib/stores.svelte.js', () => ({
     session: sessionMock.store
 }))
 

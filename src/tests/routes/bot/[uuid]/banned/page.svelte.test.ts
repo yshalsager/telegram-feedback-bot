@@ -74,7 +74,7 @@ vi.mock('~/lib/telegram.js', () => ({
     showNotification: showNotificationMock
 }))
 
-vi.mock('$lib/api.js', () => ({
+vi.mock('#lib/api.js', () => ({
     list_banned_users: (...args: unknown[]) => listBannedUsersMock(...args),
     ban_user: (...args: unknown[]) => banUserMock(...args),
     unban_user: (...args: unknown[]) => unbanUserMock(...args)

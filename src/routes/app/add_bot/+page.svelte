@@ -4,16 +4,16 @@ import {resolve} from '$app/paths'
 import {Loader} from '@lucide/svelte'
 import type {EventPayload} from '@tma.js/sdk-svelte'
 import {on} from '@tma.js/sdk-svelte'
+import {add_bot} from '#lib/api.js'
+import {Button} from '#lib/components/ui/button/index.js'
+import {Input} from '#lib/components/ui/input/index.js'
+import {Separator} from '#lib/components/ui/separator/index.js'
+import type {CommunicationMode} from '#lib/constants/communication_mode.js'
 import BotMessageField from '~/components/management/BotMessageField.svelte'
 import CommunicationModeSection from '~/components/management/CommunicationModeSection.svelte'
 import SettingsPage from '~/components/management/SettingsPage.svelte'
 import SwitchRow from '~/components/management/SwitchRow.svelte'
 import {showNotification} from '~/lib/telegram.js'
-import {add_bot} from '$lib/api.js'
-import {Button} from '$lib/components/ui/button'
-import {Input} from '$lib/components/ui/input'
-import {Separator} from '$lib/components/ui/separator'
-import type {CommunicationMode} from '$lib/constants/communication_mode'
 
 type AddBotResponse = {
     status?: string
@@ -33,6 +33,7 @@ let use_topics = $state(false)
 let disableSubmit = $state(false)
 // Bot token regex validation
 const botTokenRegex = /^[0-9]{8,10}:[a-zA-Z0-9_-]{35}$/
+
 let isTokenValid = $derived(botToken === '' || botTokenRegex.test(botToken))
 
 // Form validation
@@ -45,12 +46,14 @@ let isFormValid = $derived(
 
 // Format character count with locale-specific number formatting
 const onBotSuccessfullyAdded = on('popup_closed', (payload: EventPayload<'popup_closed'>) => {
-    if (payload.button_id === 'bot_successfully_added_close') goto(resolve('/app'))
+    if (payload.button_id === 'bot_successfully_added_close') goto(resolve('app'))
+
     onBotSuccessfullyAdded()
 })
 
 async function handleSaveBot() {
     disableSubmit = true
+
     const response = (await add_bot(
         botToken,
         startMessage,
@@ -58,6 +61,7 @@ async function handleSaveBot() {
         communication_mode,
         use_topics
     )) as AddBotResponse
+
     if (response?.status === 'success') {
         showNotification(
             '',

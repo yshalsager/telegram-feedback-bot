@@ -12,7 +12,7 @@ import {
     themeParams,
     viewport
 } from '@tma.js/sdk-svelte'
-import {mockEnvInDev} from '$lib/telegram_debug.js'
+import {mockEnvInDev} from '#lib/telegram_debug.js'
 import {session} from './stores.svelte'
 
 export async function initSDK() {
@@ -34,7 +34,7 @@ export async function initSDK() {
         if (settingsButton.isSupported() && settingsButton.mount.isAvailable()) {
             settingsButton.mount()
             settingsButton.show()
-            settingsButton.onClick(() => goto(resolve('/app/settings')))
+            settingsButton.onClick(() => goto(resolve('app/settings')))
         }
         if (backButton.isSupported() && backButton.mount.isAvailable()) {
             backButton.mount()
