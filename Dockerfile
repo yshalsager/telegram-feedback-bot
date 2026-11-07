@@ -24,7 +24,7 @@ RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-group dev
 FROM public.ecr.aws/docker/library/node:${NODE_VERSION}-slim AS frontend-builder
 WORKDIR /code
 RUN corepack enable && pnpm config set store-dir /root/.pnpm-store
-COPY package.json pnpm-lock.yaml .npmrc ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN --mount=type=cache,target=/root/.pnpm-store pnpm install --frozen-lockfile
 COPY vite.config.js jsconfig.json tsconfig.json tsconfig.eslint.json wuchale.config.js components.json vitest-setup-client.js ./
 COPY src ./src
