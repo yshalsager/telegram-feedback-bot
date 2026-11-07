@@ -24,6 +24,7 @@ SVELTEKIT_BUILD_DIR = BASE_DIR / 'build'
 
 SECRET_KEY = getenv('DJANGO_SECRET_KEY', '')
 DEBUG = bool_env('DJANGO_DEBUG', 'false')
+MINIAPP_DEV_AUTH = bool_env('DJANGO_MINIAPP_DEV_AUTH', 'false')
 FRONTEND_DEBUG = bool_env('PUBLIC_DEBUG', 'false')
 ALLOWED_HOSTS = getenv('DJANGO_ALLOWED_HOSTS', '').split()
 CSRF_TRUSTED_ORIGINS = [

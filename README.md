@@ -203,5 +203,6 @@ mise x pnpm -- pnpm run check
 ## Development Tips
 
 - `mise r` starts migrations, Granian, and the SvelteKit dev server in one go.
+- For browser-only Mini App development, enable `PUBLIC_DEBUG=true`, `DJANGO_DEBUG=true`, and `DJANGO_MINIAPP_DEV_AUTH=true` in your local configuration. The backend bypass defaults to off and only accepts mock user ID `1`. Keep this backend private: anyone who can reach it can impersonate that mock admin while the bypass is enabled. Never enable it in production.
 - Use `mise x uv -- uv run manage.py shell_plus` for interactive debugging.
 - Internationalization helpers live under `src/locales` and `feedback_bot/locale`; run `mise r i18n_update` after editing strings.

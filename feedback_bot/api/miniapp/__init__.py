@@ -33,13 +33,15 @@ class TelegramMiniAppAuth(HttpBearer):
         admins = settings.TELEGRAM_BUILDER_BOT_ADMINS
         parsed_data = parse_init_data(init_data)
 
-        if (
-            settings.DEBUG
-            and (user_data := orjson.loads(parsed_data.get('user', '{}')))
-            and (user_data.get('id') in admins or user_data.get('id') == 1)
-        ):
-            user_data['is_admin'] = True
-            return cast(dict[str, Any], user_data)
+        if settings.DEBUG and settings.MINIAPP_DEV_AUTH:
+            try:
+                user_data = orjson.loads(parsed_data.get('user', '{}'))
+            except orjson.JSONDecodeError:
+                raise AuthenticationError(message='Invalid Telegram Mini App data') from None
+
+            if isinstance(user_data, dict) and user_data.get('id') == 1:
+                user_data['is_admin'] = True
+                return cast(dict[str, Any], user_data)
 
         is_valid, user_data = validate_mini_app_init_data(
             parsed_data, settings.TELEGRAM_BUILDER_BOT_TOKEN
