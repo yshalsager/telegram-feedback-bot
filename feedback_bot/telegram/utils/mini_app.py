@@ -39,10 +39,14 @@ def validate_mini_app_init_data(parsed_data: dict[str, str], bot_token: str) -> 
         logger.error('Hash not found in initData.')
         return False, {}
 
+    try:
+        auth_date = datetime.fromtimestamp(float(parsed_data.get('auth_date', 0)), tz=UTC)
+    except ValueError, OverflowError, OSError:
+        logger.error('Invalid auth date in initData.')
+        return False, {}
+
     # auth_date must not be older than 1 day
-    if datetime.now(tz=UTC) - datetime.fromtimestamp(
-        float(parsed_data.get('auth_date', 0)), tz=UTC
-    ) > timedelta(days=1):
+    if datetime.now(tz=UTC) - auth_date > timedelta(days=1):
         logger.error('Auth date is older than 1 day.')
         return False, {}
 
