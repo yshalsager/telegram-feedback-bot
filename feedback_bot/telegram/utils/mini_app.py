@@ -65,7 +65,7 @@ def validate_mini_app_init_data(parsed_data: dict[str, str], bot_token: str) -> 
     calculated_hash = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
 
     # If the hashes match, the data is authentic.
-    if calculated_hash == received_hash:
+    if received_hash.isascii() and hmac.compare_digest(calculated_hash, received_hash):
         user_data_str = parsed_data.get('user', '{}')
         try:
             user_data = orjson.loads(user_data_str)
