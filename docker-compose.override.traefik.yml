@@ -2,7 +2,7 @@ services:
   app:
     restart: always
     environment:
-      - GRANIAN_WORKERS=${GRANIAN_WORKERS:-4}
+      - GRANIAN_WORKERS=${GRANIAN_WORKERS:-1}
       - GRANIAN_THREADS=${GRANIAN_THREADS:-1}
       - GRANIAN_RELOAD=${GRANIAN_RELOAD:-0}
     labels:

@@ -200,6 +200,10 @@ mise x pnpm -- pnpm run check
 - [SvelteKit](https://kit.svelte.dev/), [Tailwind CSS](https://tailwindcss.com/), and [Bits UI](https://www.bits-ui.com/) for the mini app.
 - [uv](https://github.com/astral-sh/uv) and [mise](https://mise.jdx.dev/) for fast, reproducible environments.
 
+## Worker configuration
+
+Keep `GRANIAN_WORKERS=1` in mise and deployment configuration. The builder bot initializes PTB in only one worker; additional workers lack the application state needed to handle builder webhooks and return HTTP 500. Compose defaults to one worker, but an explicit environment value overrides that default. Do not increase the worker count until PTB initialization supports every worker.
+
 ## Development Tips
 
 - `mise r` starts migrations, Granian, and the SvelteKit dev server in one go.
